@@ -3,6 +3,7 @@
 ### Participents
 
 - Daniel Schwarzenbach
+- Mateo Cárdenes Wuttig
 
 ### You can use Latex here!
 
