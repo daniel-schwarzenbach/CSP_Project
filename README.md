@@ -1,6 +1,7 @@
 # CSP Project FS24
 
-### Participents
+### Participants
 
 - Daniel Schwarzenbach
 - Mateo Cárdenes Wuttig
+- Constança Tropa
