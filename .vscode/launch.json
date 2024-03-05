@@ -16,7 +16,7 @@
         {
             "preLaunchTask": "build",
             "name": "windows",
-            //"type": "cppvsdbg",
+            "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
             "program": "${workspaceFolder}/build/test.exe"
@@ -24,7 +24,7 @@
         {
             "preLaunchTask": "build",
             "name": "mac-os",
-            //"type": "cppvsdbg",
+            "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
             "program": "${workspaceFolder}/build/test"
