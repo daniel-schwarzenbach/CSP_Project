@@ -3,6 +3,8 @@
 something
 
 ### Participents
+### Participants
 
 - Daniel Schwarzenbach
 - Mateo Cárdenes Wuttig
+- Constança Tropa
