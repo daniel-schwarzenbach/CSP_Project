@@ -6,4 +6,4 @@ something
 
 - Daniel Schwarzenbach
 - Mateo Cárdenes Wuttig
-- Constança Tropa
+- Constança Tropaa
