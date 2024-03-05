@@ -2,7 +2,6 @@
 
 something
 
-### Participents
 ### Participants
 
 - Daniel Schwarzenbach
