@@ -2,30 +2,18 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "build-linux",
-
-            "linux" :{
-                "command": "${workspaceFolder}/build-linux.sh"
-            },
-
-            "options" :{
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher":[
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "build-windows",
+            "label": "build",
 
             "windows" :{
                 "command": "${workspaceFolder}/build-win.bat"
             },
+            "linux" :{
+                "command": "${workspaceFolder}/build-unix.sh"
+            },
+            "osx" :{
+                "command": "${workspaceFolder}/build-unix.sh"
+            },
+
 
             "options" :{
                 "cwd": "${workspaceFolder}"
@@ -38,24 +26,6 @@
                 "isDefault": true
             },
         },
-        {
-            "type": "shell",
-            "label": "build-mac-os",
-
-        
-            "command": "${workspaceFolder}/build-linux.sh",
-
-            "options" :{
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher":[
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        }
     ],
     "version": "2.0.0"
 }
