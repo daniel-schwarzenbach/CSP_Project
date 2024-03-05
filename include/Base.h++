@@ -26,6 +26,7 @@ using std::string;
 
 #include <functional>
 using std::function;
+using std::mem_fn;
 
 
 //          --- Functions
