@@ -2,14 +2,48 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "build everything",
+            "label": "build-linux",
+
+            "linux" :{
+                "command": "${workspaceFolder}/build-linux.sh"
+            },
+
+            "options" :{
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
+            "label": "build-windows",
 
             "windows" :{
                 "command": "${workspaceFolder}/build-win.bat"
             },
-            "linux" :{
-                "command": "${workspaceFolder}/build-linux.sh"
+
+            "options" :{
+                "cwd": "${workspaceFolder}"
             },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
+            "label": "build-mac-os",
+
+        
+            "command": "${workspaceFolder}/build-linux.sh",
 
             "options" :{
                 "cwd": "${workspaceFolder}"

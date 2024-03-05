@@ -5,20 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "build everything",
+            "preLaunchTask": "build-linux",
             "miDebuggerPath": "/usr/bin/gdb",
-            "name": "Linux",
+            "name": "linux",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test",
             "cwd": "${workspaceFolder}/build",
         },
         {
-            "name": "Windows",
+            "preLaunchTask": "build-windows",
+            "name": "windows",
             //"type": "cppvsdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
             "program": "${workspaceFolder}/build/test.exe"
-        }
+        },
+        {
+            "preLaunchTask": "build-mac-os",
+            "name": "mac-os",
+            //"type": "cppvsdbg",
+            "request": "launch",
+            "cwd" : "${workspaceFolder}/build",
+            "program": "${workspaceFolder}/build/test"
+        },
+        
+
     ]
 }
