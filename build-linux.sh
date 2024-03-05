@@ -4,8 +4,6 @@
 if [ ! -d build ]
 then
     mkdir build
-    mkdir build/bin
-    mkdir build/bin/assets
 fi
 
 #generate cmake files
