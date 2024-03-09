@@ -8,7 +8,7 @@
 #define IPPL_TIMER_H
 
 #ifndef IPPL_ENABLE_TIMER_FENCES
-#warning "IPPL timer fences were not set via CMake! Defaulting to no fences."
+// #warning "IPPL timer fences were not set via CMake! Defaulting to no fences."
 #define IPPL_ENABLE_TIMER_FENCES false
 #endif
 
