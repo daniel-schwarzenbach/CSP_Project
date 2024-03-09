@@ -4,15 +4,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
 
+project(CSP_FS24)
 
 # include/
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
 include_directories(${CMAKE_SOURCE_DIR}/include/Heffte)
 include_directories(${CMAKE_SOURCE_DIR}/include/Kokkos)
+# lib/
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
-project(CSP_FS24)
 
 # add open mp
 find_package(OpenMP REQUIRED)
