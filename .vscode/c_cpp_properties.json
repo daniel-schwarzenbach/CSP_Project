@@ -3,8 +3,11 @@
         {
             "name": "Linux configs",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/Ippl",
+                "${workspaceFolder}/include/Kokkos",
+                "${workspaceFolder}/include/Heffte",
+                "${workspaceFolder}/MPI",
                 "/usr/include"
             ],
             "defines": [
