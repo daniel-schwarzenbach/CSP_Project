@@ -71,7 +71,7 @@ int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
 
 int MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, int root, 
-                  MPI_Comm comm){return 0}
+                  MPI_Comm comm){return 0;}
 
 int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm){
@@ -126,17 +126,17 @@ int MPI_Type_create_subarray(
         int ndims, int sizes[], int subsizes[], int starts[],
         int order, MPI_Datatype oldtype, MPI_Datatype *newtype){}
 
-int MPI_Type_commit(MPI_Datatype* newtype){return 0};
+int MPI_Type_commit(MPI_Datatype* newtype){return 0;}
 
 /// @brief 
 /// @param to_free 
 /// @return 
-int MPI_Type_free(MPI_Datatype* to_free){}
+int MPI_Type_free(MPI_Datatype* to_free){return 0;}
 
 /// @brief 
 /// @param comm 
 /// @return 
-int MPI_Comm_free(MPI_Comm *comm){}
+int MPI_Comm_free(MPI_Comm *comm){return 0;}
 
 //int MPI_BSEND_OVERHEAD = 0;
 
