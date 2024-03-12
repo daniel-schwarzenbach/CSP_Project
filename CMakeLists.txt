@@ -29,6 +29,8 @@ add_executable(test test/test-ippl.c++)
 target_link_libraries(test heffte)
 target_link_libraries(test ippl)
 target_link_libraries(test kokkoscore)
+target_link_libraries(test kokkoscontainers)
+target_link_libraries(test kokkossimd)
 
 # add MPI
 find_package(MPI REQUIRED)
