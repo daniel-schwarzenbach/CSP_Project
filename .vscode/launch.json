@@ -27,7 +27,12 @@
             "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
-            "program": "${workspaceFolder}/build/test"
+            "program": "${workspaceFolder}/build/test",
+            "args": [],
+            "stopAtEntry": false,
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
         },
         
 
