@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 using namespace std;
-dfgddgdg
+
 // Define constants
 const int L = 10; // Lattice size
 const int N = L * L * L; // Total number of spins
