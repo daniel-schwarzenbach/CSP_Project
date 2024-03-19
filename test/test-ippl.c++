@@ -1,8 +1,5 @@
 #include <Base.h++>
-#include <Kokkos_Macros.hpp>
-#include <Kokkos_Profiling_ProfileSection.hpp>
-#include <Kokkos_Profiling_ScopedRegion.hpp>
-#include <Ippl.h>
+#include <Ippl/Ippl.h>
 
 
 int main(int mainArgc, char** mainArgs)
