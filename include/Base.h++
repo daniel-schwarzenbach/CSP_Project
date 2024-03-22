@@ -4,6 +4,7 @@
 //          --- Output
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 // output
 using std::cout;
@@ -12,6 +13,10 @@ using std::endl;
 using std::cin;
 using std::setw;
 
+// math
+using std::cos;
+using std::sin;
+
 //          --- Types
 
 // standart floatingpoint type
@@ -19,15 +24,27 @@ using std::setw;
 // usign a generic float has the advantage that we can easily
 // change it.
 // also writing flt is shorter than double/float/long double
-using flt = double;
+using flt = float;
 
 #include <string>
 using std::string;
+
+#include <vector>
+using std::vector;
 
 #include <functional>
 using std::function;
 using std::mem_fn;
 
+//          --- Constants
+
+
+constexpr flt π = M_PI;
+constexpr flt ₂π = 2*π;
+
+// eulers number
+// latex: mite
+flt 𝑒 = M_E;
 
 //          --- Functions
 
