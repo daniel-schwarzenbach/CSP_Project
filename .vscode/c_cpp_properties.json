@@ -8,7 +8,8 @@
                 "${workspaceFolder}/include/Kokkos",
                 "${workspaceFolder}/include/Heffte",
                 "${workspaceFolder}/MPI",
-                "/usr/include"
+                "/usr/include",
+                "${workspaceFolder}/build/matplotplusplus/source/matplot"
             ],
             "defines": [
                 "CSP_DEBUG"

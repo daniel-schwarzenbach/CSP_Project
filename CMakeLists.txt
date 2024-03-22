@@ -6,6 +6,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(CSP_FS24)
 
+add_subdirectory(matplotplusplus)
+
+set(CMAKE_BUILD_TYPE Release)
+
+
+# enable vectorization
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+
+
 # include/
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
@@ -36,6 +45,7 @@ target_link_libraries(test kokkoscore)
 target_link_libraries(test kokkoscontainers)
 target_link_libraries(test kokkossimd)
 target_link_libraries(test dl)
+target_link_libraries(test matplot)
 
 # add MPI
 find_package(MPI REQUIRED)
