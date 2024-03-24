@@ -2,24 +2,20 @@
 #include <Timekeeper.h++>
 #include <normalVectors.h++>
 #include <matplot/matplot.h>
-#include <Ippl/Ippl.h>
-
 
 
 int main(int mainArgc, char** mainArgs)
 {
-    //          --- test Ippl
-    ippl::Vector<flt, 3> vec3 = {2,3,3};
-    cout << vec3[2] << " == 3" << endl << endl;
-    ippl::initialize(mainArgc, mainArgs, MPI_COMM_WORLD);
 
-    uint L = 50'000;
+    uint L = 150'000;
     vector<Norm3d>  x3d(L, Norm3d());
     vector<NormPol> xPolar(L, NormPol());
+    vector<NormFast> xFast(L, NormFast());
     vector<flt>  buffer(10);
     for(uint i = 0; i < L; ++i){
         x3d[i] = Norm3d();
         xPolar[i] = NormPol();
+        xFast[i] = NormFast();
     }
     
     Timekeeper timekeeper;
@@ -30,8 +26,9 @@ int main(int mainArgc, char** mainArgs)
         }
     }
     timekeeper.stop();
-    flt randomtime = timekeeper.time();
-    cout << "Time for 50K iterations is: " <<  randomtime << endl;
+    flt iterationTime = timekeeper.time();
+    cout << "Time for "<< L/1'000 << "K iterations is: " 
+         <<  iterationTime << endl;
 
     timekeeper.start();
     for(uint i = 0; i < L; ++i){
@@ -42,8 +39,20 @@ int main(int mainArgc, char** mainArgs)
     }
     timekeeper.stop();
     flt timeCar = timekeeper.time();
-    cout << "Time for 50K Cartesian calculation is: " 
+    cout << "Time for "<< L/1'000 << "K Cartesian calculation is: " 
          << timeCar << endl;
+
+    timekeeper.start();
+    for(uint i = 0; i < L; ++i){
+        for(uint j = i; j < L; ++j){
+            // cout << i << endl;
+            volatile flt x = xFast[i] | xFast[j];
+        }
+    }
+    timekeeper.stop();
+    flt timeFast = timekeeper.time();
+    cout << "Time for "<< L/1'000 << "K CartesianFast calculation is: " 
+         << timeFast << endl;
 
     timekeeper.start();
     for(uint i = 0; i < L; ++i){
@@ -53,10 +62,13 @@ int main(int mainArgc, char** mainArgs)
     }
     timekeeper.stop();
     flt timePol = timekeeper.time();
-    cout << "Time for 50K Polar calculation is: " << timePol
+    cout << "Time for "<< L/1'000 << "K Polar calculation is: " 
+         << timePol
          << endl;
 
-    cout << "timePolar / timeCartesian = " << timePol / timeCar 
+    cout << "timePolar / timeCartesian = " 
+         << (timePol-iterationTime) 
+            / (std::min(timeCar,timeFast)-iterationTime)
          << endl;
     //          --- test Matplot++
     namespace plt = matplot; 

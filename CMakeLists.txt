@@ -12,14 +12,14 @@ set(CMAKE_BUILD_TYPE Release)
 
 
 # enable vectorization
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
 
 
 # include/
 include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
-include_directories(${CMAKE_SOURCE_DIR}/include/Heffte)
-include_directories(${CMAKE_SOURCE_DIR}/include/Kokkos)
+# include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
+# include_directories(${CMAKE_SOURCE_DIR}/include/Heffte)
+# include_directories(${CMAKE_SOURCE_DIR}/include/Kokkos)
 # lib/
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
@@ -36,14 +36,14 @@ endif()
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "-ldl")
 
-add_executable(test test/test-ippl.c++)
+add_executable(test test/test.c++)
 
 # lib/
-target_link_libraries(test heffte)
-target_link_libraries(test ippl)
-target_link_libraries(test kokkoscore)
-target_link_libraries(test kokkoscontainers)
-target_link_libraries(test kokkossimd)
+# target_link_libraries(test heffte)
+# target_link_libraries(test ippl)
+# target_link_libraries(test kokkoscore)
+# target_link_libraries(test kokkoscontainers)
+# target_link_libraries(test kokkossimd)
 target_link_libraries(test dl)
 target_link_libraries(test matplot)
 

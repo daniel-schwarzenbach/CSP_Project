@@ -1,6 +1,6 @@
 #include <Base.h++>
-// #include <immintrin.h> // Include SIMD intrinsics header file 
-//                        // for vectorization
+#include <immintrin.h> // Include SIMD intrinsics header file 
+                       // for vectorization
 
 class NormVec{
     // scalar product
@@ -9,41 +9,49 @@ class NormVec{
 };
 
 // uses vectorization
-// class NormFast : public NormVec{
-// private:
-//     flt* data;
-// public:
+class NormFast : public NormVec{
+private:
+    flt* data;
+public:
     
-//     NormFast(){
-//         data = (flt*) malloc(sizeof(flt)*3);
-//         flt φ = randflt() * ₂π;
-//         flt ϑ = randflt() * π;
-//         data[0] = sin(φ)*cos(ϑ);
-//         data[1] = cos(φ)*cos(ϑ);
-//         data[2] = sin(ϑ);
-//     }
-//     // NormFast(flt x, flt y, flt z){}
-//     ~NormFast(){free(data);}
-//     NormFast& operator=(NormFast const& other){
-//         data[0] = other.data[0];
-//         data[1] = other.data[1];
-//         data[2] = other.data[2];
-//         return *this;
-//     };
-//     // scalar product
-//     flt operator|(NormFast const& other){
-//         __m128 v1 = _mm_loadu_ps(this->data);
-//         __m128 v2 = _mm_loadu_ps(other.data);
+    NormFast(){
+        data = (flt*) malloc(sizeof(flt)*3);
+        flt φ = randflt() * ₂π;
+        flt ϑ = randflt() * π;
+        data[0] = sin(φ)*cos(ϑ);
+        data[1] = cos(φ)*cos(ϑ);
+        data[2] = sin(ϑ);
+    }
+    NormFast(NormFast const& other){
+        data = (flt*) malloc(sizeof(flt)*3);
+        data[0] = other.data[0];
+        data[1] = other.data[1];
+        data[2] = other.data[2];
+    }
+    // NormFast(flt x, flt y, flt z){}
+    ~NormFast(){if(data != NULL) free(data);}
 
-//         // Perform dot product using SIMD multiplication and addition
-//         __m128 result = _mm_dp_ps(v1, v2, 0b01110001);
 
-//         // Extract the scalar product result from the SIMD vector
-//         float resultScalar;
-//         _mm_store_ss(&resultScalar, result);
-//         return resultScalar;
-//     }
-// };
+    NormFast& operator=(NormFast const& other){
+        data[0] = other.data[0];
+        data[1] = other.data[1];
+        data[2] = other.data[2];
+        return *this;
+    }
+    // scalar product
+    flt operator|(NormFast const& other){
+        __m128 v1 = _mm_loadu_ps(this->data);
+        __m128 v2 = _mm_loadu_ps(other.data);
+
+        // Perform dot product using SIMD multiplication and addition
+        __m128 result = _mm_dp_ps(v1, v2, 0b01110001);
+
+        // Extract the scalar product result from the SIMD vector
+        float resultScalar;
+        _mm_store_ss(&resultScalar, result);
+        return resultScalar;
+    }
+};
 
 class Norm3d : public NormVec{
 public:
