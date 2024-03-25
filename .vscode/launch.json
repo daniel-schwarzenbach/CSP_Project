@@ -10,7 +10,7 @@
             "name": "linux",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test",
+            "program": "${workspaceFolder}/build/Heisenberg",
             "cwd": "${workspaceFolder}/build",
         },
         {
@@ -19,7 +19,7 @@
             "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
-            "program": "${workspaceFolder}/build/test.exe"
+            "program": "${workspaceFolder}/build/Heisenberg.exe"
         },
         {
             "preLaunchTask": "build",
@@ -27,7 +27,7 @@
             "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
-            "program": "${workspaceFolder}/build/test",
+            "program": "${workspaceFolder}/build/Heisenberg",
             "args": [],
             "stopAtEntry": false,
             "environment": [],
