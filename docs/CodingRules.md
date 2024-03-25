@@ -10,10 +10,9 @@ https://about.gitlab.com/images/press/git-cheat-sheet.pdf
 our branching:
 
 master(Daniel)\
-├── develop(Daniel, Mateo)\
-│   ├── Wolf(Constancia)\
-│   └── Metropolis(Justus)\
-└── paralell(Daniel)
+├── Wolf(Constancia)\
+├── Metropolis(Justus)\
+└── Observables(Mateo)\
 
 #### How to get updates form parent branch:
 
@@ -36,9 +35,9 @@ type_t apple_juice(type_t const& t);
 ```
 
 in general use:
--   constexpr: as much as possible, evaluates value by preprocessor
+-   constexpr: as much as possible, evaluates value by preprocessor.
+-   const: as much as possible.
 -   inline: on smaller functions, avoids function call
-
 
 alwas have an is-, can- or has- for bools
 ```cpp
