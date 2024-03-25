@@ -8,7 +8,7 @@ project(Heisenberg3d)
 
 add_subdirectory(matplotplusplus)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 
 # enable vectorization

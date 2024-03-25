@@ -13,8 +13,14 @@ Heisenberg: MAINFUNCTION
 */
 int main(int mainArgCount, char** mainArgs){
 
+    // random seedd
+    const uint seed = 42;
+
     // Lattice
-    Lattice3d<Spin> lattice(16,16,16, 42);
+    Lattice3d<Spin> lattice(16,16,16, seed); // 50 KB
+    cout << "the lattice uses up: " << lattice.memory_size() 
+         << " Bytes" << endl
+         << "lattice(2,4,17) = " << lattice(2,4,17) << endl;
 
     // metropolis
     cout << "running metropolis" << endl;
@@ -28,6 +34,7 @@ int main(int mainArgCount, char** mainArgs){
     // wolf
     cout << "running wolf" << endl;
     try{
+        lattice.regenerate(seed); // regenetate the lattice
         wolf(lattice);
     } catch(exception& e){
         cerr    << "wolf failed!" << endl
