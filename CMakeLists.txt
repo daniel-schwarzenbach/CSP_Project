@@ -10,6 +10,8 @@ add_subdirectory(matplotplusplus)
 
 set(CMAKE_BUILD_TYPE Debug)
 
+# 
+file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # enable vectorization
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
@@ -36,8 +38,8 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "-ldl")
 
-add_executable(test code/test/test.c++)
-add_executable(Heisenberg code/main.c++)
+add_executable(test test/test.c++)
+add_executable(Heisenberg ${SRC_FILES})
 
 # lib/
 # target_link_libraries(test heffte)
