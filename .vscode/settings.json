@@ -79,5 +79,8 @@
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++-13",
     "cmake.configureOnOpen": false,
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "editor.rulers": [
+        70
+    ]
 }

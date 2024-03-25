@@ -26,25 +26,28 @@ using std::sin;
 // also writing flt is shorter than double/float/long double
 using flt = float;
 
+#include <functional>
+using std::function;
+using std::mem_fn;
+
 #include <string>
 using std::string;
 
 #include <vector>
 using std::vector;
 
-#include <functional>
-using std::function;
-using std::mem_fn;
+#include <array>
+using std::array;
+
 
 //          --- Constants
 
 
-constexpr flt π = M_PI;
-constexpr flt ₂π = 2*π;
+static constexpr flt π = M_PI; //\pi
+static constexpr flt ₂π = 2*π; //\_2\pi
 
-// eulers number
-// latex: mite
-flt 𝑒 = M_E;
+// eulers number 
+static constexpr flt 𝑒 = M_E; //\mite
 
 //          --- Functions
 
@@ -52,5 +55,12 @@ flt 𝑒 = M_E;
 static flt randflt(){
     return (flt)rand()/(flt)RAND_MAX;
 }
+
+
+//          --- Exeptions
+#include <exception>
+
+using std::exception;
+
 
 #endif // BASE_HPP

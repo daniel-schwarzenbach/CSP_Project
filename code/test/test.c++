@@ -1,21 +1,21 @@
 #include <Base.h++>
 #include <Timekeeper.h++>
-#include <normalVectors.h++>
+#include <Spin.h++>
 #include <matplot/matplot.h>
 
 
-int main(int mainArgc, char** mainArgs)
+int main(int mainArgCount, char** mainArgs)
 {
 
     uint L = 150'000;
-    vector<Norm3d>  x3d(L, Norm3d());
-    vector<NormPol> xPolar(L, NormPol());
-    vector<NormFast> xFast(L, NormFast());
+    vector<Spin3d>  x3d(L, Spin3d());
+    vector<SpinPol> xPolar(L, SpinPol());
+    vector<SpinFast> xFast(L, SpinFast());
     vector<flt>  buffer(10);
     for(uint i = 0; i < L; ++i){
-        x3d[i] = Norm3d();
-        xPolar[i] = NormPol();
-        xFast[i] = NormFast();
+        x3d[i] = Spin3d();
+        xPolar[i] = SpinPol();
+        xFast[i] = SpinFast();
     }
     
     Timekeeper timekeeper;

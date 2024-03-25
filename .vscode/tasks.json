@@ -13,8 +13,9 @@
             "osx" :{
                 "command": "${workspaceFolder}/build-unix.sh"
             },
-
-
+            "presentation": {
+                "reveal": "always"
+            },
             "options" :{
                 "cwd": "${workspaceFolder}"
             },
