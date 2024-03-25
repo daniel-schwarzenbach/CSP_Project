@@ -15,6 +15,12 @@ master(Daniel)\
 │   └── Metropolis(Justus)\
 └── paralell(Daniel)
 
+#### How to get updates form parent branch:
+
+git pull origin 'parent'
+
+git merge 'parent'
+
 
 ## Naming Convetions
 

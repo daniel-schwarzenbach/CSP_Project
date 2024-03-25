@@ -60,7 +60,7 @@ public:
         y = cos(φ)*cos(ϑ);
         z = sin(ϑ);
     }
-    Spin3d(flt x, flt y, flt z):x(x), y(y), z(z) {}
+    Spin3d(flt x, flt y=0, flt z=0):x(x), y(y), z(z) {}
     Spin3d& operator=(Spin3d const& other){
         this->x = other.x;
         this->y = other.y;
@@ -71,6 +71,16 @@ public:
     flt operator|(Spin3d const& other){
         return this->x*other.x + this->y*other.y + this->z*other.z;
     }
+    bool operator==(Spin3d const& other){
+        return  (abs(this->x==other.x)<1e-3) && 
+                (abs(this->y==other.y)<1e-3) &&
+                (abs(this->z==other.z)<1e-3);
+    }
+    friend std::ostream& operator<<(std::ostream& os, 
+                                    Spin3d const& s){
+        os << "{" << s.x << ", " << s.y << ", " << s.z << "}";
+        return os;
+    }
 };
 
 class SpinPol{
@@ -80,7 +90,7 @@ public:
         flt φ = randflt() * ₂π;
         flt ϑ = randflt() * π;
     }
-    SpinPol(flt φ, flt ϑ): φ(φ), ϑ(ϑ){}
+    SpinPol(flt φ, flt ϑ=0): φ(φ), ϑ(ϑ){}
     SpinPol& operator=(SpinPol const& other){
         this->φ = other.φ;
         this->ϑ = other.ϑ;
