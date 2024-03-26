@@ -6,12 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Heisenberg3d)
 
-add_subdirectory(matplotplusplus)
+add_subdirectory(lib/matplotplusplus)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-# 
-file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
+
 
 # enable vectorization
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
@@ -19,12 +18,15 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # include/
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/code)
 # include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
 # include_directories(${CMAKE_SOURCE_DIR}/include/Heffte)
 # include_directories(${CMAKE_SOURCE_DIR}/include/Kokkos)
 # lib/
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
+# 
+file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 
 # add open mp
@@ -38,8 +40,9 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "-ldl")
 
-add_executable(test test/test.c++)
-add_executable(Heisenberg ${SRC_FILES})
+# programs
+add_executable(test ${SRC_FILES} ./programs/test.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/heisenberg.c++)
 
 # lib/
 # target_link_libraries(test heffte)

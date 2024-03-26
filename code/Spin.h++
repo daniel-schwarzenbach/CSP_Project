@@ -71,11 +71,13 @@ public:
     flt operator|(Spin3d const& other){
         return this->x*other.x + this->y*other.y + this->z*other.z;
     }
+    // compareration operator
     bool operator==(Spin3d const& other){
         return  (abs(this->x==other.x)<1e-3) && 
                 (abs(this->y==other.y)<1e-3) &&
                 (abs(this->z==other.z)<1e-3);
     }
+    // output operator
     friend std::ostream& operator<<(std::ostream& os, 
                                     Spin3d const& s){
         os << "{" << s.x << ", " << s.y << ", " << s.z << "}";
