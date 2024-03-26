@@ -1,5 +1,5 @@
-#ifndef METROPOLIS_HPP
-#define METROPOLIS_HPP
+#ifndef ADAPTIVE_METROPOLIS_HPP
+#define ADAPTIVE_METROPOLIS_HPP
 
 #include <Base.h++>
 #include <Lattice3d.h++>
@@ -13,6 +13,6 @@ performs the metropolis algoritm on the lattice
 - returns: if it sucseeds
 - can throw
 */
-bool metropolis(Lattice3d<Spin> & lattice);
+bool adaptive_metropolis(Lattice3d<Spin> & lattice);
 
 #endif

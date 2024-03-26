@@ -45,6 +45,7 @@ using std::array;
 
 static constexpr flt π = M_PI; //\pi
 static constexpr flt ₂π = 2*π; //\_2\pi
+static constexpr flt π_2 = π/2.; //\_2\pi
 
 // eulers number 
 static constexpr flt 𝑒 = M_E; //\mite
