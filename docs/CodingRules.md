@@ -50,26 +50,19 @@ always comment your functions like this
 1. What does the function do
 2. describe the argument
 3. what does the function return?
-4. if it can throw an exeption write: can throw!
+4. if it can throw an exeption!
 
 try to always use `const&` in your function arguments! otherwise it will copy the entire data stucture!
 ```cpp
-
 /*
-calculates all relevant observables.
+wolf algorithm for the Heisenber3D model
 
-- lattice: the whole lattice
-- returns: list of all observables
-- can throw!
+/ @brief
+/ @param lattice our 3d lattice, where to perform the simulation on
+/ @return if the procedure succeds
+/ @exception may fail
 */
-vector<double> get_observables(
-        Lattice3d<SpinXYZ> const& lattice)  // avoid coping 8GB 
-                                            // of memory!!!!!
-{
-    // ...
-    // code
-    // ...
-}
+bool wolf(Lattice3d<Spin> & lattice);
 ```
 
 

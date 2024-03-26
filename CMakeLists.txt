@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Heisenberg3d)
 
-add_subdirectory(lib/matplotplusplus)
+add_subdirectory(libraries/matplotplusplus)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -17,23 +17,33 @@ set(CMAKE_BUILD_TYPE Debug)
 
 
 # include/
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/libraries/matplotplusplus/source)
 include_directories(${CMAKE_SOURCE_DIR}/code)
-# include_directories(${CMAKE_SOURCE_DIR}/include/Ippl)
-# include_directories(${CMAKE_SOURCE_DIR}/include/Heffte)
-# include_directories(${CMAKE_SOURCE_DIR}/include/Kokkos)
+
+# include/Ippl
+#include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/include)
+include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/ippl/src)
+include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_mixed/include)
+include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_mixed/include)
+
 # lib/
-link_directories(${CMAKE_SOURCE_DIR}/lib)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/ippl/build_mixed/src)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_mixed/lib)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_mixed/lib)
 
 # 
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 
 # add open mp
-# find_package(OpenMP REQUIRED)
-# if (OPENMP_FOUND)
-#     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-# endif()
+find_package(OpenMP REQUIRED)
+if (OPENMP_FOUND)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
+# add MPI
+find_package(MPI REQUIRED)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
@@ -43,6 +53,7 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 # programs
 add_executable(test ${SRC_FILES} ./programs/test.c++)
 add_executable(Heisenberg ${SRC_FILES} ./programs/heisenberg.c++)
+add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
 # lib/
 # target_link_libraries(test heffte)
@@ -55,7 +66,10 @@ target_link_libraries(test matplot)
 target_link_libraries(Heisenberg dl)
 target_link_libraries(Heisenberg matplot)
 
-# add MPI
-#find_package(MPI REQUIRED)
-#include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-#target_link_libraries(test ${MPI_CXX_LIBRARIES})
+
+target_link_libraries(IpplTest matplot)
+target_link_libraries(IpplTest ippl)
+target_link_libraries(IpplTest kokkoscore kokkoscontainers kokkossimd)
+target_link_libraries(IpplTest heffte)
+target_link_libraries(IpplTest dl)
+target_link_libraries(IpplTest ${MPI_CXX_LIBRARIES})
