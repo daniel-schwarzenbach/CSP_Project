@@ -9,8 +9,17 @@ enum BC{
 };
 
 
-// mathematical modolo
-inline uint modulo(int i, uint u) {
+/*
+mathematical correct modulo
+
+/ @brief
+/ @param i ∈ ℤ
+/ @param u ∈ ℕ < 2³¹
+/ @return i mod u
+*/
+inline uint modulo(int const& i, uint u) {
+    constexpr uint max_u  = 1 << 31;
+    u = min(max_u, u);
     return (i % static_cast<int>(u) + static_cast<int>(u)) 
             % static_cast<int>(u);
 }
@@ -18,6 +27,8 @@ inline uint modulo(int i, uint u) {
 
 // Lattice Containder
 /*
+
+Acsess
 T x = lattice<T>(x,y,z)
 
 */

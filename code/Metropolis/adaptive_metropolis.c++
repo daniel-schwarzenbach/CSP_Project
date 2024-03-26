@@ -1,7 +1,7 @@
 #include "adaptive_metropolis.h++"
 
 /*
-performs the metropolis algoritm on the lattice
+performs the adaptive metropolis algoritm on the lattice
 
 - L: Lattice
 - returns: if it sucseeds

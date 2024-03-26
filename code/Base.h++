@@ -16,6 +16,7 @@ using std::setw;
 // math
 using std::cos;
 using std::sin;
+using std::min;
 
 //          --- Types
 
@@ -52,7 +53,13 @@ static constexpr flt 𝑒 = M_E; //\mite
 
 //          --- Functions
 
-// returns random number r ∈ [0,1]
+
+/*
+random number generator for our floats
+
+/ @brief
+/ @return uniform random number r ∈ [0,1]
+*/
 static flt randflt(){
     return (flt)rand()/(flt)RAND_MAX;
 }

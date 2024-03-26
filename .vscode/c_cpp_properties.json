@@ -3,13 +3,14 @@
         {
             "name": "Linux configs",
             "includePath": [
+                "${workspaceFolder}/code",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/include/Ippl",
-                "${workspaceFolder}/include/Kokkos",
-                "${workspaceFolder}/include/Heffte",
+                // "${workspaceFolder}/include/Ippl",
+                // "${workspaceFolder}/include/Kokkos",
+                // "${workspaceFolder}/include/Heffte",
                 "${workspaceFolder}/MPI",
                 "/usr/include",
-                "${workspaceFolder}/build/matplotplusplus/source/matplot"
+                "${workspaceFolder}/build/lib/matplotplusplus/source/matplot"
             ],
             "defines": [
                 "CSP_DEBUG"

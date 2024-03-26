@@ -7,11 +7,12 @@
 
 
 /*
-performs the wolf algoritm on the lattice
+wolf algorithm for the Heisenber3D model
 
-- L: Lattice
-- returns: if it sucseeds
-- can throw
+/ @brief
+/ @param lattice our 3d lattice, where to perform the simulation on
+/ @return if the procedure succeds
+/ @exception can throw
 */
 bool wolf(Lattice3d<Spin> & lattice);
 
