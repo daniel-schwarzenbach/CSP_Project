@@ -13,13 +13,13 @@ enum BC{
 mathematical correct modulo
 
 / @brief
-/ @param i ∈ ℤ
-/ @param u ∈ ℕ < 2³¹
+/ @param i int
+/ @param u uint < 2³¹
 / @return i mod u
 */
 inline uint modulo(int const& i, uint u) {
-    constexpr uint max_u  = 1 << 31;
-    u = min(max_u, u);
+    static constexpr uint max_u  = 1 << 31;
+    // u = min(max_u, u); zo expensive
     return (i % static_cast<int>(u) + static_cast<int>(u)) 
             % static_cast<int>(u);
 }

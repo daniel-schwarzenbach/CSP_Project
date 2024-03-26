@@ -16,7 +16,7 @@ Heisenberg: MAINFUNCTION
 */
 int main(int mainArgCount, char** mainArgs){
 
-    //              --- random seedd
+    //              --- random seed
     const uint seed = 42;
 
     //              --- Lattice
