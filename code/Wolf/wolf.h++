@@ -13,9 +13,6 @@ performs the wolf algoritm on the lattice
 - returns: if it sucseeds
 - can throw
 */
-bool wolf(Lattice3d<Spin> & lattice){
-    // to implement
-    return true;
-}
+bool wolf(Lattice3d<Spin> & lattice);
 
 #endif

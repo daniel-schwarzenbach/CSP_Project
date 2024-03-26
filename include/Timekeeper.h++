@@ -3,7 +3,7 @@
 #ifndef TIMEKEEPER_HPP
 #define TIMEKEEPER_HPP
 
-class Timekeeper{
+class TimeKeeper{
 public:
     using Time = std::chrono::time_point<
             std::chrono::high_resolution_clock>;
@@ -18,7 +18,7 @@ private:
     }
     Time now(){return std::chrono::high_resolution_clock::now();}
 public:
-    Timekeeper(){
+    TimeKeeper(){
         end_ = now();
         start_ = now();
     }
