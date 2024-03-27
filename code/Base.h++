@@ -25,6 +25,9 @@ using std::min;
 // usign a generic float has the advantage that we can easily
 // change it.
 // also writing flt is shorter than double/float/long double
+using U8 = unsigned char;
+using Size = size_t;
+
 using flt = float;
 
 #include <functional>

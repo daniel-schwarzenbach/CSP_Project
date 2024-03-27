@@ -34,6 +34,14 @@
             "externalConsole": false,
             "MIMode": "lldb"
         },
+        {
+            "name": "Run mpi: build&run",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "echo",
+            "runtimeArgs": ["\n \n Running mpi: build&run \n \n"],
+            "preLaunchTask": "run mpiexec"
+        }
         
 
     ]

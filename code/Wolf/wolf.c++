@@ -7,7 +7,7 @@ performs the wolf algoritm on the lattice
 - returns: if it sucseeds
 - can throw
 */
-bool wolf(Lattice3d<Spin> & lattice){
+bool wolf(Lattice & lattice){
     // to implement
     return true;
 }

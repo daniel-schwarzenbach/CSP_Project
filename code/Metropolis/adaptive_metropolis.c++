@@ -1,7 +1,7 @@
 #include "adaptive_metropolis.h++"
 
 
-bool adaptive_metropolis(Lattice3d<Spin> & lattice){
+bool adaptive_metropolis(Lattice & lattice){
     // to implement
     return true;
 }

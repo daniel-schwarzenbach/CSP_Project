@@ -75,13 +75,7 @@ only use `using std::something` for the things you regulary need to use.
 `using flt = float` - our generic floatingpoint: Allows for an easy change in precition\
 if you now you need a certain precition dont hesitate to use another type.
 
-`Lattice3d<Spin>` : Our lattice class that works with different boundry conditions and Spin-types. to-doo!
-
-`using std::array`: instead of using pointer! remember: pointers are dangerous, avoid them at any cost! memory leaks are extremly hard to find in larger code bases.
-
-`using std::vector`: dynamic array, great for collectiong data!
-
-`using std::string`: allows for easyer handling of 
+`Spin` : Our Spin class that works with all representations
 
 ## Exeptions
 
@@ -251,16 +245,12 @@ for(uint n = 0; n < L; ++n){
 
 ### install:
 
-https://marketplace.visualstudio.com/items?itemName=oijaz.unicode-latex 
+in vscode
 
-or just type 'unicode latex' in the extension tab on vscode
-
-set up an keybinding by
-1.  ctrl-shift-p
-2.  type: 'unicode: insert matsymbol'
-3.  click on the settings icon to the right(Configure Keybinding)
-
-![Keybind](.images/SetKeybind.png)
+Ctrl+Shift
+```
+ext install gao-shuhua.vsc-unicode-latex
+```
 
 math symbols are allowed and encuraged when they make the code more 
 readable!
