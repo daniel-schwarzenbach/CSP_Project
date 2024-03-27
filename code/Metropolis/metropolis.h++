@@ -14,6 +14,6 @@ metropolis algorithm for the Heisenber3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool metropolis(Lattice3d<Spin> & lattice);
+bool metropolis(Lattice & lattice);
 
 #endif

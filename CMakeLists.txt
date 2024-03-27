@@ -8,6 +8,7 @@ project(Heisenberg3d)
 
 add_subdirectory(libraries/matplotplusplus)
 
+#set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_BUILD_TYPE Debug)
 
 
@@ -31,6 +32,8 @@ link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/ippl/build_mixed/src)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_mixed/lib)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_mixed/lib)
 
+add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
+
 # 
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
@@ -39,6 +42,7 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 find_package(OpenMP REQUIRED)
 if (OPENMP_FOUND)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (OMP_PROC_BIND=false and OMP_PLACES=threads)
 endif()
 
 # add MPI

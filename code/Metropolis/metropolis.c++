@@ -1,7 +1,7 @@
 #include "metropolis.h++"
 
 
-bool metropolis(Lattice3d<Spin> & lattice){
+bool metropolis(Lattice & lattice){
     // to implement
     return true;
 }

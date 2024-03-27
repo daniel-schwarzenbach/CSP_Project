@@ -27,6 +27,16 @@
                 "isDefault": true
             },
         },
+        {
+            "label": "run mpiexec",
+            "type": "shell",
+            "command": "mpiexec -n 2 ${workspaceFolder}/build/IpplTest",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": ["build"]
+        }
     ],
     "version": "2.0.0"
 }

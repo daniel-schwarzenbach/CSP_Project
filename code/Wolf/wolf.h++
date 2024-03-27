@@ -14,6 +14,6 @@ wolf algorithm for the Heisenber3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool wolf(Lattice3d<Spin> & lattice);
+bool wolf(Lattice& lattice);
 
 #endif

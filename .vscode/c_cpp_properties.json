@@ -5,11 +5,8 @@
             "includePath": [
                 "/usr/include",
                 "${workspaceFolder}/code",
-
                 "${workspaceFolder}/libraries/matplotplusplus/source",
                 "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot",
-
-                //"${workspaceFolder}/libraries/Ippl/build/include",
                 "${workspaceFolder}/libraries/Ippl/build/ippl/src",
                 "${workspaceFolder}/libraries/Ippl/build/Heffte/Heffte_mixed/include",
                 "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_mixed/include",
@@ -18,11 +15,9 @@
             "defines": [
                 "CSP_DEBUG"
             ],
-            "compilerPath": "/usr/bin/g++-13",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++20",
-            "intelliSenseMode": "linux-gcc-arm64",
-            "configurationProvider": "go2sh.cmake-integration"
+            "cStandard": "gnu23",
+            "cppStandard": "gnu++23",
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4

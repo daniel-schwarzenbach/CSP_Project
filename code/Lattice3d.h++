@@ -1,6 +1,7 @@
 #ifndef LATTICE3D_HPP
 #define LATTICE3D_HPP
 #include <Base.h++>
+#include <Spin.h++>
 
 // Boundary Conditions
 enum BC{
@@ -121,4 +122,5 @@ public:
     }
 };
 
+using Lattice = Lattice3d<Spin>;
 #endif
