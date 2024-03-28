@@ -40,7 +40,8 @@
             "request": "launch",
             "runtimeExecutable": "echo",
             "runtimeArgs": ["\n \n Running mpi: build&run \n \n"],
-            "preLaunchTask": "run mpiexec"
+            "preLaunchTask": "run mpiexec",
+            "cwd" : "${workspaceFolder}/build"
         }
         
 

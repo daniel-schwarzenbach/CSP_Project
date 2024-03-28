@@ -77,3 +77,5 @@ target_link_libraries(IpplTest kokkoscore kokkoscontainers kokkossimd)
 target_link_libraries(IpplTest heffte)
 target_link_libraries(IpplTest dl)
 target_link_libraries(IpplTest ${MPI_CXX_LIBRARIES})
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
