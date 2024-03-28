@@ -4,4 +4,4 @@ then
 fi
 
 cd build
-../ippl-build-scripts/999-build-everything -t mixed --enable-openmp --kokkos --heffte --ippl --export
+../ippl-build-scripts/999-build-everything -t mixed --enable-openmp --enable-serial --kokkos --heffte --ippl --export --arch=C++20
