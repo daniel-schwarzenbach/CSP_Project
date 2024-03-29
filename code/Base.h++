@@ -4,7 +4,18 @@
 //          --- Output
 #include <iostream>
 #include <iomanip>
-#include <cmath>
+#include <string>
+using std::string;
+
+static constexpr string RESET   = "\033[0m";    //   RESET
+static constexpr string RED     =   "\033[31m";   //   RED
+static constexpr string GREEN   =  "\033[32m";    /* Green */
+static constexpr string YELLOW  = "\033[33m";     /* Yellow */
+static constexpr string BLUE    = "\033[35m";      /* Blue */
+
+static const string ERROR   =  "\033[31m [Error]: \033[0m";
+static const string WARNING =  "\033[35m [Warning]: \033[0m";
+static const string INFO    =  "\033[32m [INFO]: \033[0m";
 
 // output
 using std::cout;
@@ -13,6 +24,8 @@ using std::endl;
 using std::cin;
 using std::setw;
 
+//          --- Math
+#include <cmath>
 // math
 using std::cos;
 using std::sin;
@@ -34,8 +47,7 @@ using flt = float;
 using std::function;
 using std::mem_fn;
 
-#include <string>
-using std::string;
+
 
 #include <vector>
 using std::vector;
