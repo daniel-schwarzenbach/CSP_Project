@@ -2,6 +2,8 @@
 
 ## Git Branches
 
+branches allow us to set up our own work enviroments!
+
 understanding how github works: https://www.youtube.com/watch?v=k6pxsaXAhbI
 
 [Git-CheatSheet](https://about.gitlab.com/images/press/git-cheat-sheet.pdf)
@@ -13,19 +15,25 @@ master(Daniel)\
 ├── Metropolis(Justus)\
 └── Observables(Mateo)
 
+### Most important comands:
+ 
 list all branches: `git branch -a`\
 make a new banch:`git branch my_branch`\
 switch to a differen branch: `git checkout my_branch`
 
 
 
-#### How to get updates form parent branch:
+#### How to get updates form main branch:
 
-git pull origin 'parent'
+`git pull origin main` : updates the main
 
-git merge 'parent'
+`git merge main` : get uptates into your current branch
 
-#### Pushing Rules
+merge as often a possible!!
+
+### Pushing Rules
+
+Push as often as possible!!!
 
 only push/sync when the program still compiles!
 
@@ -109,7 +117,7 @@ if you now you need a certain precition dont hesitate to use another type.
 
 ## Exeptions
 
-make use of exceptions, or assert!
+make use of exceptions, better than asserts!
 
 example:
 
@@ -159,6 +167,7 @@ see: https://www.tutorialspoint.com/cplusplus/cpp_exceptions_handling.htm
 for void function, always return a bool if it had succedet!
 
 example:
+
 ```cpp
 /*
 - i :  pointer to allocated memory
@@ -273,13 +282,15 @@ for(uint n = 0; n < L; ++n){
 
 ## Unicode symbols
 
-### install:
+### install
 
 in vscode
 
 Ctrl+Shift
 
 `ext install gao-shuhua.vsc-unicode-latex`
+
+### Usage
 
 
 math symbols are allowed and encuraged when they make the code more 
