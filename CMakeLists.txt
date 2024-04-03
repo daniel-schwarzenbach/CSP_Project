@@ -17,6 +17,8 @@ set(CMAKE_BUILD_TYPE Debug)
 # include files
 include_directories(${CMAKE_SOURCE_DIR}/libraries/matplotplusplus/source)
 include_directories(${CMAKE_SOURCE_DIR}/code)
+# include Eigen
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 # source files
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
@@ -79,6 +81,7 @@ if(IPPL)
     # lib/
     set(LIBRARIES
     matplot
+    Eigen3::Eigen
     ${MPI_CXX_LIBRARIES}
     ${IPPL_LIBRARY}
     ${KOKKOS_CORE_LIBRARY}
@@ -98,6 +101,7 @@ else()# without IPPL
     set(LIBRARIES
     dl
     matplot
+    Eigen3::Eigen
     )
 
 endif()

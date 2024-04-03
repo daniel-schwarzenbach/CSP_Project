@@ -4,6 +4,7 @@
             "name": "Linux configs",
             "includePath": [
                 "/usr/include",
+                "/usr/local/include",
                 "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 "${workspaceFolder}/code",
                 "${workspaceFolder}/libraries/matplotplusplus/source",

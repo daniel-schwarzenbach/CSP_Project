@@ -34,6 +34,11 @@ install cmake
 brew install cmake
 ```
 
+install eigen
+```bash
+brew install eigen
+```
+
 install openmpi
 ```bash
 brew install openmpi --build-from-source --cc=gcc-11
