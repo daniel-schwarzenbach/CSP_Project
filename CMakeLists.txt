@@ -22,7 +22,6 @@ include_directories(${CMAKE_SOURCE_DIR}/code)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(test ${SRC_FILES} ./programs/test.c++)
 add_executable(Heisenberg ${SRC_FILES} ./programs/heisenberg.c++)
 
 # precompile header
@@ -31,6 +30,7 @@ target_precompile_headers(Heisenberg
     code/LatticeSerial.h++
 )
 
+# IPPL STUFF
 option(IPPL "Use IPPL" OFF)
 if(IPPL)
     message(STATUS "IPPL option is set to ${IPPL}")
@@ -68,7 +68,7 @@ if(IPPL)
     # programs
     add_executable(HeisenbergIppl ${SRC_FILES} 
         ./programs/heisenbergIppl.c++)
-    add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
+    # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
     # precompile header
     target_precompile_headers(HeisenbergIppl
@@ -90,17 +90,19 @@ if(IPPL)
 
     # link libraries
     target_link_libraries(HeisenbergIppl ${LIBRARIES})
-    target_link_libraries(IpplTest ${LIBRARIES})
-else()
+    # target_link_libraries(IpplTest ${LIBRARIES})
+
+else()# without IPPL
+
     # get all libraries
     set(LIBRARIES
     dl
     matplot
     )
+
 endif()
 
 # link libraries
-target_link_libraries(test ${LIBRARIES})
 target_link_libraries(Heisenberg ${LIBRARIES})
 
 # export compile commands for intellisense

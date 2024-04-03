@@ -1,24 +1,52 @@
-# Coding Rules
+# Coding Guidlines
 
 ## Git Branches
 
 understanding how github works: https://www.youtube.com/watch?v=k6pxsaXAhbI
 
-tipp: print out the git cheat sheet:
-https://about.gitlab.com/images/press/git-cheat-sheet.pdf
+[Git-CheatSheet](https://about.gitlab.com/images/press/git-cheat-sheet.pdf)
 
 our branching:
 
 master(Daniel)\
 ├── Wolf(Constancia)\
 ├── Metropolis(Justus)\
-└── Observables(Mateo)\
+└── Observables(Mateo)
+
+list all branches: `git branch -a`\
+make a new banch:`git branch my_branch`\
+switch to a differen branch: `git checkout my_branch`
+
+
 
 #### How to get updates form parent branch:
 
 git pull origin 'parent'
 
 git merge 'parent'
+
+#### Pushing Rules
+
+only push/sync when the program still compiles!
+
+Daniel will get notified and will merge your work into the main branch
+
+## Programs
+
+don't be affraid to change files like in .vscode or CMakeLists in your own branch. Set up your own enviroments!
+
+Daniel will hole heatingly ignore them
+
+1. Make a new program by adding a new .c++ into the programs folder
+2. Target the Porgam inside of CMakeList
+```cmake
+# programs
+add_executable(Heisenberg ${SRC_FILES} ./programs/my_program.c++)
+```
+3. Make sure the ./.vscode/lauch.json file is debuging your program
+```json
+"program": "${workspaceFolder}/build/My_Program",
+```
 
 
 ## Naming Convetions
@@ -68,7 +96,7 @@ bool wolf(Lattice3d<Spin> & lattice);
 
 ## Our Types
 
-write symbols and types that are often into base.h++. do never write:
+write symbols and types that are often into Base.h++. do never write:
 `using namespace std;` or any other auto inclusion of a namespace.
 only use `using std::something` for the things you regulary need to use.
 
@@ -76,6 +104,8 @@ only use `using std::something` for the things you regulary need to use.
 if you now you need a certain precition dont hesitate to use another type.
 
 `Spin` : Our Spin class that works with all representations
+
+`Lattice` : A 3d Lattice containing Spins. If you include ippl.h before Heisenberg.h++ it usese the parrelised LatticeIppl insteat of the LatticeSerial
 
 ## Exeptions
 
@@ -248,9 +278,9 @@ for(uint n = 0; n < L; ++n){
 in vscode
 
 Ctrl+Shift
-```
-ext install gao-shuhua.vsc-unicode-latex
-```
+
+`ext install gao-shuhua.vsc-unicode-latex`
+
 
 math symbols are allowed and encuraged when they make the code more 
 readable!

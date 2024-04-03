@@ -1,10 +1,19 @@
 # CSP Project FS24
 
-### Participants
+### To Do
 
 - Daniel Schwarzenbach
+    -   implement Memory tracker
+    -   merge incoming changes
+    -   Investigate Ippl further, cuda?
 - Mateo Cárdenes Wuttig
+    - Implement measure functions insider ./code/Measure
 - Constança Tropa
+    - Implemente Wolf algorithm, one where the cluster can go over the Boundry and one where it can't(for parralelisation)
+- Justus
+    - Implement the Metropolis Algorightm
+    - Implement the adaptive Metropolis Algorightm
+
 
 ## Mac-Os
 
