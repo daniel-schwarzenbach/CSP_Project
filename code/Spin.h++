@@ -167,5 +167,4 @@ public:
     }
 };
 
-
 #endif // __SPIN_H__

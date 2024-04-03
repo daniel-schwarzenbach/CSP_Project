@@ -3,6 +3,7 @@
 
 #include <Base.h++>
 #include <Spin.h++>
+#include <Eigen.h++>
 
 /*
 Spin class
