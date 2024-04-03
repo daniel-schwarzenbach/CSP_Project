@@ -1,9 +1,7 @@
 #ifndef WOLF_HPP
 #define WOLF_HPP
 
-#include <Base.h++>
-#include <Lattice3d.h++>
-#include <Spin.h++>
+#include <Heisenberg.h++>
 
 
 /*

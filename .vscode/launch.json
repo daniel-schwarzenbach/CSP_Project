@@ -5,9 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "preLaunchTask": "build-ippl",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "name": "Linux-ippl",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/HeisenbergIppl",
+            "cwd": "${workspaceFolder}/build",
+        },
+        {
             "preLaunchTask": "build",
             "miDebuggerPath": "/usr/bin/gdb",
-            "name": "linux",
+            "name": "Linux",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Heisenberg",
@@ -23,7 +32,7 @@
         },
         {
             "preLaunchTask": "build",
-            "name": "mac-os",
+            "name": "MacOs",
             "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
@@ -35,11 +44,11 @@
             "MIMode": "lldb"
         },
         {
-            "name": "Run mpi: build&run",
+            "name": "mpiexec -n 2",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "echo",
-            "runtimeArgs": ["\n \n Running mpi: build&run \n \n"],
+            "runtimeArgs": ["\n \n MPI ran succesfully xD \n \n"],
             "preLaunchTask": "run mpiexec",
             "cwd" : "${workspaceFolder}/build"
         }

@@ -28,9 +28,33 @@
             },
         },
         {
+            "type": "shell",
+            "label": "build-ippl",
+
+            "linux" :{
+                "command": "${workspaceFolder}/build-unix-ippl.sh"
+            },
+            "osx" :{
+                "command": "${workspaceFolder}/build-unix-ippl.sh"
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "options" :{
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
             "label": "run mpiexec",
             "type": "shell",
-            "command": "mpiexec -n 2 ${workspaceFolder}/build/IpplTest",
+            "command": "mpiexec -n 2 ${workspaceFolder}/build/HeisenbergIppl",
             "group": {
                 "kind": "build",
                 "isDefault": true
