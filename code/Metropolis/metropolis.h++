@@ -1,9 +1,7 @@
 #ifndef METROPOLIS_HPP
 #define METROPOLIS_HPP
 
-#include <Base.h++>
-#include <Lattice3d.h++>
-#include <Spin.h++>
+#include <Heisenberg.h++>
 
 
 /*

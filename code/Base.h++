@@ -1,5 +1,8 @@
-#ifndef BASE_HPP
-#define BASE_HPP
+#ifndef __BASE_HPP__
+#define __BASE_HPP__
+
+//          --- System
+// #define WITH_IPPL
 
 //          --- Output
 #include <iostream>
@@ -38,10 +41,18 @@ using std::min;
 // usign a generic float has the advantage that we can easily
 // change it.
 // also writing flt is shorter than double/float/long double
-using U8 = unsigned char;
-using Size = size_t;
+
 
 using flt = float;
+
+// 8 bit unsigned integer
+using U8 = unsigned char;
+// 16 bit unsigned integer
+using U16 = unsigned short;
+// 8 bit signed integer
+using I8 = signed char;
+// Memory Adress
+using Adress = size_t;
 
 #include <functional>
 using std::function;
@@ -85,5 +96,18 @@ static flt randflt(){
 
 using std::exception;
 
+//         --- Enumerations
+
+// Boundary Conditions
+enum BC{
+    Dirichlet,// 0 boundry conditions
+    Periodic
+};
+
+// Parallelrange Policys
+enum RangePolicy{
+    For_Every_ELEMENT,
+    RANDOM
+};
 
 #endif // BASE_HPP

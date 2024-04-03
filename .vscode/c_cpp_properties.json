@@ -4,6 +4,7 @@
             "name": "Linux configs",
             "includePath": [
                 "/usr/include",
+                "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 "${workspaceFolder}/code",
                 "${workspaceFolder}/libraries/matplotplusplus/source",
                 "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot",
@@ -11,8 +12,7 @@
                 //"${workspaceFolder}/libraries/Ippl/build/ippl/src/*",
                 //"${workspaceFolder}/libraries/Ippl/build/include",
                 "${workspaceFolder}/libraries/Ippl/build/Heffte/Heffte_mixed/include",
-                "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_mixed/include",
-                "${workspaceFolder}/libraries/MPI"
+                "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_mixed/include"
             ],
             "defines": [
                 "CSP_DEBUG"
