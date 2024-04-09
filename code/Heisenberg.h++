@@ -34,6 +34,8 @@ using Spin = SpinXYZ;
     Lattice class
     - with acces operator: (x,y,z)
     - with boundry conditions: set_boundry_conditions()
+    - Lx(), Ly(), Lz() // size of the lattice
+    - comunicate_ghost_cells() // does nothing in Serial
     */
     using Lattice = LatticeSerial<Spin>;
 

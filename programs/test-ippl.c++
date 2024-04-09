@@ -118,7 +118,7 @@ int main(int numMainArgs, char *mainArgs[])
 
         cout << INFO << rank << " :finished diffusion" << endl;
 
-        std::string fname = "field_" + std::to_string(rank) + ".dat";
+        string fname = "field_" + std::to_string(rank) + ".dat";
         Inform out("Output", fname.c_str(), Inform::OVERWRITE, rank);
         field.write(out);
 
