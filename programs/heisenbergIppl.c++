@@ -18,7 +18,8 @@ int main(int mainArgCount, char** mainArgs){
     cout << "lattice(1,1,1) = " << lattice(1,1,1) << endl;
     cout << "lattice(0,0,0) = " << lattice(0,0,0) << endl;
     cout << "lattice(-1,0,0) = " << lattice(-1,0,0) << endl;
-    cout << "lattice(Lx,Ly,Lz) = " << lattice(32,16,16) << endl;
+    cout << "lattice(Lx,Ly,Lz) = " 
+         << lattice(lattice.Lx(),lattice.Ly(),lattice.Lz()) << endl;
 
     cout << "Lz = " << lattice.Lz() << endl;
     cout << "Ly = " << lattice.Ly() << endl;
