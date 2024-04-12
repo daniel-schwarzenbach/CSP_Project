@@ -59,7 +59,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "dependsOn": ["build"],
+            "dependsOn": ["build-ippl"],
             "options" :{
                 "cwd": "${workspaceFolder}/build"
             },
