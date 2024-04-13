@@ -8,6 +8,10 @@
 /*
 Spin class
 - with scalar product: |
+- with standard product: *
+- with addition operator: +
+- with subtraction operator: -
+- with normalization: normalize()
 - with output operator: <<
 - with compareration operator: ==
 - with assignment operator: =
