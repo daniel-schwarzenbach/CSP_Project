@@ -25,12 +25,68 @@ SpinCartesian& SpinCartesian::operator=(SpinCartesian const &other)
     return *this;
 };
 // scalar product
-flt SpinCartesian::operator|(SpinCartesian const &other)
+flt SpinCartesian::operator|(SpinCartesian const &other) const
 {
     return this->x_ * other.x_ + this->y_ * other.y_ + this->z_ * other.z_;
 }
+// standard product
+SpinCartesian SpinCartesian::operator*(SpinCartesian const &other) const
+{
+    SpinCartesian s;
+    s.x_ = this->x_ * other.x_;
+    s.y_ = this->y_ * other.y_;
+    s.z_ = this->z_ * other.z_;
+    return s;
+}
+SpinCartesian& SpinCartesian::operator*=(SpinCartesian const &other)
+{
+    this->x_ *= other.x_;
+    this->y_ *= other.y_;
+    this->z_ *= other.z_;
+    return *this;
+}
+// addition operator
+SpinCartesian SpinCartesian::operator+(SpinCartesian const &other) const
+{
+    SpinCartesian s;
+    s.x_ = this->x_ + other.x_;
+    s.y_ = this->y_ + other.y_;
+    s.z_ = this->z_ + other.z_;
+    return s;
+}
+SpinCartesian& SpinCartesian::operator+=(SpinCartesian const &other)
+{
+    this->x_ += other.x_;
+    this->y_ += other.y_;
+    this->z_ += other.z_;
+    return *this;
+}
+// subtraction operator
+SpinCartesian SpinCartesian::operator-(SpinCartesian const &other) const
+{
+    SpinCartesian s;
+    s.x_ = this->x_ - other.x_;
+    s.y_ = this->y_ - other.y_;
+    s.z_ = this->z_ - other.z_;
+    return s;
+}
+SpinCartesian& SpinCartesian::operator-=(SpinCartesian const &other)
+{
+    this->x_ -= other.x_;
+    this->y_ -= other.y_;
+    this->z_ -= other.z_;
+    return *this;
+}
+// normalize the spin
+void SpinCartesian::normalize()
+{
+    flt norm = sqrt(x_ * x_ + y_ * y_ + z_ * z_);
+    x_ /= norm;
+    y_ /= norm;
+    z_ /= norm;
+}
 // compareration operator
-bool SpinCartesian::operator==(SpinCartesian const &other)
+bool SpinCartesian::operator==(SpinCartesian const &other) const
 {
     return (abs(this->x_ == other.x_) < 1e-3) &&
             (abs(this->y_ == other.y_) < 1e-3) &&

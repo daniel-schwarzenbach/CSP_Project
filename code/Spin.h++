@@ -24,9 +24,20 @@ public:
     SpinCartesian(flt zero);
     SpinCartesian &operator=(SpinCartesian const &other);
     // scalar product
-    flt operator|(SpinCartesian const &other);
+    flt operator|(SpinCartesian const &other) const;
+    // standard product
+    SpinCartesian operator*(SpinCartesian const &other) const;
+    SpinCartesian& operator*=(SpinCartesian const &other);
+    // addition operator
+    SpinCartesian operator+(SpinCartesian const &other) const;
+    SpinCartesian& operator+=(SpinCartesian const &other);
+    // subtraction operator
+    SpinCartesian operator-(SpinCartesian const &other) const;
+    SpinCartesian& operator-=(SpinCartesian const &other);
+    // normalize the spin
+    void normalize();
     // compareration operator
-    bool operator==(SpinCartesian const &other);
+    bool operator==(SpinCartesian const &other) const;
     // output operator
     friend std::ostream &operator<<(std::ostream &os,
                                     SpinCartesian const &s);
