@@ -26,6 +26,10 @@ public:
     // scalar product
     flt operator|(SpinCartesian const &other) const;
     // standard product
+    SpinCartesian operator*(flt const &other) const;
+    SpinCartesian& operator*=(flt const &other);
+    friend SpinCartesian operator*(flt const &lhs, 
+                                    SpinCartesian const &rhs);
     SpinCartesian operator*(SpinCartesian const &other) const;
     SpinCartesian& operator*=(SpinCartesian const &other);
     // addition operator
@@ -78,7 +82,18 @@ public:
 
     // scalar product (1,θ₁,ϕ₁) ⋅ (1,θ₂,ϕ₂)
     // - returns 0 if any θ=0xff
-    flt operator|(SpinPolar const &other);
+    flt operator|(SpinPolar const &other) const;
+    // standard product: is always normalized!
+    SpinPolar operator*(SpinPolar const &other) const;
+    SpinPolar& operator*=(SpinPolar const &other);
+    // addition operator: is always normalized!
+    SpinPolar operator+(SpinPolar const &other) const;
+    SpinPolar& operator+=(SpinPolar const &other);
+    // subtraction operator: is always normalized!
+    SpinPolar operator-(SpinPolar const &other) const;
+    SpinPolar& operator-=(SpinPolar const &other);
+    // does nothing
+    void normalize(){};
     // output operator
     friend std::ostream &operator<<(std::ostream &os,
                                     SpinPolar const &s);

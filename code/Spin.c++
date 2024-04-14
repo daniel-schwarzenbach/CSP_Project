@@ -45,6 +45,29 @@ SpinCartesian& SpinCartesian::operator*=(SpinCartesian const &other)
     this->z_ *= other.z_;
     return *this;
 }
+SpinCartesian operator*(flt const &lhs, SpinCartesian const &rhs)
+{
+    SpinCartesian s;
+    s.x_ = lhs * rhs.x_;
+    s.y_ = lhs * rhs.y_;
+    s.z_ = lhs * rhs.z_;
+    return s;
+}
+SpinCartesian SpinCartesian::operator*(flt const &other) const
+{
+    SpinCartesian s;
+    s.x_ = this->x_ * other;
+    s.y_ = this->y_ * other;
+    s.z_ = this->z_ * other;
+    return s;
+}
+SpinCartesian& SpinCartesian::operator*=(flt const &other)
+{
+    this->x_ *= other;
+    this->y_ *= other;
+    this->z_ *= other;
+    return *this;
+}
 // addition operator
 SpinCartesian SpinCartesian::operator+(SpinCartesian const &other) const
 {
@@ -166,7 +189,7 @@ SpinPolar& SpinPolar::operator=(SpinPolar const &other)
 
 // scalar product (1,θ₁,ϕ₁) ⋅ (1,θ₂,ϕ₂)
 // - returns 0 if any θ=0xff
-flt SpinPolar::operator|(SpinPolar const &other)
+flt SpinPolar::operator|(SpinPolar const &other) const
 {
     flt θ₁ = this->θ();
     flt θ₂ = other.θ();
