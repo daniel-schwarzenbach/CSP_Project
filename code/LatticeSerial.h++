@@ -38,8 +38,8 @@ public:
     inline uint Lx() const { return _Lx; }
     inline uint Ly() const { return _Ly; }
     inline uint Lz() const { return _Lz; }
-    
-    void set_boundary_conditions(BC bc_){bc = bc_;}
+
+    void set_boundary_conditions(BC bc_) { bc = bc_; }
     // acess operator const
     inline T operator()(int x, int y, int z) const
     {
@@ -50,7 +50,7 @@ public:
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
             {
-                return data.at(x*_Ly*_Lz + y * _Lz + z);
+                return data.at(x * _Ly * _Lz + y * _Lz + z);
             }
             else
             {
@@ -62,7 +62,7 @@ public:
             uint x_ = modulo(x, _Lx);
             uint y_ = modulo(y, _Ly);
             uint z_ = modulo(x, _Lz);
-            return data.at(x_*_Ly*_Lz + y_ * _Lz + z_);
+            return data.at(x_ * _Ly * _Lz + y_ * _Lz + z_);
             break;
         }
     }
@@ -76,7 +76,7 @@ public:
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
             {
-                return data.at(x*_Ly*_Lz + y * _Lz + z);
+                return data.at(x * _Ly * _Lz + y * _Lz + z);
             }
             else
             {
@@ -88,7 +88,8 @@ public:
             uint x_ = modulo(x, _Lx);
             uint y_ = modulo(y, _Ly);
             uint z_ = modulo(z, _Lz);
-            return data.at(x_*_Ly*_Lz + y_ * _Lz + z_);;
+            return data.at(x_ * _Ly * _Lz + y_ * _Lz + z_);
+            ;
             break;
         }
     }
@@ -136,7 +137,7 @@ public:
 };
 
 #include <Spin.h++>
-template class  LatticeSerial<SpinXYZ>;
-template class  LatticeSerial<Spinϕθ>;
+template class LatticeSerial<SpinCartesian>;
+template class LatticeSerial<SpinPolar>;
 
 #endif

@@ -11,17 +11,17 @@ understanding how github works: https://www.youtube.com/watch?v=k6pxsaXAhbI
 our branching:
 
 master(Daniel)\
-├── Wolf(Constancia)\
+├── Wolf(Constanca)\
 ├── Metropolis(Justus)\
 └── Observables(Mateo)
 
 ### Most important comands:
- 
+
 list all branches: `git branch -a`\
 make a new banch:`git branch my_branch`\
 switch to a differen branch: `git checkout my_branch`
 
-
+to push your branch `git push -u origin <branch-name>`
 
 #### How to get updates form main branch:
 
@@ -89,6 +89,7 @@ always comment your functions like this
 4. if it can throw an exeption!
 
 try to always use `const&` in your function arguments! otherwise it will copy the entire data stucture!
+
 ```cpp
 /*
 wolf algorithm for the Heisenber3D model
@@ -100,7 +101,6 @@ wolf algorithm for the Heisenber3D model
 */
 bool wolf(Lattice3d<Spin> & lattice);
 ```
-
 
 ## Our Types
 
