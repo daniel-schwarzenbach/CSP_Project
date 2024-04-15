@@ -3,5 +3,6 @@
 
 bool metropolis(Lattice & lattice){
     // to implement
-    return true;
+    // test
+    return false;
 }
