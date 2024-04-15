@@ -1,4 +1,6 @@
+
 ``` cpp
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,7 +11,7 @@ using namespace std;
 // Define constants
 const int L = 10; // Lattice size
 const int N = L * L * L; // Total number of spins
-const int numSteps = 10000; // Number of Monte Carlo steps
+const int numSteps = 10'000; // Number of Monte Carlo steps
 // ? How is the interactionstrength calculatde
 const double J = 1.0; // Exchange interaction strength
 // ? How do we get the temperature
@@ -74,4 +76,5 @@ int main() {
 
     return 0;
 }
+
 ```

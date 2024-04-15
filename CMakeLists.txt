@@ -17,6 +17,8 @@ set(CMAKE_BUILD_TYPE Debug)
 # include files
 include_directories(${CMAKE_SOURCE_DIR}/libraries/matplotplusplus/source)
 include_directories(${CMAKE_SOURCE_DIR}/code)
+# include Eigen
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 # source files
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
@@ -36,16 +38,16 @@ if(IPPL)
     message(STATUS "IPPL option is set to ${IPPL}")
     set(CMAKE_CXX_COMPILER mpic++)
     # include/ippl
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/ippl/src)
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_mixed/include)
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_mixed/include)
+    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/include/)
+    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_omp/include)
+    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_omp/include)
 
     add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
 
     # lib/ippl
-    set(IPPL_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/ippl/build_mixed/src/)
-    set(HEFFTE_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_mixed/lib/)
-    set(KOKKOS_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_mixed/lib/)
+    set(IPPL_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/lib/)
+    set(HEFFTE_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_omp/lib/)
+    set(KOKKOS_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_omp/lib/)
 
     find_library(IPPL_LIBRARY ippl PATHS ${IPPL_PATH})
     find_library(KOKKOS_CORE_LIBRARY kokkoscore PATHS ${KOKKOS_PATH})
@@ -79,6 +81,7 @@ if(IPPL)
     # lib/
     set(LIBRARIES
     matplot
+    Eigen3::Eigen
     ${MPI_CXX_LIBRARIES}
     ${IPPL_LIBRARY}
     ${KOKKOS_CORE_LIBRARY}
@@ -98,6 +101,7 @@ else()# without IPPL
     set(LIBRARIES
     dl
     matplot
+    Eigen3::Eigen
     )
 
 endif()

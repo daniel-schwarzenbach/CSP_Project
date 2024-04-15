@@ -7,14 +7,14 @@ int main(int mainArgCount, char **mainArgs)
 {
 
     uint L = 50'000;
-    vector<SpinXYZ> x3d(L, SpinXYZ());
-    vector<Spinϕθ> xPolar(L, Spinϕθ());
+    vector<SpinCartesian> x3d(L, SpinCartesian());
+    vector<SpinPolar> xPolar(L, SpinPolar());
     // vector<SpinFast> xFast(L, SpinFast());
     vector<flt> buffer(10);
     for (uint i = 0; i < L; ++i)
     {
-        x3d[i] = SpinXYZ();
-        xPolar[i] = Spinϕθ();
+        x3d[i] = SpinCartesian();
+        xPolar[i] = SpinPolar();
         // xFast[i] = SpinFast();
     }
 
