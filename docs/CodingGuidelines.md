@@ -25,9 +25,9 @@ to push your branch `git push -u origin <branch-name>`
 
 #### How to get updates form main branch:
 
-`git pull origin main` : updates the main
+`git fetch origin` : updates the main
 
-`git merge main` : get uptates into your current branch
+`git merge origin/main` : get uptates into your current branch
 
 merge as often a possible!!
 
