@@ -10,6 +10,9 @@ using MatrixNxM = Eigen::Matrix<flt, Eigen::Dynamic,
 // represents an Nx1 real vector
 using VectorN = Eigen::Matrix<flt, Eigen::Dynamic, 1>;
 
+// represents an ℝ³ vector
+using Vector3 = Eigen::Matrix<flt, 3, 1>;
+
 // returns the solution of the linear system min{ |Ax - b|² }
 VectorN fit_lst_sqr(const MatrixNxM& A, const VectorN& b);
 
