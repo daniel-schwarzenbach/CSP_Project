@@ -49,9 +49,9 @@ public:
     friend std::ostream &operator<<(std::ostream &os,
                                     SpinCartesian const &s);
 
-    SpinCartesian from_xyz(flt x, flt y, flt z);
-    SpinCartesian from_phi_theata(flt ϕ, flt θ);
-    SpinCartesian get_random();
+    static SpinCartesian from_xyz(flt x, flt y, flt z);
+    static SpinCartesian from_phi_theata(flt ϕ, flt θ);
+    static SpinCartesian get_random();
 };
 
 /*
@@ -85,7 +85,7 @@ public:
                                     SpinEigen const &s);
     SpinEigen from_xyz(flt x, flt y, flt z);
     SpinEigen from_phi_theata(flt ϕ, flt θ);
-    SpinEigen get_random();
+    static SpinEigen get_random();
 };
 
 /*
@@ -137,11 +137,11 @@ public:
     // compare operator
     bool operator==(SpinPolar const &other);
     // generates a spin from x,y,z
-    SpinPolar from_xyz(flt x, flt y, flt z);
+    static SpinPolar from_xyz(flt x, flt y, flt z);
     // generates a spin from ϕ,θ
-    SpinPolar from_phi_theata(flt ϕ, flt θ);
+    static SpinPolar from_phi_theata(flt ϕ, flt θ);
     // generates a random spin
-    SpinPolar get_random();
+    static SpinPolar get_random();
 };
 
 #endif // __SPIN_H__
