@@ -131,10 +131,9 @@ performs the wolf algoritm on the lattice
 - can throw
 */
 
-flt wolf(Lattice & lattice){
+flt wolf(Lattice& lattice, flt T, flt J, flt Time){
     // to implement
 
-    flt T = 30.0f;
     flt kB = 1.380649e-23f;
     flt beta = 1.0f / (T*kB);
 
