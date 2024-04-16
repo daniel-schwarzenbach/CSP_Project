@@ -12,6 +12,6 @@ ado algorithm for the Heisenber3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool adaptive_metropolis(Lattice& lattice);
+bool adaptive_metropolis(Lattice& lattice, flt T, flt J, flt Time);
 
 #endif

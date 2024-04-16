@@ -2,16 +2,21 @@
 #define WOLF_HPP
 
 #include <Heisenberg.h++>
+#include <algorithm>
+#include <cmath>
+
+using flt = float;
+using namespace std;
 
 
 /*
-wolf algorithm for the Heisenber3D model
+wolf algorithm for the Heisenberg3D model
 
 / @brief
 / @param lattice our 3d lattice, where to perform the simulation on
 / @return if the procedure succeds
 / @exception may fail
 */
-bool wolf(Lattice& lattice);
+flt wolf(Lattice& lattice, flt T, flt J, flt Time);
 
 #endif
