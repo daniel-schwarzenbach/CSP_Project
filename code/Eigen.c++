@@ -1,5 +1,5 @@
 #include "Eigen.h++"
-#include <eigen3/Eigen/QR>
+#include <Eigen/QR>
 
 VectorN fit_lst_sqr(const MatrixNxM& A, const VectorN& b){
     MatrixNxM A_t = A.transpose() * A;

@@ -3,7 +3,7 @@
 
 #include <Base.h++>
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 // represents an NxN real matrix
 using MatrixNxM = Eigen::Matrix<flt, Eigen::Dynamic, 
                                 Eigen::Dynamic, Eigen::RowMajor>;
