@@ -11,7 +11,7 @@ This is the main file which we run to get all calculations for the project.
 */
 
 /*Define the Boltzmann constant*/
-flt kB = 1.38064852 * 10**(-23);
+flt kB = 1.38064852 * std::pow(10,-23);
 
 int main(int mainArgCount, char** mainArgs){
 
