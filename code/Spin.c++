@@ -14,8 +14,8 @@ flt SpinCartesian::phi() const {
 
 SpinCartesian::SpinCartesian()
 {
-    flt φ = randflt() * ₂π;
-    flt ϑ = randflt() * π - π_2;
+    flt φ = randflt() * _2pi_;
+    flt ϑ = randflt() * _pi_ - _pi2_;
     x_ = sin(φ) * sin(ϑ);
     y_ = cos(φ) * sin(ϑ);
     z_ = cos(ϑ);
@@ -126,9 +126,9 @@ SpinCartesian SpinCartesian::normalized() const
 // compareration operator
 bool SpinCartesian::operator==(SpinCartesian const &other) const
 {
-    return (abs(this->x_ == other.x_) < 1e-3) &&
-           (abs(this->y_ == other.y_) < 1e-3) &&
-           (abs(this->z_ == other.z_) < 1e-3);
+    return (abs(this->x_ - other.x_) < 1e-3) &&
+           (abs(this->y_ - other.y_) < 1e-3) &&
+           (abs(this->z_ - other.z_) < 1e-3);
 }
 // output operator
 std::ostream &operator<<(std::ostream &os,
@@ -156,8 +156,8 @@ SpinCartesian SpinCartesian::from_phi_theata(flt ϕ, flt θ)
 }
 
 // @constants for SpinPolar:
-constexpr flt spinpolθFac = π / 0xfe;
-constexpr flt spinpolϕFac = ₂π / 0xff;
+constexpr flt spinpolθFac = _pi_ / 0xfe;
+constexpr flt spinpolϕFac = _2pi_ / 0xff;
 /*
 x = sin(θ) ⋅ cos(ϕ)
 y = sin(θ) ⋅ sin(ϕ)
@@ -206,12 +206,12 @@ SpinPolar &SpinPolar::operator=(SpinPolar const &other)
 // - returns 0 if any θ=0xff
 flt SpinPolar::operator|(SpinPolar const &other) const
 {
-    flt θ₁ = this->theta();
-    flt θ₂ = other.theta();
-    if (θ₁ == 0xff || θ₂ == 0xff)
+    flt t1 = this->theta();
+    flt t2 = other.theta();
+    if (t1 == 0xff || t2 == 0xff)
         return 0; // => zero Spin
     // Wolfram Alpha told me that
-    return sin(θ₁) * sin(θ₂) * cos(this->phi() - other.phi()) + cos(θ₁) * cos(θ₂);
+    return sin(t1) * sin(t2) * cos(this->phi() - other.phi()) + cos(t1) * cos(t2);
 }
 // output operator
 std::ostream &operator<<(std::ostream &os,
@@ -244,57 +244,57 @@ SpinPolar SpinPolar::from_phi_theata(flt ϕ, flt θ)
 
 //            --- SpinEigen ---
 
-flt SpinEigen::x() const { return this->operator()(0); }
-flt SpinEigen::y() const { return this->operator()(1); }
-flt SpinEigen::z() const { return this->operator()(2); }
-flt SpinEigen::theta() const { 
-    SpinEigen s = this->normalized();
-    return acos(s.z()); 
-}
-flt SpinEigen::phi() const { 
-    SpinEigen s = this->normalized();
-    return atan2(s.y(), s.x()); 
-}
+// flt SpinEigen::x() const { return this->operator()(0); }
+// flt SpinEigen::y() const { return this->operator()(1); }
+// flt SpinEigen::z() const { return this->operator()(2); }
+// flt SpinEigen::theta() const { 
+//     SpinEigen s = this->normalized();
+//     return acos(s.z()); 
+// }
+// flt SpinEigen::phi() const { 
+//     SpinEigen s = this->normalized();
+//     return atan2(s.y(), s.x()); 
+// }
 
-void SpinEigen::normalize()
-{
-    *this = this->normalized();
-}
+// void SpinEigen::normalize()
+// {
+//     *this = this->normalized();
+// }
 
 
-SpinEigen::SpinEigen() : Vector3() {}
-SpinEigen::SpinEigen(flt zero) : Vector3(zero, 0, 0) {}
-flt SpinEigen::operator|(SpinEigen const &other) const
-{
-    return this->dot(other);
-}
+// SpinEigen::SpinEigen() : Vector3() {}
+// SpinEigen::SpinEigen(flt zero) : Vector3(zero, 0, 0) {}
+// flt SpinEigen::operator|(SpinEigen const &other) const
+// {
+//     return this->dot(other);
+// }
 
-bool SpinEigen::operator==(SpinEigen const &other) const
-{
-    return (abs(this->x() == other.x()) < 1e-3) &&
-           (abs(this->y() == other.y()) < 1e-3) &&
-           (abs(this->z() == other.z()) < 1e-3);
-}
+// bool SpinEigen::operator==(SpinEigen const &other) const
+// {
+//     return (abs(this->x() == other.x()) < 1e-3) &&
+//            (abs(this->y() == other.y()) < 1e-3) &&
+//            (abs(this->z() == other.z()) < 1e-3);
+// }
 
-std::ostream &operator<<(std::ostream &os,
-                         SpinEigen const &s)
-{
-    os << "{" << s.x() << ", " << s.y() << ", " << s.z() << "}";
-    return os;
-}
+// std::ostream &operator<<(std::ostream &os,
+//                          SpinEigen const &s)
+// {
+//     os << "{" << s.x() << ", " << s.y() << ", " << s.z() << "}";
+//     return os;
+// }
 
-SpinEigen SpinEigen::from_xyz(flt x, flt y, flt z)
-{
-    SpinEigen s;
-    s << x, y, z;
-    return s;
-}
-SpinEigen SpinEigen::from_phi_theata(flt ϕ, flt θ)
-{
-    SpinEigen s;
-    s <<    std::sin(θ) * std::cos(ϕ), 
-            std::sin(θ) * std::sin(ϕ), 
-            std::cos(θ);
-    return s;
-}
+// SpinEigen SpinEigen::from_xyz(flt x, flt y, flt z)
+// {
+//     SpinEigen s;
+//     s << x, y, z;
+//     return s;
+// }
+// SpinEigen SpinEigen::from_phi_theata(flt ϕ, flt θ)
+// {
+//     SpinEigen s;
+//     s <<    std::sin(θ) * std::cos(ϕ), 
+//             std::sin(θ) * std::sin(ϕ), 
+//             std::cos(θ);
+//     return s;
+// }
 
