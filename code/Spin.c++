@@ -155,6 +155,21 @@ SpinCartesian SpinCartesian::from_phi_theata(flt ϕ, flt θ)
     return s;
 }
 
+SpinCartesian SpinCartesian::get_random()
+{
+    SpinCartesian s;
+    flt φ = randflt() * _2pi_;
+    flt ϑ = randflt() * _pi_ - _pi2_;
+    s.x_ = sin(φ) * sin(ϑ);
+    s.y_ = cos(φ) * sin(ϑ);
+    s.z_ = cos(ϑ);
+    return s;
+}
+
+
+//            --- SpinPolar ---
+
+
 // @constants for SpinPolar:
 constexpr flt spinpolθFac = _pi_ / 0xfe;
 constexpr flt spinpolϕFac = _2pi_ / 0xff;
@@ -239,6 +254,14 @@ SpinPolar SpinPolar::from_phi_theata(flt ϕ, flt θ)
     SpinPolar s;
     s.θ_byte = round(θ / spinpolθFac);
     s.ϕ_byte = round(ϕ / spinpolϕFac);
+    return s;
+}
+
+SpinPolar SpinPolar::get_random()
+{
+    SpinPolar s;
+    s.ϕ_byte = round(randflt() * 0xff);
+    s.θ_byte = round(randflt() * 0xfe);
     return s;
 }
 
