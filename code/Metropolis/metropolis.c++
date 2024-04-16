@@ -4,6 +4,8 @@
 #include <random>
 #include <chrono>
 
+enum class MoveType { SpinFlip, Random, SmallStep };
+
 using namespace std;
 using namespace std::chrono;
 
@@ -15,16 +17,10 @@ class SpinCartesian;
 class SpinEigen;
 class SpinPolar;
 
-// Metropolis function with time criterion
+// Metropolis algorithm with time criterion
 template <class IpplT>
-
-bool metropolis(Lattice & lattice){
-    // Generate random initial configuration
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_real_distribution<double> dis(0.0, 1.0);
-
-    // Start time
+bool metropolis(LatticeIppl<IpplT> &lattice, double maxTimeSeconds, MoveType moveType = MoveType::SmallStep) {
+// Start time
     auto startTime = high_resolution_clock::now();
     
     // Main Metropolis loop
@@ -36,16 +32,26 @@ bool metropolis(Lattice & lattice){
 
         // Get the spin at the chosen site
         IpplT& spin = lattice(x, y, z);
-
-        // Make a trial move (flip spin)
-        IpplT oldSpin = spin;
-        IpplT newSpin = trialMove(spin);
-
+        
+        // Propose spin change based on given trial move
+        SpinCartesian newSpin;
+        switch (moveType) {
+            case MoveType::SpinFlip:
+                newSpin = spin; // Spin flip move (reflect the spin)
+                newSpin.spin_flip();
+                break;
+            case MoveType::Random:
+                newSpin = SpinCartesian::random_move(); // Random move (generate a random spin)
+                break;
+            case MoveType::SmallStep:
+                newSpin = spin.small_step_move(0.1); // Small step move (small change around the current spin)
+                break;
+        }
         // Calculate energy difference
-        double deltaE = calculateEnergy(lattice, x, y, z, oldSpin, newSpin);
+        double deltaE = calculateEnergyDiff(lattice, x, y, z, oldSpin, newSpin);
 
         // Acceptance condition
-        if (deltaE <= 0 || dis(gen) < exp(-deltaE)) {
+        if (deltaE <= 0 || dis(gen) < exp(-deltaE)) { // TODO
             spin = newSpin; // Accept the new configuration
         }
 
@@ -57,50 +63,13 @@ bool metropolis(Lattice & lattice){
         if (elapsedTime >= maxTimeSeconds) {
             break; // Stop simulation if maximum time reached
         }
-    }
-
-
-    // Calculate energy of configuration (not necessary)
-    // Make the energy of the lattice an instance of the class??
-    // Other observables maybe as well
-
-    // While algo is not converged, i.e. thermal equilibrium is not
-    // reached
-        // Choose random spin
-     
-        //  Make trial move: call trial move function
-
-        // Calculate new energy
-        // For efficiency: maybe not calculate energy of the new
-        // configuration but just energy difference, since most
-        // of the cluster actually remains unchanged
-
-        // Accept with probability depending on energy difference
-
-    // Check for convergence: criterion??? ideas
-    // - mean square deviation of the energy over the past steps
-    // - same with magnetization
-    // - same with specific heat
-    // - Binder cumulant
-    // - autocorrelation time
-
-    // Maybe not check for convergence after every step, but every 100
-    // or so, or implement an adaptive check:
-    // - Exponential/linear decrease of steps between checks
-    // - Adaptive number of steps depending on how far away the system
-    // is from the convergence theshold
-
-
-    // Other questions: 
-    // - implement class instances for observables??
-    // - how to plot energy, magnetization and other observables??
-    
+    }    
     return false;
 }
 
 template <class IpplT>
 
-double calculateEnergy(LatticeIppl<IpplT>& lattice, int x, int y, int z, IpplT& oldSpin, IpplT& newSpin) {
+double calculateEnergyDiff(LatticeIppl<IpplT>& lattice, int x, int y, int z, IpplT& oldSpin, IpplT& newSpin) {
     constexpr double J = 1.0; // Interaction strength
 
     // Get dimensions of the lattice

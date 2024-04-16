@@ -52,6 +52,11 @@ public:
     static SpinCartesian from_xyz(flt x, flt y, flt z);
     static SpinCartesian from_phi_theata(flt ϕ, flt θ);
     static SpinCartesian get_random();
+    
+    // Trial moves
+    void spin_flip();
+    void random_move();
+    void small_step_move(flt maxStepSize);
 };
 
 /*
