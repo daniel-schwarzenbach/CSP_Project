@@ -17,9 +17,9 @@ master(Daniel)\
 
 ### Most important comands:
 
-list all branches: `git branch -a`\
-make a new banch:`git branch my_branch`\
-switch to a differen branch: `git checkout my_branch`
+list all branches:  `git branch -a`\
+make a new banch:  `git branch my_branch`\
+switch to a differen branch:  `git checkout my_branch`
 
 to push your branch `git push -u origin <branch-name>`
 
