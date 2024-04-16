@@ -27,7 +27,7 @@ to push your branch `git push -u origin <branch-name>`
 
 `git fetch origin` : updates the main
 
-`git merge origin/main` : get uptates into your current branch
+`git merge origin/main --no-commit` : get uptates into your current branch
 
 merge as often a possible!!
 
