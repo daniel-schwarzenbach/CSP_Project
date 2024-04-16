@@ -10,11 +10,11 @@
 #include <string>
 using std::string;
 
-static constexpr string RESET   = "\033[0m";    //   RESET
-static constexpr string RED     =   "\033[31m";   //   RED
-static constexpr string GREEN   =  "\033[32m";    /* Green */
-static constexpr string YELLOW  = "\033[33m";     /* Yellow */
-static constexpr string BLUE    = "\033[35m";      /* Blue */
+static const string RESET   = "\033[0m";    //   RESET
+static const string RED     =   "\033[31m";   //   RED
+static const string GREEN   =  "\033[32m";    /* Green */
+static const string YELLOW  = "\033[33m";     /* Yellow */
+static const string BLUE    = "\033[35m";      /* Blue */
 
 static const string ERROR   =  "\033[31m [Error]: \033[0m";
 static const string WARNING =  "\033[35m [Warning]: \033[0m";
@@ -70,9 +70,9 @@ using std::array;
 //          --- Constants
 
 
-static constexpr flt π = M_PI; //\pi
-static constexpr flt ₂π = 2*π; //\_2\pi
-static constexpr flt π_2 = π/2.; //\_2\pi
+static constexpr flt _pi_ = M_PI; //\pi
+static constexpr flt _2pi_ = 2*_pi_; //\_2\pi
+static constexpr flt _pi2_ = _pi_/2.; //\_2\pi
 
 // eulers number 
 static constexpr flt 𝑒 = M_E; //\mite
@@ -109,5 +109,6 @@ enum RangePolicy{
     For_Every_ELEMENT,
     RANDOM
 };
+
 
 #endif // BASE_HPP
