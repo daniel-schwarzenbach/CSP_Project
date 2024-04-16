@@ -69,7 +69,7 @@ public:
             }
             break;
 
-        default:
+        default: // BC::Periodic
             uint x_ = modulo(x, _Lx);
             uint y_ = modulo(y, _Ly);
             uint z_ = modulo(x, _Lz);
