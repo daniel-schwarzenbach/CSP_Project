@@ -17,17 +17,17 @@ master(Daniel)\
 
 ### Most important comands:
 
-list all branches: `git branch -a`\
-make a new banch:`git branch my_branch`\
-switch to a differen branch: `git checkout my_branch`
+list all branches:  `git branch -a`\
+make a new banch:  `git branch my_branch`\
+switch to a differen branch:  `git checkout my_branch`
 
 to push your branch `git push -u origin <branch-name>`
 
 #### How to get updates form main branch:
 
-`git pull origin main` : updates the main
+`git fetch origin` : updates the main
 
-`git merge main` : get uptates into your current branch
+`git merge origin/main` : get uptates into your current branch
 
 merge as often a possible!!
 
