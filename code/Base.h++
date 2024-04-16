@@ -110,4 +110,5 @@ enum RangePolicy{
     RANDOM
 };
 
+
 #endif // BASE_HPP

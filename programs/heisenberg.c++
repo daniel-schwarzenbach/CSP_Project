@@ -21,7 +21,7 @@ int main(int mainArgCount, char** mainArgs){
     const uint seed = 42;
 
     //              --- Lattice
-    Lattice lattice(16,16,16, seed); // 50 KB
+    Lattice lattice = Lattice::random_lattice(16, 16, 16,seed); // 50 KB
     cout << "the lattice uses up: " << lattice.memory_size() 
          << " Bytes" << endl
          << "lattice(2,4,17) = " << lattice(2,4,17) << endl << endl;
