@@ -166,6 +166,27 @@ SpinCartesian SpinCartesian::get_random()
     return s;
 }
 
+// Trial moves
+void SpinCartesian::spin_flip() {
+    x_ = -x_;
+    y_ = -y_;
+    z_ = -z_;
+    normalize();
+}
+
+void SpinCartesian::random_move() {
+    *this = get_random();
+}
+
+void SpinCartesian::small_step_move(flt maxStepSize) {
+    flt dx = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
+    flt dy = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
+    flt dz = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
+    x_ += dx;
+    y_ += dy;
+    z_ += dz;
+    normalize();
+}
 
 //            --- SpinPolar ---
 
