@@ -62,7 +62,7 @@ int main(int mainArgCount, char** mainArgs){
     timerK.start();
     try{
         lattice.regenerate(seed); // regenerate the lattice
-        wolf(lattice, T, J, Time);
+        wolf(lattice, T, Time);
     } catch(exception& e){
         cerr    << ERROR << "wolf failed!" << endl
                 << e.what() << endl;
