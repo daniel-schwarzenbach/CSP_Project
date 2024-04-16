@@ -47,6 +47,9 @@ public:
     // size of the lattice in z-direction
     inline uint Lz() const { return _Lz; }
 
+    // get boundary condition
+    inline BC get_boundary_conditions() const { return bc; }
+
     void set_boundary_conditions(BC bc_) { bc = bc_; }
     // acess operator const
     inline T operator()(int x, int y, int z) const
@@ -102,10 +105,9 @@ public:
         }
     }
 
-    LatticeSerial(uint Lx_, uint Ly_, uint Lz_, uint seed = 42)
+    LatticeSerial(uint Lx_, uint Ly_, uint Lz_)
         : _Lx(Lx_), _Ly(Ly_), _Lz(Lz_), data(Lx_ * Ly_ * Lz_ + 1)
     {
-        srand(seed);
         data.resize(Lx_ * Ly_ * Lz_ + 1);
         data.shrink_to_fit();
         for (uint x = 0; x < _Lx; ++x)
@@ -141,6 +143,41 @@ public:
     int memory_size() const
     {
         return data.size() * sizeof(T);
+    }
+
+    static LatticeSerial constant_lattice(uint Lx_,uint Ly_,uint Lz_, 
+                                          T const &value)
+    {
+        LatticeSerial lattice(Lx_, Ly_, Lz_);
+        for (uint x = 0; x < Lx_; ++x)
+        {
+            for (uint y = 0; y < Ly_; ++y)
+            {
+                for (uint z = 0; z < Lz_; ++z)
+                {
+                    lattice(x, y, z) = value;
+                }
+            }
+        }
+        return lattice;
+    }
+
+    static LatticeSerial random_lattice(uint Lx_,uint Ly_,uint Lz_, 
+                                        uint seed = 42)
+    {
+        LatticeSerial lattice(Lx_, Ly_, Lz_);
+        srand(seed);
+        for (uint x = 0; x < Lx_; ++x)
+        {
+            for (uint y = 0; y < Ly_; ++y)
+            {
+                for (uint z = 0; z < Lz_; ++z)
+                {
+                    lattice(x, y, z) = T::get_random();
+                }
+            }
+        }
+        return lattice;
     }
 };
 
