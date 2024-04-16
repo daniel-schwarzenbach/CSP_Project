@@ -1,7 +1,7 @@
 #include "metropolis.h++"
 
 
-bool metropolis(Lattice& lattice, flt T, flt J, flt Time){
+bool metropolis(Lattice& lattice, flt T, flt Time){
     // to implement
     // test
     return false;
