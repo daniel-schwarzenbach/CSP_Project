@@ -105,7 +105,7 @@ public:
     inline void parrallel_for(
         function<void(uint, uint, uint)> const &f)
     {
-        Kokkos::parallel_for("lattice", field.getFieldRangePolicy(), f);
+        Kokkos::parallel_for("lattice", field.getFieldRangePolicy(),f);
     }
 
     bool regenerate(int seed = 42)

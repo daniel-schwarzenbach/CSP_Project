@@ -17,6 +17,6 @@ wolf algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-flt wolf(Lattice & lattice);
+flt wolf(Lattice& lattice, flt T, flt J, flt Time);
 
 #endif

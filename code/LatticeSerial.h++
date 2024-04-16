@@ -35,8 +35,16 @@ private:
     BC bc = BC::Periodic;
 
 public:
+    // // temperature
+    // flt T = 0;
+    // // interaction
+    // flt J = 1;
+
+    // size of the lattice in x-direction
     inline uint Lx() const { return _Lx; }
+    // size of the lattice in y-direction
     inline uint Ly() const { return _Ly; }
+    // size of the lattice in z-direction
     inline uint Lz() const { return _Lz; }
 
     void set_boundary_conditions(BC bc_) { bc = bc_; }

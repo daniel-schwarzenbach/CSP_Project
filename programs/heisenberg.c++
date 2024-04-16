@@ -7,6 +7,9 @@
 #include <Timekeeper.h++>
 
 
+flt T = 0.1;
+flt J = 1.0;
+flt Time = 20.0;
 /*
 Heisenberg: MAINFUNCTION
 
@@ -28,7 +31,7 @@ int main(int mainArgCount, char** mainArgs){
     cout << "running metropolis ..." << endl;
     TimeKeeper timerK;
     try{
-        metropolis(lattice);
+        metropolis(lattice, T, J, Time);
     } catch(exception& e){
         cerr   << ERROR << "metropolis failed!" << endl
                 << e.what() << endl;
@@ -44,7 +47,7 @@ int main(int mainArgCount, char** mainArgs){
     timerK.start();
     try{
         lattice.regenerate(seed); // regenerate the lattice
-        adaptive_metropolis(lattice);
+        adaptive_metropolis(lattice, T, J, Time);
     } catch(exception& e){
         cerr    << ERROR << "adaptive metropolis failed!" << endl
                 << e.what() << endl;
@@ -59,7 +62,7 @@ int main(int mainArgCount, char** mainArgs){
     timerK.start();
     try{
         lattice.regenerate(seed); // regenerate the lattice
-        wolf(lattice);
+        wolf(lattice, T, J, Time);
     } catch(exception& e){
         cerr    << ERROR << "wolf failed!" << endl
                 << e.what() << endl;
