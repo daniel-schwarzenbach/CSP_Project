@@ -6,9 +6,6 @@
 
 enum class MoveType { SpinFlip, Random, SmallStep };
 
-using namespace std;
-using namespace std::chrono;
-
 // Forward declarations
 template <class IpplT>
 class LatticeIppl;
@@ -17,13 +14,18 @@ class SpinCartesian;
 class SpinEigen;
 class SpinPolar;
 
-// Metropolis algorithm with time criterion
+// Metropolis algorithm
 template <class IpplT>
-bool metropolis(LatticeIppl<IpplT> &lattice, double maxTimeSeconds, MoveType moveType = MoveType::SmallStep) {
-// Start time
-    auto startTime = high_resolution_clock::now();
-    
-    // Main Metropolis loop
+bool metropolis(LatticeIppl<IpplT> &lattice, float T, float maxTimeSeconds, float maxSteps, MoveType moveType = MoveType::SmallStep) {
+    // Initialize random number generator @ Daneil: wann machen wir das am besten??
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0.0, 1.0);
+    // Start time and set step counter to 0
+    int step_count = 0;
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    // Main Metropolis loop until number of steps or max time is reached
     while (true) {
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
@@ -35,34 +37,37 @@ bool metropolis(LatticeIppl<IpplT> &lattice, double maxTimeSeconds, MoveType mov
         
         // Propose spin change based on given trial move
         SpinCartesian newSpin;
+        newSpin = spin;
         switch (moveType) {
             case MoveType::SpinFlip:
-                newSpin = spin; // Spin flip move (reflect the spin)
-                newSpin.spin_flip();
+                newSpin.spin_flip(); // Spin flip move (reflect the spin)
                 break;
             case MoveType::Random:
-                newSpin = SpinCartesian::random_move(); // Random move (generate a random spin)
+                newSpin = newSpin.random_move(); // Random move (generate a random spin)
                 break;
             case MoveType::SmallStep:
-                newSpin = spin.small_step_move(0.1); // Small step move (small change around the current spin)
+                newSpin = newSpin.small_step_move(0.1); // Small step move (small change around the current spin)
                 break;
         }
         // Calculate energy difference
-        double deltaE = calculateEnergyDiff(lattice, x, y, z, oldSpin, newSpin);
+        double deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
 
         // Acceptance condition
-        if (deltaE <= 0 || dis(gen) < exp(-deltaE)) { // TODO
+        if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) { // Boltzmann constant k is 
+        // normalized with interaction strength J in this implementation
             spin = newSpin; // Accept the new configuration
         }
 
         // Check elapsed time
-        auto currentTime = high_resolution_clock::now();
-        auto elapsedTime = duration_cast<duration<double>>(currentTime - startTime).count();
-        
+        auto current_time = std::chrono::steady_clock::now();
+        auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time);
+        auto elapsed_time = elapsed_seconds.count(); // Get the count of elapsed seconds
+
         // Check if maximum time has been reached
-        if (elapsedTime >= maxTimeSeconds) {
+        if (elapsed_time >= maxTimeSeconds) {
             break; // Stop simulation if maximum time reached
         }
+        ++step_count;
     }    
     return false;
 }
@@ -70,7 +75,7 @@ bool metropolis(LatticeIppl<IpplT> &lattice, double maxTimeSeconds, MoveType mov
 template <class IpplT>
 
 double calculateEnergyDiff(LatticeIppl<IpplT>& lattice, int x, int y, int z, IpplT& oldSpin, IpplT& newSpin) {
-    constexpr double J = 1.0; // Interaction strength
+    constexpr double J = 1.0; // Interaction strength, normalized with k_b
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -101,11 +106,10 @@ double calculateEnergyDiff(LatticeIppl<IpplT>& lattice, int x, int y, int z, Ipp
         int ny = neighbors[i][1];
         int nz = neighbors[i][2];
         SpinCartesian& neighborSpin = lattice(nx, ny, nz);
-        energyNew += -J * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
+        energyNew += -J * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());
     }
 
     // Calculate energy difference (deltaE)
     double deltaE = energyNew - energyOld;
     return deltaE;
 }
-

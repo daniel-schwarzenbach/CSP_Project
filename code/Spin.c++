@@ -179,12 +179,9 @@ void SpinCartesian::random_move() {
 }
 
 void SpinCartesian::small_step_move(flt maxStepSize) {
-    flt dx = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
-    flt dy = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
-    flt dz = maxStepSize * (static_cast<flt>(rand()) / RAND_MAX - 0.5);
-    x_ += dx;
-    y_ += dy;
-    z_ += dz;
+    x_ += maxStepSize * (randflt() - 0.5);
+    y_ += maxStepSize * (randflt() - 0.5);
+    z_ += maxStepSize * (randflt() - 0.5);
     normalize();
 }
 
