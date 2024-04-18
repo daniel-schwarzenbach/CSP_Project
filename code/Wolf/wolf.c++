@@ -1,6 +1,6 @@
 #include "wolf.h++"
 
-using flt = float;
+
 
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
 vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz) {
@@ -131,7 +131,7 @@ performs the wolf algoritm on the lattice
 - can throw
 */
 
-flt wolf(Lattice& lattice, flt T, flt J, flt Time){
+flt wolf(Lattice& lattice, flt T, flt Time){
     // to implement
 
     flt kB = 1.380649e-23f;
