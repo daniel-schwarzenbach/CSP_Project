@@ -32,8 +32,6 @@ void comunicate_ghost_cells(Field &field)
     ippl::Comm->barrier();
 }
 
-
-
 // Lets try to do a simple diffusion problem with periodic BC in 2D
 int main(int numMainArgs, char *mainArgs[])
 {

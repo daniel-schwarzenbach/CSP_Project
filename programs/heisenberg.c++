@@ -31,7 +31,7 @@ int main(int mainArgCount, char** mainArgs){
     cout << "running metropolis ..." << endl;
     TimeKeeper timerK;
     try{
-        metropolis(lattice, T, Time);
+        metropolis(lattice, T, J, Time);
     } catch(exception& e){
         cerr   << ERROR << "metropolis failed!" << endl
                 << e.what() << endl;
@@ -62,7 +62,7 @@ int main(int mainArgCount, char** mainArgs){
     timerK.start();
     try{
         lattice.regenerate(seed); // regenerate the lattice
-        wolf(lattice, T, Time);
+        wolf(lattice, T, J, Time);
     } catch(exception& e){
         cerr    << ERROR << "wolf failed!" << endl
                 << e.what() << endl;
