@@ -4,7 +4,7 @@
 
 branches allow us to set up our own work enviroments!
 
-understanding how github works: https://www.youtube.com/watch?v=k6pxsaXAhbI
+[understanding how github works](https://www.youtube.com/watch?v=k6pxsaXAhbI)
 
 [Git-CheatSheet](https://about.gitlab.com/images/press/git-cheat-sheet.pdf)
 
@@ -15,7 +15,7 @@ master(Daniel)\
 ├── Metropolis(Justus)\
 └── Observables(Mateo)
 
-### Most important comands:
+### Most important comands
 
 list all branches:  `git branch -a`\
 make a new banch:  `git branch my_branch`\
@@ -23,7 +23,7 @@ switch to a differen branch:  `git checkout my_branch`
 
 to push your branch `git push -u origin <branch-name>`
 
-#### How to get updates form main branch:
+#### How to get updates form main branch
 
 `git fetch origin` : updates the main
 
@@ -47,11 +47,14 @@ Daniel will hole heatingly ignore them
 
 1. Make a new program by adding a new .c++ into the programs folder
 2. Target the Porgam inside of CMakeList
+
 ```cmake
 # programs
 add_executable(Heisenberg ${SRC_FILES} ./programs/my_program.c++)
 ```
+
 3. Make sure the ./.vscode/lauch.json file is debuging your program
+
 ```json
 "program": "${workspaceFolder}/build/My_Program",
 ```
