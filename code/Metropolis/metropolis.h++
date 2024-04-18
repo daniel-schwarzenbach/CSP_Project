@@ -13,6 +13,8 @@ metropolis algorithm for the Heisenber3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool metropolis(Lattice& lattice, flt T, flt J, flt Time);
+bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, 
+                float maxSteps, 
+                MoveType moveType = MoveType::SmallStep);
 
 #endif

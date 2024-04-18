@@ -7,6 +7,7 @@
 #include <Timekeeper.h++>
 
 
+// temperature
 flt T = 0.1;
 flt J = 1.0;
 flt Time = 20.0;
@@ -31,7 +32,7 @@ int main(int mainArgCount, char** mainArgs){
     cout << "running metropolis ..." << endl;
     TimeKeeper timerK;
     try{
-        metropolis(lattice, T, J, Time);
+        metropolis(lattice, T, 10, 100);
     } catch(exception& e){
         cerr   << ERROR << "metropolis failed!" << endl
                 << e.what() << endl;
