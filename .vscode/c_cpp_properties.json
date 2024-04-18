@@ -14,6 +14,7 @@
                 //"${workspaceFolder}/libraries/Ippl/build/include",
                 "${workspaceFolder}/libraries/Ippl/build/Heffte/Heffte_omp/include",
                 "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_omp/include"
+                
             ],
             "defines": [
                 "CSP_DEBUG"
