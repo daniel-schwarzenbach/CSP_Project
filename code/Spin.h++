@@ -57,6 +57,8 @@ public:
     void spin_flip();
     void random_move();
     void small_step_move(flt maxStepSize);
+
+    Vector3 to_vector3() const;
 };
 
 /*
@@ -91,6 +93,8 @@ public:
     SpinEigen from_xyz(flt x, flt y, flt z);
     SpinEigen from_phi_theata(flt ϕ, flt θ);
     static SpinEigen get_random();
+
+    
 };
 
 /*

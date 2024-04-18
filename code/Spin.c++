@@ -185,6 +185,27 @@ void SpinCartesian::small_step_move(flt maxStepSize) {
     normalize();
 }
 
+Vector3 SpinCartesian::to_vector3() const {
+    return Vector3(x_, y_, z_);
+}
+
+//            --- SpinEigen ---
+flt SpinEigen::x() const { return this->base::operator()(0); }
+flt SpinEigen::y() const { return this->base::operator()(1); }
+flt SpinEigen::z() const { return this->base::operator()(2); }
+
+flt SpinEigen::theta() const { 
+    SpinEigen s = this->base::normalized();
+    return acos(s.z()); 
+}
+flt SpinEigen::phi() const { 
+    SpinEigen s = this->base::normalized();
+    return atan2(s.y(), s.x()); 
+}
+
+
+
+
 //            --- SpinPolar ---
 
 
