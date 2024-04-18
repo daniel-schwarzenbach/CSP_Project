@@ -166,6 +166,45 @@ SpinCartesian SpinCartesian::get_random()
     return s;
 }
 
+// Trial moves
+void SpinCartesian::spin_flip() {
+    x_ = -x_;
+    y_ = -y_;
+    z_ = -z_;
+    normalize();
+}
+
+void SpinCartesian::random_move() {
+    *this = get_random();
+}
+
+void SpinCartesian::small_step_move(flt maxStepSize) {
+    x_ += maxStepSize * (randflt() - 0.5);
+    y_ += maxStepSize * (randflt() - 0.5);
+    z_ += maxStepSize * (randflt() - 0.5);
+    normalize();
+}
+
+Vector3 SpinCartesian::to_vector3() const {
+    return Vector3(x_, y_, z_);
+}
+
+//            --- SpinEigen ---
+flt SpinEigen::x() const { return this->base::operator()(0); }
+flt SpinEigen::y() const { return this->base::operator()(1); }
+flt SpinEigen::z() const { return this->base::operator()(2); }
+
+flt SpinEigen::theta() const { 
+    SpinEigen s = this->base::normalized();
+    return acos(s.z()); 
+}
+flt SpinEigen::phi() const { 
+    SpinEigen s = this->base::normalized();
+    return atan2(s.y(), s.x()); 
+}
+
+
+
 
 //            --- SpinPolar ---
 

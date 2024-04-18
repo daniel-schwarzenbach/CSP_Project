@@ -69,7 +69,7 @@ public:
             }
             break;
 
-        default: // BC::Periodic
+        default:
             uint x_ = modulo(x, _Lx);
             uint y_ = modulo(y, _Ly);
             uint z_ = modulo(x, _Lz);
@@ -178,6 +178,11 @@ public:
             }
         }
         return lattice;
+    }
+
+    uint get_total_size() const
+    {
+        return _Lx * _Ly * _Lz;
     }
 };
 
