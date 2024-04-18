@@ -5,9 +5,6 @@
 #include <algorithm>
 #include <cmath>
 
-
-
-
 /*
 wolf algorithm for the Heisenberg3D model
 
@@ -16,6 +13,6 @@ wolf algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-flt wolf(Lattice& lattice, flt T, flt J, flt Time);
+flt wolf(Lattice& lattice, flt T, flt Time);
 
 #endif
