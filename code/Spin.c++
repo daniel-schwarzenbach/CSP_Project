@@ -166,7 +166,9 @@ SpinCartesian SpinCartesian::get_random()
     return s;
 }
 
-// Trial moves
+// Trial moves //
+
+// Reflects the initial spin across the origin
 void SpinCartesian::spin_flip() {
     x_ = -x_;
     y_ = -y_;
@@ -174,15 +176,49 @@ void SpinCartesian::spin_flip() {
     normalize();
 }
 
+// Changes the spin to a random spin
 void SpinCartesian::random_move() {
     *this = get_random();
 }
 
-void SpinCartesian::small_step_move(flt maxStepSize) {
-    x_ += maxStepSize * (randflt() - 0.5);
-    y_ += maxStepSize * (randflt() - 0.5);
-    z_ += maxStepSize * (randflt() - 0.5);
-    normalize();
+// Changes the spin to a random spin within a certain distance, 
+// specified by the opening angle of a cone
+
+// Used both in the standard Metropolis when using the small step
+// trial move and the adaptive Metropolis
+void SpinCartesian::small_step_move(flt openingAngle) {
+    // Sample angles uniformly within the cone specified by the opening angle
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // Sampling from this interval makes sure we stay within a certain
+    // distance/opening angle from the initial spin
+    std::uniform_real_distribution<flt> dis_theta(0.0, openingAngle);
+    std::uniform_real_distribution<flt> dis_phi(0.0, 2.0 * M_PI);
+
+    flt theta = dis_theta(gen); // Sample theta from [0, openingAngle]
+    flt phi = dis_phi(gen);     // Sample phi from [0, 2*pi)
+
+
+    // Calculate the new spin vector components from the sampled angles
+    // The two angles fully characterize the point on the unit sphere
+    flt newX = std::sin(theta) * std::cos(phi);
+    flt newY = std::sin(theta) * std::sin(phi);
+    flt newZ = std::cos(theta);
+
+    // Compute rotation quaternion from north pole (zero angles) to
+    // the initial spin direction (this)
+    // Needed to rotate the generated spin
+    Eigen::Vector3d northPole(0.0, 0.0, 1.0); // North pole (z-axis)
+    Eigen::Vector3d originalSpin(x_, y_, z_);
+    Eigen::Quaterniond rotationToOriginal = Eigen::Quaterniond::FromTwoVectors(northPole, originalSpin);
+
+    // Apply the rotation quaternion to the new spin vector
+    Eigen::Vector3d rotatedNewSpin = rotationToOriginal * Eigen::Vector3d(newX, newY, newZ);
+
+    // Update the current SpinCartesian object with the rotated spin vector components
+    x_ = rotatedNewSpin.x();
+    y_ = rotatedNewSpin.y();
+    z_ = rotatedNewSpin.z();
 }
 
 //            --- SpinPolar ---

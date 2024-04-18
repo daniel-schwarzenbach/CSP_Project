@@ -6,7 +6,7 @@
 enum class MoveType { SpinFlip, Random, SmallStep };
 
 /*
-metropolis algorithm for the Heisenber3D model
+metropolis algorithm for the Heisenberg3D model
 
 / @brief
 / @param lattice our 3d lattice, where to perform the simulation on
