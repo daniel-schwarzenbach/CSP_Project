@@ -3,7 +3,6 @@
 
 #include <Heisenberg.h++>
 
-
 /*
 ado algorithm for the Heisenber3D model
 
