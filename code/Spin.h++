@@ -58,6 +58,7 @@ public:
     void spin_flip();
     void random_move();
     void small_step_move(flt openingAngle);
+    void adaptive_step(flt sigma);
 };
 
 /*

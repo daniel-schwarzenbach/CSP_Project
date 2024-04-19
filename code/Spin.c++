@@ -221,6 +221,28 @@ void SpinCartesian::small_step_move(flt openingAngle) {
     z_ = rotatedNewSpin.z();
 }
 
+// Performs the step of the adaptive Metropolis algorithm: adds the
+// initial spin with a Gaussian distributed random vector multiplied 
+// by an adaptive factor sigma
+void SpinCartesian::adaptive_step(flt sigma) {
+    // Initialize random number generator for Gaussian distribution
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<flt> dist(0.0, 1.0); // Mean 0.0, Standard deviation 1.0
+
+    // Generate Gaussian-distributed random components
+    flt dx = dist(gen);
+    flt dy = dist(gen);
+    flt dz = dist(gen);
+
+    // Add Gaussian-distributed random vector to the spin
+    x_ += sigma * dx;
+    y_ += sigma * dy;
+    z_ += sigma * dz;
+
+    // Normalize the resulting spin to ensure it remains on the unit sphere
+    normalize();
+}
 //            --- SpinPolar ---
 
 
