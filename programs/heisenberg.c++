@@ -31,7 +31,7 @@ int main(int mainArgCount, char** mainArgs){
     cout << "running metropolis ..." << endl;
     TimeKeeper timerK;
     try{
-        metropolis(lattice, T, 100000, 1000000 );
+        metropolis(lattice, T, 100000, 1000000, 100);
     } catch(exception& e){
         cerr   << ERROR << "metropolis failed!" << endl
                 << e.what() << endl;
@@ -47,7 +47,7 @@ int main(int mainArgCount, char** mainArgs){
     timerK.start();
     try{
         lattice.regenerate(seed); // regenerate the lattice
-        adaptive_metropolis(lattice, T, J, Time);
+        adaptive_metropolis(lattice, T, J, Time, 100);
     } catch(exception& e){
         cerr    << ERROR << "adaptive metropolis failed!" << endl
                 << e.what() << endl;
