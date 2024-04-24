@@ -1,6 +1,7 @@
-#include <f/wolff.h++>
+
 #include <Metropolis/metropolis.h++>
 #include <Metropolis/adaptive_metropolis.h++>
+#include <Wolff/wolff.h++>
 
 #include <matplot/matplot.h>
 #include <Heisenberg.h++>
@@ -86,5 +87,6 @@ int main(int mainArgCount, char** mainArgs){
     
     
     cout << lattice.memory_size();
+    cout << "hello world";
     return 0;
 }
