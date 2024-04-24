@@ -4,7 +4,7 @@
 
 branches allow us to set up our own work enviroments!
 
-understanding how github works: https://www.youtube.com/watch?v=k6pxsaXAhbI
+[how-github-works](https://www.youtube.com/watch?v=k6pxsaXAhbI)
 
 [Git-CheatSheet](https://about.gitlab.com/images/press/git-cheat-sheet.pdf)
 
@@ -15,7 +15,7 @@ master(Daniel)\
 ├── Metropolis(Justus)\
 └── Observables(Mateo)
 
-### Most important comands:
+### Most important comands
 
 list all branches: `git branch -a`\
 make a new banch:`git branch my_branch`\
@@ -47,15 +47,17 @@ Daniel will hole heatingly ignore them
 
 1. Make a new program by adding a new .c++ into the programs folder
 2. Target the Porgam inside of CMakeList
+
 ```cmake
 # programs
 add_executable(Heisenberg ${SRC_FILES} ./programs/my_program.c++)
 ```
+
 3. Make sure the ./.vscode/lauch.json file is debuging your program
+
 ```json
 "program": "${workspaceFolder}/build/My_Program",
 ```
-
 
 ## Naming Convetions
 
@@ -71,11 +73,13 @@ type_t apple_juice(type_t const& t);
 ```
 
 in general use:
--   constexpr: as much as possible, evaluates value by preprocessor.
--   const: as much as possible.
--   inline: on smaller functions, avoids function call
+
+- constexpr: as much as possible, evaluates value by preprocessor.
+- const: as much as possible.
+- inline: on smaller functions, avoids function call
 
 alwas have an is-, can- or has- for bools
+
 ```cpp
 bool isOver9000 = true;
 bool isDone = false;
@@ -83,6 +87,7 @@ bool hasSolution = false;
 ```
 
 always comment your functions like this
+
 1. What does the function do
 2. describe the argument
 3. what does the function return?

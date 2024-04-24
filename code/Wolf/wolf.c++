@@ -1,6 +1,6 @@
 #include "wolf.h++"
 
-using flt = float;
+
 
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
 vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz) {

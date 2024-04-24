@@ -1,17 +1,22 @@
 #ifndef METROPOLIS_HPP
 #define METROPOLIS_HPP
 
+#include <Timekeeper.h++>
+#include <cmath>
+#include <random>
 #include <Heisenberg.h++>
 
+enum class MoveType { SpinFlip, Random, SmallStep };
 
 /*
-metropolis algorithm for the Heisenber3D model
+metropolis algorithm for the Heisenberg 3D model
 
 / @brief
 / @param lattice our 3d lattice, where to perform the simulation on
 / @return if the procedure succeds
 / @exception may fail
 */
-bool metropolis(Lattice& lattice, flt T, flt J, flt Time);
+bool metropolis(Lattice& lattice, flt T, flt maxTime, flt maxSteps, 
+                MoveType moveType = MoveType::SmallStep);
 
 #endif
