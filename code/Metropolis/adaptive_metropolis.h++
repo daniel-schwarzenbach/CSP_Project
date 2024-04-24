@@ -15,6 +15,6 @@ ado algorithm for the Heisenber3D model
 / @exception may fail
 */
 bool adaptive_metropolis(Lattice& lattice, flt T, flt maxTime,
-                        flt maxSteps, flt maxFactor = 60);
+                        flt maxSteps, flt interactionStrength, flt maxFactor = 60);
 
 #endif
