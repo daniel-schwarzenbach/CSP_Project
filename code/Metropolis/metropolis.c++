@@ -1,14 +1,25 @@
-#include <Timekeeper.h++>
-#include <iostream>
-#include <cmath>
-#include <random>
-#include <chrono>
-#include <Heisenberg.h++>
 #include <Metropolis/metropolis.h++>
+#include <Metropolis/energy_diff.h++>
 
-double calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin);
+// Metropolis algorithm //
 
-// Metropolis algorithm
+// This function takes a reference to an initial lattice and performs
+// the Metropolis algorithm on this lattice at the specified temperature.
+// We can specify the trial move which we want to use. The algorithm
+// stops when the max time OR the max number of steps, that are also
+// specified by the input, are reached.
+
+// Input: 
+//      - refrence to the lattice
+//      - temperature T
+//      - maximal running time of the algorithm
+//      - maximal number of steps
+//      - trial move which we want to use to generate new spins: SpinFlip,
+//        Random or SmallStep; default: small step move 
+
+// Output: 
+//      Returns true when the algorithm has finished running. The lattice
+//      is modified throughout the runtime of the algorithm.
 bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps, MoveType moveType) {
     // Initialize random number generator @ Daniel: wann machen wir das am besten??
     std::random_device rd;
@@ -19,7 +30,8 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
     TimeKeeper watch;
 
     // Main Metropolis loop until number of steps or max time is reached
-    while (true) {
+    // Check if max number of steps is reached
+    while (step_count < maxSteps) {
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -42,7 +54,7 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
                 break;
         }
         // Calculate energy difference
-        double deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
+        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
 
         // Acceptance condition
         if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) { // Boltzmann constant k is 
@@ -54,44 +66,8 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
         if (watch.time() >= maxTimeSeconds) {
             break; // Stop simulation if maximum time reached
         }
+        // Increase step counter
         ++step_count;
     }    
     return true;
-}
-
-
-
-double calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin) {
-    constexpr double J = 1.0; // Interaction strength, normalized with k_b
-
-    // Get dimensions of the lattice
-    int Lx = lattice.Lx();
-    int Ly = lattice.Ly();
-    int Lz = lattice.Lz();
-
-    // Indices of nearest neighbors (periodic boundary conditions assumed)
-    int neighbors[6][3] = {
-        {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
-        {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
-        {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
-    };
-
-    // Energies of old and new configuration
-    double energyOld = 0.0;
-    double energyNew = 0.0;
-    for (int i = 0; i < 6; ++i) {
-        // Get indices of neighbors
-        int nx = neighbors[i][0];
-        int ny = neighbors[i][1];
-        int nz = neighbors[i][2];
-        // Get neighboring spin
-        SpinCartesian& neighborSpin = lattice(nx, ny, nz);
-        // Calcualte and add energies
-        energyOld += -J * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
-        energyNew += -J * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());
-    }   
-
-    // Calculate energy difference (deltaE)
-    double deltaE = energyNew - energyOld;
-    return deltaE;
 }
