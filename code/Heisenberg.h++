@@ -49,3 +49,40 @@ using Lattice = LatticeSerial<Spin>;
 #endif // IPPL_H
 
 #endif // __HEISENBERG_H__
+
+
+
+/*Define the Boltzmann constant*/
+int power = -23.0;
+flt kB = 1.38064852 * pow(10.0, power);
+
+/*
+Definition of thermodynamic beta
+*/
+
+flt Beta(flt T) {
+    return 1/(kB * T);
+};
+
+/*
+Given an array[] of floats with a length l, this function returns the average value
+*/
+flt average(flt array[], int l) {
+    double sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += array[i];
+
+    return sum / l;
+};
+
+/*
+Given an array[] of floatswith a length l and mean value avg, this function returns the square value of the variance:
+return: var^2 = 1/l * 𝚺_{i=1}^N (array[i] - mean)^2
+*/
+flt variance(flt array[], int l, flt mean) {
+    double return_variance = 0;
+    for (int i = 0; i < n; i++)
+        return_variance += pow(array[i] - mean, 2);
+
+    return return_variance / (l - 1);
+};
