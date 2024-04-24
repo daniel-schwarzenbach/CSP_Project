@@ -21,7 +21,7 @@ void flip_spin(Spin& spin_r, Spin& spin_x){
     spin_x = spin_x - (2.0f * cdot)*spin_r;
 }
 
-
+//Function to activate bond depending on given probability 
 bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
     flt activate_prob;
