@@ -3,6 +3,7 @@
 
 #include <Base.h++>
 #include <Eigen.h++>
+#include <random>
 
 /*
 [x, y, z]†
@@ -56,8 +57,8 @@ public:
     // Trial moves
     void spin_flip();
     void random_move();
-    void small_step_move(flt maxStepSize);
-
+    void small_step_move(flt openingAngle);
+    void adaptive_step(flt sigma);
     Vector3 to_vector3() const;
 };
 
