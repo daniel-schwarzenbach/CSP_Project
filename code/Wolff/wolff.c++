@@ -1,4 +1,4 @@
-#include "wolf.h++"
+#include "wolff.h++"
 
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
 vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz) {
@@ -120,16 +120,16 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     return clusterSize;
 }
 
-//bool wolf(Lattice& lattice);
+//bool wolff(Lattice& lattice);
 /*
-performs the wolf algoritm on the lattice
+performs the wolff algoritm on the lattice
 
 - L: Lattice
 - returns: succeptibility if it sucseeds
 - can throw
 */
 
-flt wolf(Lattice& lattice, flt T, flt Time){
+flt wolff(Lattice& lattice, flt T, flt Time){
     // to implement
 
     flt kB = 1.380649e-23f;
