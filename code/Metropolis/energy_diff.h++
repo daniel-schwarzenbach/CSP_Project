@@ -4,6 +4,7 @@
 #include <Heisenberg.h++>
 #include <cmath> // Is it really needed? Check later
 
-float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin);
+float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
+                    Spin& oldSpin, Spin& newSpin, flt interactionStrength);
 
 #endif // ENERGY_DIFF_H

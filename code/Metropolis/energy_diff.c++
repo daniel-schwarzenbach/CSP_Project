@@ -16,11 +16,12 @@
 //      - z coordinate of the changed spin
 //      - initial spin
 //      - proposed spin update
+//      - interaction strength J of the Heisenberg model
 
 // Output: 
 //      Returns the energy difference of the two spin configurations.
-float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin) {
-    constexpr float J = 1.0; // Interaction strength, normalized with k_b
+float calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
+            Spin& oldSpin, Spin& newSpin, float interactionStrength) {
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -45,8 +46,8 @@ float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, 
         // Get neighboring spin
         SpinCartesian& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
-        energyOld += -J * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
-        energyNew += -J * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());
+        energyOld += -interactionStrength * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
+        energyNew += -interactionStrength * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());
     }   
 
     // Calculate energy difference (deltaE)

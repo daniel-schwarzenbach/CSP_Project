@@ -14,13 +14,15 @@
 //      - temperature T
 //      - maximal running time of the algorithm
 //      - maximal number of steps
+//      - interaction strength of the Heisenberg model
 //      - trial move which we want to use to generate new spins: SpinFlip,
 //        Random or SmallStep; default: small step move 
 
 // Output: 
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps, MoveType moveType) {
+bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
+                float interactionStrength, MoveType moveType) {
     // Initialize random number generator @ Daniel: wann machen wir das am besten??
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -41,7 +43,7 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
         Spin& spin = lattice(x, y, z);
         
         // Propose spin change based on given trial move
-        SpinCartesian newSpin = spin;
+        Spin newSpin = spin;
         switch (moveType) {
             case MoveType::SpinFlip:
                 newSpin.spin_flip(); // Spin flip move (reflect the spin)
@@ -54,7 +56,8 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
                 break;
         }
         // Calculate energy difference
-        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
+        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, interactionStrength);
 
         // Acceptance condition
         if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) { // Boltzmann constant k is 

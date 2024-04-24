@@ -26,13 +26,14 @@
 //      - temperature T
 //      - max running time of the algorithm
 //      - max number of steps
+//      - interaction strength of the Heisenberg model
 //      - initial and max factor of the Gaussian
 
 // Output: 
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
 bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
-                        float maxSteps, float maxFactor) {
+                        float maxSteps, float interactionStrength, float maxFactor) {
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -54,11 +55,12 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         // Get the spin at the chosen site (cartesian)
         Spin& spin = lattice(x, y, z);
         //Initialize proposed spin
-        SpinCartesian newSpin = spin;
+        Spin newSpin = spin;
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
+        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, interactionStrength);
         // increase count of proposed changes
         ++proposed_count;
 
