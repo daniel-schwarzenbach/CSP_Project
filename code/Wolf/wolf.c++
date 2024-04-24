@@ -1,7 +1,5 @@
 #include "wolf.h++"
 
-
-
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
 vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz) {
     // Initialize the 3D vector representing the lattice
