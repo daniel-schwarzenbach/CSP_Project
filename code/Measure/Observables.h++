@@ -12,7 +12,7 @@ calculate the magnetization of all the spins inside the lattice
 / @param lattice our 3d lattice, where to perform the simulation on
 / @return the magnetization of the lattice
 */
-flt get_magnetization(const Lattice& lattice);
+vector<flt> get_magnetization(const Lattice& lattice);
 
 /*
 calculate the energy of all the spins inside the lattice
@@ -22,27 +22,5 @@ calculate the energy of all the spins inside the lattice
 / @return the energy of the lattice
 */
 flt get_energy(const Lattice& lattice);
-
-/*
-calculate the specific heat of all the spins inside the lattice
-
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return the specific heat of the lattice
-*/
-flt get_specific_heat(const Lattice& lattice);
-
-
-/*
-calculate all the observables of the lattice
-
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return a vector with all the observables
-*/
-vector<flt> get_all_observables(const Lattice& lattice);
-
-
-} // namespace measure
 
 #endif // __OBSERVABLES_H__
