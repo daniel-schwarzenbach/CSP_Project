@@ -75,8 +75,7 @@
         "core": "cpp",
         "geometry": "cpp",
         "hash_map": "cpp",
-        "*.h++": "cpp",
-        "__locale": "cpp"
+        "*.h++": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "cmake.configureOnOpen": true,

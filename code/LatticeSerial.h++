@@ -179,6 +179,11 @@ public:
         }
         return lattice;
     }
+
+    uint get_total_size() const
+    {
+        return _Lx * _Ly * _Lz;
+    }
 };
 
 #include <Spin.h++>
