@@ -25,11 +25,11 @@ T x = lattice<T>(x,y,z)
 
 */
 template <class T>
-class LatticeSerial
+class Lattice3d
 {
 private:
     // datavector
-    vector<T> data;
+    Array<T> data;
     // dimentions
     uint _Lx, _Ly, _Lz;
     BC bc = BC::Periodic;
@@ -56,7 +56,7 @@ public:
     {
         switch (bc)
         {
-        case BC::Dirichlet:
+        case BC::_0:
             if (x >= 0 && x < _Lx &&
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
@@ -82,7 +82,7 @@ public:
     {
         switch (bc)
         {
-        case BC::Dirichlet:
+        case BC::_0:
             if (x >= 0 && x < _Lx &&
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
@@ -105,35 +105,24 @@ public:
         }
     }
 
-    LatticeSerial(uint Lx_, uint Ly_, uint Lz_)
+    Lattice3d(uint Lx_, uint Ly_, uint Lz_)
         : _Lx(Lx_), _Ly(Ly_), _Lz(Lz_), data(Lx_ * Ly_ * Lz_ + 1)
     {
         data.resize(Lx_ * Ly_ * Lz_ + 1);
         data.shrink_to_fit();
-        for (uint x = 0; x < _Lx; ++x)
-        {
-            for (uint y = 0; y < _Ly; ++y)
-            {
-                for (uint z = 0; z < _Lz; ++z)
-                {
-                    (*this)(x, y, z) = T();
-                }
-            }
-        }
     }
-    LatticeSerial(LatticeSerial &other) = default;
-    LatticeSerial(LatticeSerial const &other) = default;
+    Lattice3d(Lattice3d &other) = default;
+    Lattice3d(Lattice3d const &other) = default;
 
-    bool regenerate(uint seed = 42)
+    bool randomize()
     {
-        srand(seed);
         for (uint x = 0; x < _Lx; ++x)
         {
             for (uint y = 0; y < _Ly; ++y)
             {
                 for (uint z = 0; z < _Lz; ++z)
                 {
-                    (*this)(x, y, z) = T();
+                    (*this)(x, y, z) = rng::get_random<T>();
                 }
             }
         }
@@ -145,10 +134,10 @@ public:
         return data.size() * sizeof(T);
     }
 
-    static LatticeSerial constant_lattice(uint Lx_,uint Ly_,uint Lz_, 
-                                          T const &value)
+    static Lattice3d constant_lattice(uint Lx_, uint Ly_, uint Lz_,
+                                      T const &value)
     {
-        LatticeSerial lattice(Lx_, Ly_, Lz_);
+        Lattice3d lattice(Lx_, Ly_, Lz_);
         for (uint x = 0; x < Lx_; ++x)
         {
             for (uint y = 0; y < Ly_; ++y)
@@ -162,10 +151,10 @@ public:
         return lattice;
     }
 
-    static LatticeSerial random_lattice(uint Lx_,uint Ly_,uint Lz_, 
-                                        uint seed = 42)
+    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_,
+                                    uint seed = 42)
     {
-        LatticeSerial lattice(Lx_, Ly_, Lz_);
+        Lattice3d lattice(Lx_, Ly_, Lz_);
         srand(seed);
         for (uint x = 0; x < Lx_; ++x)
         {
@@ -173,7 +162,7 @@ public:
             {
                 for (uint z = 0; z < Lz_; ++z)
                 {
-                    lattice(x, y, z) = T::get_random();
+                    lattice(x, y, z) = rng::get_random<T>();
                 }
             }
         }
@@ -187,7 +176,8 @@ public:
 };
 
 #include <Spin.h++>
-template class LatticeSerial<SpinCartesian>;
-template class LatticeSerial<SpinPolar>;
+template class Lattice3d<SpinVector>;
+template class Lattice3d<SpinCompressed>;
+template class Lattice3d<U8>;
 
 #endif

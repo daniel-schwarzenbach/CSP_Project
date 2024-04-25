@@ -13,6 +13,6 @@ wolf algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-flt wolf(Lattice& lattice, flt T, flt Time);
+flt wolf(Lattice &lattice, flt T, flt Timer, uint maxSteps = maxUint);
 
 #endif

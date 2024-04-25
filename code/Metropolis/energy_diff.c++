@@ -43,7 +43,7 @@ float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, 
         int ny = neighbors[i][1];
         int nz = neighbors[i][2];
         // Get neighboring spin
-        SpinCartesian& neighborSpin = lattice(nx, ny, nz);
+        Spin& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
         energyOld += -J * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
         energyNew += -J * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());

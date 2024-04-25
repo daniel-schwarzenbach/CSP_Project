@@ -10,40 +10,51 @@
 #include <string>
 using std::string;
 
-static const string RESET   = "\033[0m";    //   RESET
-static const string RED     =   "\033[31m";   //   RED
-static const string GREEN   =  "\033[32m";    /* Green */
-static const string YELLOW  = "\033[33m";     /* Yellow */
-static const string BLUE    = "\033[35m";      /* Blue */
+static const string RESET = "\033[0m";   //   RESET
+static const string RED = "\033[31m";    //   RED
+static const string GREEN = "\033[32m";  /* Green */
+static const string YELLOW = "\033[33m"; /* Yellow */
+static const string BLUE = "\033[35m";   /* Blue */
 
-static const string ERROR   =  "\033[31m [Error]: \033[0m";
-static const string WARNING =  "\033[35m [Warning]: \033[0m";
-static const string INFO    =  "\033[32m [INFO]: \033[0m";
+static const string ERROR = "\033[31m [Error]: \033[0m";
+static const string WARNING = "\033[35m [Warning]: \033[0m";
+static const string INFO = "\033[32m [INFO]: \033[0m";
 
 // output
-using std::cout;
 using std::cerr;
-using std::endl;
 using std::cin;
+using std::cout;
+using std::endl;
 using std::setw;
 
 //          --- Math
 #include <cmath>
 // math
 using std::cos;
-using std::sin;
 using std::min;
+using std::sin;
+
+
+
 
 //          --- Types
 
-// standart floatingpoint type
-//
-// usign a generic float has the advantage that we can easily
-// change it.
-// also writing flt is shorter than double/float/long double
 
+/*
+standart floatingpoint type
 
+usign a generic float has the advantage that we can easily
+change it.
+ also writing flt is shorter than double/float/long double
+*/
 using flt = float;
+
+
+
+// 32 bit floating point
+using F32 = float;
+// 64 bit floating point
+using F64 = double;
 
 // 8 bit unsigned integer
 using U8 = unsigned char;
@@ -59,37 +70,120 @@ using std::function;
 using std::mem_fn;
 
 
-
 #include <vector>
-using std::vector;
+// dynamic array
+template <typename T>
+using Array = std::vector<T, std::allocator<T>>;
+
 
 #include <array>
-using std::array;
-
+// static array
+template <typename T, Adress I>
+using StaticArray = std::array<T, I>;
 
 //          --- Constants
 
+// π
+static constexpr F64 _pi_ = M_PI;
+// 2π
+static constexpr F64 _2pi_ = 2 * _pi_;
+// π/2
+static constexpr F64 _pi_2_ = _pi_ / 2.;
 
-static constexpr flt _pi_ = M_PI; //\pi
-static constexpr flt _2pi_ = 2*_pi_; //\_2\pi
-static constexpr flt _pi2_ = _pi_/2.; //\_2\pi
+// ∞
+static constexpr F64 _inf_ = INFINITY;
 
-// eulers number 
-static constexpr flt 𝑒 = M_E; //\mite
+// e: eulers number
+static constexpr F64 _e_ = M_E;
+
+// boltzmann constant
+static constexpr F64 _kB_ = 1.38064852e-23;
+
+
+static constexpr uint maxUint = 0xff'ff'ff'ff;
 
 //          --- Functions
 
+//          --- Random
+#include <random>
+namespace rng
+{
 
-/*
-random number generator for our floats
+    static std::mt19937 engine;
+    /*
 
-/ @brief
-/ @return uniform random number r ∈ [0,1]
-*/
-static flt randflt(){
-    return (flt)rand()/(flt)RAND_MAX;
+
+    */
+    static void set_seed(uint seed)
+    {
+        engine.seed(seed);
+    }
+
+    /*
+    random number generator for our floats
+
+    / @brief
+    / @return uniform random number r ∈ [0,1]
+    */
+    static flt randflt()
+    {
+        static std::uniform_real_distribution<flt> dis(0, 1);
+        return dis(engine);
+    }
+
+    /*
+    random number generator F64
+
+    / @brief
+    / @return uniform random number r ∈ [0,1]
+    */
+    static F64 randf64()
+    {
+        static std::uniform_real_distribution<F64> dis(0, 1);
+        return dis(engine);
+    }
+
+    template<class T>
+    static T get_random(){return T(randflt());}
+
 }
 
+
+
+/*
+calculate the mean value of a vector
+
+/ @brief
+/ @param array: vector of Floats
+/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
+*/
+template <typename Float>
+static F64 mean(Array<Float> array)
+{
+    Float sum = 0;
+    uint n = array.size();
+    for (uint i = 0; i < n; i++)
+        sum += array[i];
+    return sum / n;
+};
+
+/*
+calculate the variance of a vector
+
+/ @brief
+/ @param array: vector of Floats
+/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
+*/
+template <typename Float>
+F64 variance(Array<Float> array)
+{
+    Float mean = mean(array);
+    uint n = array.size();
+    double sum = 0;
+    for (uint i = 0; i < n; i++)
+        sum += pow(array[i] - mean, 2);
+    return sum / F64(n);
+};
 
 //          --- Exeptions
 #include <exception>
@@ -99,16 +193,10 @@ using std::exception;
 //         --- Enumerations
 
 // Boundary Conditions
-enum BC{
-    Dirichlet,// 0 boundry conditions
+enum BC
+{
+    _0, // 0 boundry conditions
     Periodic
 };
-
-// Parallelrange Policys
-enum RangePolicy{
-    For_Every_ELEMENT,
-    RANDOM
-};
-
 
 #endif // BASE_HPP
