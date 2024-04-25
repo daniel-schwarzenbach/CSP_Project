@@ -16,7 +16,7 @@ Spin class
 - with compareration operator: ==
 - with assignment operator: =
 */
-using Spin = SpinCartesian;
+using Spin = SpinVector;
 #define LAMBDA [=]
 
 #ifdef IPPL_H
@@ -39,7 +39,7 @@ Lattice class
 - Lx(), Ly(), Lz() // size of the lattice
 - comunicate_ghost_cells() // does nothing in Serial
 */
-using Lattice = LatticeSerial<Spin>;
+using Lattice = Lattice3d<Spin>;
 
 #define PARALLEL_FOR  // theoretical parallel
 #define REDUCTION_SUM // theretical reduction
@@ -48,41 +48,17 @@ using Lattice = LatticeSerial<Spin>;
 
 #endif // IPPL_H
 
-#endif // __HEISENBERG_H__
-
-
-
 /*Define the Boltzmann constant*/
-int power = -23.0;
-flt kB = 1.38064852 * pow(10.0, power);
+static constexpr double kB = 1.38064852e-23;
 
 /*
 Definition of thermodynamic beta
-*/
 
-flt Beta(flt T) {
-    return 1/(kB * T);
+/ @param T: temperature
+*/
+static double Beta(double T)
+{
+    return 1. / (kB * T);
 };
 
-/*
-Given an array[] of floats with a length l, this function returns the average value
-*/
-flt average(flt array[], int l) {
-    double sum = 0;
-    for (int i = 0; i < n; i++)
-        sum += array[i];
-
-    return sum / l;
-};
-
-/*
-Given an array[] of floatswith a length l and mean value avg, this function returns the square value of the variance:
-return: var^2 = 1/l * 𝚺_{i=1}^N (array[i] - mean)^2
-*/
-flt variance(flt array[], int l, flt mean) {
-    double return_variance = 0;
-    for (int i = 0; i < n; i++)
-        return_variance += pow(array[i] - mean, 2);
-
-    return return_variance / (l - 1);
-};
+#endif // __HEISENBERG_H__

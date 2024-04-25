@@ -1,15 +1,20 @@
 #include "wolf.h++"
 
-
+using namespace rng;
 
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
-vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz) {
-    // Initialize the 3D vector representing the lattice
-    vector<vector<vector<bool>>> visited(Lx, vector<vector<bool>>(Ly, vector<bool>(Lz)));
+Array<Array<Array<bool>>> checked(const uint Lx, const uint Ly, const uint Lz)
+{
+    // Initialize the 3D Array representing the lattice
+    Array<Array<Array<bool>>> visited(Lx, Array<Array<bool>>(Ly,
+                                                             Array<bool>(Lz)));
     // Assign false to all points in the checking_cluster
-    for (int i = 0; i < Lx; ++i) {
-        for (int j = 0; j < Ly; ++j) {
-            for (int k = 0; k < Lz; ++k) {
+    for (int i = 0; i < Lx; ++i)
+    {
+        for (int j = 0; j < Ly; ++j)
+        {
+            for (int k = 0; k < Lz; ++k)
+            {
                 visited[i][j][k] = false;
             }
         }
@@ -17,94 +22,105 @@ vector<vector<vector<bool>>> checked(const uint Lx, const uint Ly, const uint Lz
     return visited;
 }
 
-//Function to flip the spin
-void flip_spin(Spin& spin_r, Spin& spin_x){
+// Function to flip the spin
+void flip_spin(Spin &spin_r, Spin &spin_x)
+{
     flt cdot = spin_x | spin_r;
-    spin_x = spin_x - (2.0f * cdot)*spin_r;
+    spin_x = spin_x - (2.0f * cdot) * spin_r;
 }
 
-
-bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
-    flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
+bool activate_bond(Spin &spin_x, Spin &spin_r, flt beta, Spin &spin_y)
+{
+    flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
     flt activate_prob;
 
-    if (cdot > 0) {
-        flt activate_prob =  0.0f;
+    if (cdot > 0)
+    {
+        flt activate_prob = 0.0f;
     }
-    else {
-        flt activate_prob = 1-exp(cdot);
+    else
+    {
+        flt activate_prob = 1 - exp(cdot);
     }
     flt p = randflt();
     return (p <= activate_prob);
 }
 
-int wolf_algorithm(Lattice& lattice, flt beta){
+int wolf_algorithm(Lattice &lattice, flt beta)
+{
 
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
 
-    //Create vector that checks whether the site has been checked
-    vector<vector<vector<bool>>> visited = checked(Lx, Ly, Lz);
+    // Create Array that checks whether the site has been checked
+    Array<Array<Array<bool>>> visited = checked(Lx, Ly, Lz);
 
-    //Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
-    std::vector<std::vector<uint>> stack;
+    // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
+    Array<Array<uint>> stack;
 
-    //Define cluster for adding the lattice sites that belong to the cluster (for computing average lattice size)
-    std::vector<std::vector<uint>> cluster;
+    // Define cluster for adding the lattice sites that belong to the cluster (for computing average lattice size)
+    Array<Array<uint>> cluster;
 
     // Choose random reflection
-    Spin spin_r; 
+    Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    uint x = randflt()*Lx;
-    uint y = randflt()*Ly;
-    uint z = randflt()*Lz;
-    
-    //Define spin_x to be flipped, first point of the cluster
-    Spin spin_x = lattice(x,y,z);
+    uint x = randflt() * Lx;
+    uint y = randflt() * Ly;
+    uint z = randflt() * Lz;
 
-    //Flip sigma_x and mark x
+    // Define spin_x to be flipped, first point of the cluster
+    Spin &spin_x = lattice(x, y, z);
+
+    // Flip sigma_x and mark x
     flip_spin(spin_r, spin_x);
 
-    //Add spin_x to stack & cluster, mark site as checked
-    stack.push_back({x,y,z});
-    cluster.push_back({x,y,z});
+    // Add spin_x to stack & cluster, mark site as checked
+    stack.push_back({x, y, z});
+    cluster.push_back({x, y, z});
     visited[x][y][z] = true;
 
-    //Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
-    while(!stack.empty()){
-        
-        const std::vector<uint>& current = stack.back();
+    // Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
+    while (!stack.empty())
+    {
+
+        const Array<uint> &current = stack.back();
         stack.pop_back();
 
-        //Get current lattice position
+        // Get current lattice position
         uint cx = current[0];
         uint cy = current[1];
         uint cz = current[2];
 
-        //Mark as visited
+        // Mark as visited
         visited[cx][cy][cz] = true;
 
-        for (uint i = -1; i <= 1; ++i){
-            for (uint j = -1; j <= 1; ++j){
-                for (uint k = -1; k <=1; ++k){
-                    if (i==0 && j==0 && k==0) continue; //Skip original site
+        for (uint i = -1; i <= 1; ++i)
+        {
+            for (uint j = -1; j <= 1; ++j)
+            {
+                for (uint k = -1; k <= 1; ++k)
+                {
+                    if (i == 0 && j == 0 && k == 0)
+                        continue; // Skip original site
 
-                    //Implement periodic boundary conditions
+                    // Implement periodic boundary conditions
                     uint nx = (cx + i + Lx) % Lx;
                     uint ny = (cy + j + Ly) % Ly;
                     uint nz = (cz + k + Lz) % Lz;
-                    
-                    if (!visited[nx][ny][nz]){
-                        Spin spin_y = lattice(nx,ny,nz); //Define spin sigma_y
-                        visited[nx][ny][nz] = true; //Mark as visited
 
-                        //If Bond is activated...
-                        if (activate_bond(spin_x, spin_r, beta, spin_y)){
-                            flip_spin(spin_r, spin_y); //...flip spin
-                            stack.push_back({nx,ny,nz}); // ...add to stack 
-                            cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
+                    if (!visited[nx][ny][nz])
+                    {
+                        Spin spin_y = lattice(nx, ny, nz); // Define spin sigma_y
+                        visited[nx][ny][nz] = true;        // Mark as visited
+
+                        // If Bond is activated...
+                        if (activate_bond(spin_x, spin_r, beta, spin_y))
+                        {
+                            flip_spin(spin_r, spin_y);       //...flip spin
+                            stack.push_back({nx, ny, nz});   // ...add to stack
+                            cluster.push_back({nx, ny, nz}); // ...add to cluster (mark y)
                         }
                     }
                 }
@@ -112,17 +128,18 @@ int wolf_algorithm(Lattice& lattice, flt beta){
         }
     }
 
-    //Compute cluster size
+    // Compute cluster size
     size_t clusterSize = cluster.size();
 
-    if (clusterSize == 0 ){
+    if (clusterSize == 0)
+    {
         return -1;
     }
 
     return clusterSize;
 }
 
-//bool wolf(Lattice& lattice);
+// bool wolf(Lattice& lattice);
 /*
 performs the wolf algoritm on the lattice
 
@@ -131,19 +148,20 @@ performs the wolf algoritm on the lattice
 - can throw
 */
 
-flt wolf(Lattice& lattice, flt T, flt Time){
-    // to implement
+flt wolf(Lattice &lattice, flt T, flt Time, uint maxSteps)
+{
 
-    flt kB = 1.380649e-23f;
-    flt beta = 1.0f / (T*kB);
+    flt beta = 1.0f / (T * _kB_);
 
     uint Nruns = 100;
 
-    std::vector<uint> clusters;
+    Array<uint> clusters;
 
-    for (int i = 0; i <= Nruns; ++i){
+    for (int i = 0; i <= Nruns; ++i)
+    {
         uint clusterSize = wolf_algorithm(lattice, beta);
-        if(clusterSize == -1){
+        if (clusterSize == -1)
+        {
             return false;
             std::cout << "ERROR" << std::endl;
         }
@@ -152,12 +170,13 @@ flt wolf(Lattice& lattice, flt T, flt Time){
     }
 
     uint totalClusterSize = 0;
-    for (uint size : clusters) {
+    for (uint size : clusters)
+    {
         totalClusterSize += size;
     }
-    
+
     flt averageClusterSize = static_cast<flt>(totalClusterSize) / Nruns;
-    
+
     flt susceptibility = averageClusterSize;
 
     return susceptibility;
