@@ -23,7 +23,7 @@
 //      is modified throughout the runtime of the algorithm.
 bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
                 float interactionStrength, MoveType moveType) {
-    // Initialize random number generator @ Daniel: wann machen wir das am besten??
+    // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dis(0.0, 1.0);
@@ -58,6 +58,11 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
         // Calculate energy difference
         float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
                                         newSpin, interactionStrength);
+        // Important::
+
+        // TODO change expression of exponential: insert k_b!!!!!!
+
+        // SAME IN ADAPTIVE
 
         // Acceptance condition
         if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) { // Boltzmann constant k is 
