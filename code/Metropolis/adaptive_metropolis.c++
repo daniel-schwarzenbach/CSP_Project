@@ -43,6 +43,7 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
     float sigma = maxFactor;
     TimeKeeper watch;
     int proposed_count = 0;
+    float beta = Beta(T);
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
@@ -67,7 +68,7 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) {
+        if (deltaE <= 0 || dis(gen) < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
