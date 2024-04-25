@@ -30,6 +30,7 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
     // Start time and set step counter to 0
     int step_count = 0;
     TimeKeeper watch;
+    float beta = Beta(T); 
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
@@ -65,7 +66,7 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
         // SAME IN ADAPTIVE
 
         // Acceptance condition
-        if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) { // Boltzmann constant k is 
+        if (deltaE <= 0 || dis(gen) < exp(-deltaE * beta)) { // Boltzmann constant k is 
         // normalized with interaction strength J in this implementation
             spin = newSpin; // Accept the new configuration
         }
