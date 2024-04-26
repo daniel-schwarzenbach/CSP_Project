@@ -15,6 +15,8 @@
 //      - maximal running time of the algorithm
 //      - maximal number of steps
 //      - interaction strength of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 //      - trial move which we want to use to generate new spins: SpinFlip,
 //        Random or SmallStep; default: small step move 
 
@@ -22,7 +24,8 @@
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
 bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
-                float interactionStrength, MoveType moveType) {
+                float interactionStrength, Eigen::Vector3d H,
+                Eigen::Vector3d k, MoveType moveType) {
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -58,7 +61,7 @@ bool metropolis(Lattice& lattice, float T, float maxTimeSeconds, float maxSteps,
         }
         // Calculate energy difference
         float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
-                                        newSpin, interactionStrength);
+                                        newSpin, interactionStrength, H, k);
         // Important::
 
         // TODO change expression of exponential: insert k_b!!!!!!

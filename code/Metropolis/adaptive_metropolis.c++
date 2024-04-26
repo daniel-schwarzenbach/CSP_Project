@@ -27,13 +27,16 @@
 //      - max running time of the algorithm
 //      - max number of steps
 //      - interaction strength of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 //      - initial and max factor of the Gaussian
 
 // Output: 
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
 bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
-                        float maxSteps, float interactionStrength, float maxFactor) {
+                        float maxSteps, float interactionStrength,
+                        Eigen::Vector3d H, Eigen::Vector3d k, float maxFactor) {
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -61,7 +64,7 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
         float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
-                                        newSpin, interactionStrength);
+                                        newSpin, interactionStrength, H, k);
         // increase count of proposed changes
         ++proposed_count;
 
