@@ -97,6 +97,7 @@ void SpinVector::adaptive_step(flt sigma)
     F64 dy = rng::randf64();
     F64 dz = rng::randf64();
     *this += sigma * SpinVector(dx, dy, dz);
+    this->normalize();
 }
 
 
