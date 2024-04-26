@@ -1,5 +1,5 @@
 #include <Wolff/wolff.h++>
-#include <Timekeeper.h++>
+#include <Measure/Timekeeper.h++>
 
 // Function to build the cluster for checking if neighbors have been visited or not, initialize with false for all (x,y,z)
 Array<Array<Array<bool>>> checked(const int Lx, const int Ly, const int Lz) {
@@ -33,7 +33,7 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     else {
         flt activate_prob = 1-exp(cdot);
     }
-    flt p = randflt();
+    flt p = rng::randflt();
     return (p <= activate_prob);
 }
 
@@ -44,7 +44,7 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     int Lz = lattice.Lz();
 
     //Create vector that checks whether the site has been checked
-    vector<vector<vector<bool>>> visited = checked(Lx, Ly, Lz);
+    Array<Array<Array<bool>>> visited = checked(Lx, Ly, Lz);
 
     //Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     std::vector<std::vector<int>> stack;
@@ -58,7 +58,7 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     // Choose random lattice site as first point of cluster
     int x = rng::randflt()*Lx;
     int y = rng::randflt()*Ly;
-    int z = randflt()*Lz;
+    int z = rng::randflt()*Lz;
     
     //Define spin_x to be flipped, first point of the cluster
     Spin& spin_x = lattice(x,y,z);
