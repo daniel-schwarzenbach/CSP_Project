@@ -16,11 +16,13 @@
 //      - z coordinate of the changed spin
 //      - initial spin
 //      - proposed spin update
+//      - interaction strength J of the Heisenberg model
 
 // Output: 
 //      Returns the energy difference of the two spin configurations.
-float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin) {
-    constexpr float J = 1.0; // Interaction strength, normalized with k_b
+F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
+                          Spin& oldSpin, Spin& newSpin, 
+                          F64 J /*interactionStrength*/){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();

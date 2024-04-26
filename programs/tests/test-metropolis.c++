@@ -19,7 +19,7 @@ int main()
 
     //             --- metropolis
     cout << "running metropolis ..." << endl;
-    metropolis(lattice, T, Time, maxUint, MoveType::SmallStep);
+    metropolis(lattice, T, J, Time, maxUint);
 
     plot_lattice(lattice);
 

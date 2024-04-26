@@ -14,15 +14,23 @@
 //      - temperature T
 //      - maximal running time of the algorithm
 //      - maximal number of steps
+//      - interaction strength of the Heisenberg model
 //      - trial move which we want to use to generate new spins: SpinFlip,
 //        Random or SmallStep; default: small step move
 //
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool metropolis(Lattice &lattice, F64 T, F64 maxTimeSeconds, 
-                uint maxSteps, MoveType moveType)
-{
+bool metropolis(Lattice &lattice, 
+                F64 T/*temperature*/, 
+                F64 J/*interaction Strength*/,
+                F64 maxTimeSeconds, 
+                uint maxSteps, 
+                MoveType moveType) {
+    // Initialize random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0.0, 1.0);
     // Start time and set step counter to 0
     uint step_count = 0;
     TimeKeeper watch;
@@ -54,7 +62,13 @@ bool metropolis(Lattice &lattice, F64 T, F64 maxTimeSeconds,
             break;
         }
         // Calculate energy difference
-        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
+        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, J);
+        // Important::
+
+        // TODO change expression of exponential: insert k_b!!!!!!
+
+        // SAME IN ADAPTIVE
 
         // Acceptance condition
         if (deltaE <= 0 || rng::randf64() < exp(-deltaE / T))
