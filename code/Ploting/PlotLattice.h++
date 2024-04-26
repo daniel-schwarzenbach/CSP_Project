@@ -3,15 +3,7 @@
 
 #include <Heisenberg.h++>
 
-static Array<Array<double>> rainbow_dark {
-    {0.0, 0.0, 0.9},
-    {0.0, 0.6, 0.6},
-    {0.0, 0.9, 0.0},
-    {0.6, 0.6, 0.0},
-    {0.9, 0.0, 0.0},
-    {0.6, 0.0, 0.6},
-    {0.0, 0.0, 0.9}
-};
+
 
 bool plot_lattice_slice(Lattice &lattice, int z = 0, 
                         string filename = "");
@@ -20,6 +12,7 @@ bool plot_lattice_slice(Lattice &lattice, int z = 0,
 bool plot_lattice(  Lattice &lattice, 
                     string filename = "");
 
+string get_filename(string Folder,uint L, F64 J, F64 T, F64 Time);
 
 /*
     @brief: convert_pngs_to_gif
