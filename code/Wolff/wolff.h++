@@ -1,3 +1,4 @@
+
 #ifndef WOLF_HPP
 #define WOLF_HPP
 
