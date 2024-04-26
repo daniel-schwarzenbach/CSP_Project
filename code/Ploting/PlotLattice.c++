@@ -64,12 +64,13 @@ bool plot_lattice_slice(Lattice &lattice, int z, std::string filename)
 {
 
     Array<Array<flt>> latticeSlice = lattice_slice(lattice, z);
+
+    auto fig  = plt::figure(true);
+    fig->size(1000, 1000);
     plt::colormap(rainbow_dark);
-    plt::caxis({0, _2pi_});
-    plt::gca()->color_box_range(0, _2pi_);
     plt::imagesc(latticeSlice);
     plt::caxis({0, _2pi_});
-    plt::gca()->color_box_range(0, _2pi_);
+    plt::figure()->size(1000, 1000);
     if (filename != "")
     {
         plt::save(filename);
@@ -84,16 +85,15 @@ bool plot_lattice_slice(Lattice &lattice, int z, std::string filename)
 bool plot_lattice(Lattice &lattice, std::string filename)
 {
     StaticArray<Array<double>, 7> vecs = lattice_Arrays(lattice);
+
+    auto fig  = plt::figure(true);
+    fig->size(1000, 1000);
     plt::colormap(rainbow_dark);
-    plt::caxis({0, _2pi_});
-    plt::gca()->color_box_range(0, _2pi_);
     auto plot = plt::quiver3(vecs[0], vecs[1], vecs[2], vecs[3],
                              vecs[4], vecs[5], vecs[6], 0.5);
     plot->line_width(3);
     plot->normalize(true);
     plt::caxis({0, _2pi_});
-    plt::gca()->color_box_range(0, _2pi_);
-
     if (filename != "")
     {
         plt::save(filename);
