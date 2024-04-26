@@ -1,4 +1,4 @@
-#include <Wolf/wolf.h++>
+#include <Wolff/wolff.h++>
 #include <Metropolis/metropolis.h++>
 #include <Metropolis/adaptive_metropolis.h++>
 
@@ -10,6 +10,7 @@
 flt T = 0.1;
 flt J = 1.0;
 flt Time = 20.0;
+int steps = 10;
 /*
 Heisenberg: MAINFUNCTION
 
@@ -63,22 +64,23 @@ int main(int mainArgCount, char **mainArgs)
     cout << INFO << "finishe adaptiven metropolis in "
          << timerK.time() << " sec" << endl;
 
-    //               --- wolf
-    cout << "running wolf ..." << endl;
+    //               --- wolff
+    cout << "running wolff ..." << endl;
     timerK.start();
     try
     {
         lattice.randomize(seed); // randomize the lattice
-        wolf(lattice, T, Time);
+        wolff(lattice, T, steps, Time);
     }
     catch (exception &e)
     {
-        cerr << ERROR << "wolf failed!" << endl
+        cerr << ERROR << "wolff failed!" << endl
              << e.what() << endl;
     }
     timerK.stop();
-    cout << INFO << "finished wolf in " << timerK.time() << " sec"
-         << endl;
+    cout    << INFO << "finished wolff in " << timerK.time() << " sec"
+            << endl;
 
     return 0;
 }
+

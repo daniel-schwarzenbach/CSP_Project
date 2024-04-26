@@ -1,4 +1,4 @@
-#include <Wolf/wolf.h++>
+#include <f/wolff.h++>
 #include <Metropolis/metropolis.h++>
 #include <Metropolis/adaptive_metropolis.h++>
 
@@ -48,8 +48,8 @@ int main(int mainArgCount, char** mainArgs){
         // Here, the Metropolis advanced algorithm acts on a given lattice and changes the lattice
     };
 
-    flt Wolff_algorithm(Lattice& lattice, flt T, flt time, int steps) {
-        susceptibility = wolf(lattice, T, time, steps); // Here, the Metropolis algorithm acts on a given lattice and changes the lattice
+    flt Wolff_algorithm(Lattice& lattice, flt T, flt time, flt steps) {
+        susceptibility = wolff(lattice, T, time, steps); // Here, the Metropolis algorithm acts on a given lattice and changes the lattice
         return susceptibility;
     };
 
