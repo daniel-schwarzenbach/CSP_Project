@@ -17,6 +17,8 @@ metropolis algorithm for the Heisenberg 3D model
 / @exception may fail
 */
 bool metropolis(Lattice& lattice, flt T, flt maxTime, flt maxSteps, 
-                flt interactionStrength, MoveType moveType = MoveType::SmallStep);
+                flt interactionStrength, Eigen::Vector3d H = Eigen::Vector3d::Zero(), 
+                Eigen::Vector3d k = Eigen::Vector3d::Zero(),
+                MoveType moveType = MoveType::SmallStep);
 
 #endif
