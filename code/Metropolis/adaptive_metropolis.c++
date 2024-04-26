@@ -8,16 +8,16 @@
 // temperature. The algorithm stops when the max time OR the max 
 // number of steps, that are also specified by the input, are reached.
 // The trial move that is used in this version of the Metropolis 
-// algorithm is a similar to the small step move, which we already
+// algorithm is similar to the small step move, which we already
 // encountered in the standard Metropolis algorithm, combined with 
 // a Gaussian move. To generate a trial spin we add a Gaussian distributed
-// random vector multiplied by factor sigma to the initial spin vector
+// random vector multiplied by a factor sigma to the initial spin vector
 // and then normalize the result to obtain the new spin. The adaptive
 // element of the algorithm is the factor sigma that multiplies the 
 // Gaussian distributed vector, which takes over the role of the opening
 // angle in the small step move. This factor is changed after each step,
 // depending on the acceptance rate in the previous step, to reach an 
-// otpimal acceptance rate of 50%. A more detailed description of
+// optimal acceptance rate of 50%. A more detailed description of
 // the algorithm can be found in the report.
 
 
@@ -26,20 +26,22 @@
 //      - temperature T
 //      - max running time of the algorithm
 //      - max number of steps
+//      - interaction strength of the Heisenberg model
 //      - initial and max factor of the Gaussian
 
 // Output: 
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
-                        float maxSteps, float maxFactor) {
+bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
+                         uint maxSteps,
+                         F64 maxFactor) {
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dis(0.0, 1.0);
     // Start time and set step counter to 0
     int step_count = 0;
-    float sigma = maxFactor;
+    F64 sigma = maxFactor;
     TimeKeeper watch;
     int proposed_count = 0;
 
@@ -54,11 +56,12 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         // Get the spin at the chosen site (cartesian)
         Spin& spin = lattice(x, y, z);
         //Initialize proposed spin
-        SpinCartesian newSpin = spin;
+        Spin newSpin = spin;
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, newSpin);
+        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, J);
         // increase count of proposed changes
         ++proposed_count;
 
@@ -81,7 +84,7 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         }
 
         // Check if maximum time has been reached
-        if (watch.time() >= maxTimeSeconds) {
+        if (watch.time() >= maxTime) {
             break; // Stop simulation if maximum time reached
         }
         // Increase step counter

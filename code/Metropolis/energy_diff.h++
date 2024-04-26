@@ -2,8 +2,9 @@
 #define ENERGY_DIFF_H
 
 #include <Heisenberg.h++>
-#include <cmath> // Is it really needed? Check later
 
-float calculateEnergyDiff(Lattice& lattice, int x, int y, int z, Spin& oldSpin, Spin& newSpin);
+F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
+                          Spin& oldSpin, Spin& newSpin, 
+                          F64 J /*interactionStrength*/);
 
 #endif // ENERGY_DIFF_H
