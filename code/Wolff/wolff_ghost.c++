@@ -75,7 +75,7 @@ bool activate_spin_ghost(Spin& spin_x, Spin& spin_r, flt beta, Matrix& ghost, Sp
 
 
 //If ghost cell is activated, check all lattice sites
-void check_ghost(Lattice& lattice, Matrix& ghost, Spin& H){
+void check_ghost(Lattice& lattice, Matrix& ghost, Spin& H, Spin& spin_r){
     for(int i == 0; i <= Lx; ++i){
         for(int j==1; j <= Ly; ++j){
             for(int k==1; k <= Lz; ++k){
@@ -170,18 +170,14 @@ int wolf_algorithm(Lattice& lattice, flt beta){
             }
         }
 
-        if(activate_spin_ghost(spin_x, spin_r, beta, ghost)){
+        if(activate_spin_ghost(spin_x, spin_r, beta, ghost, H)){
             flip_ghost(ghost, spin_r);
-            check_ghost();
+            check_ghost(lattice, ghost, H, spin_r);
         }
     }
 
     //Compute cluster size
     size_t clusterSize = cluster.size();
-
-    if (clusterSize == 0 ){
-        return -1;
-    }
 
     return clusterSize;
 }
@@ -196,7 +192,6 @@ performs the wolff algoritm on the lattice
 */
 
 F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
-    // to implement
 
     F64 beta = Beta(T);
 
