@@ -5,7 +5,7 @@
 
 #include <Eigen/Dense>
 // represents an NxN real matrix
-using MatrixNxM = Eigen::Matrix<flt, Eigen::Dynamic, 
+using MatrixNxM = Eigen::Matrix<flt, Eigen::Dynamic,
                                 Eigen::Dynamic, Eigen::RowMajor>;
 // represents an Nx1 real vector
 using VectorN = Eigen::Matrix<flt, Eigen::Dynamic, 1>;
@@ -14,8 +14,9 @@ using VectorN = Eigen::Matrix<flt, Eigen::Dynamic, 1>;
 using Vector3 = Eigen::Matrix<flt, 3, 1>;
 
 // returns the solution of the linear system min{ |Ax - b|² }
-VectorN fit_lst_sqr(const MatrixNxM& A, const VectorN& b);
+VectorN fit_lst_sqr(const MatrixNxM &A, const VectorN &b);
 
-
+// scalar product of two vectors
+flt operator|(const Vector3 &a, const Vector3 &b);
 
 #endif // __EIGEN_H__

@@ -22,9 +22,9 @@
 
 // Output: 
 //      Returns the energy difference of the two spin configurations.
-float calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
-            Spin& oldSpin, Spin& newSpin, float interactionStrength,
-            Eigen::Vector3d H, Eigen::Vector3d k) {
+F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
+                          Spin& oldSpin, Spin& newSpin, 
+                          F64 J, Eigen::Vector3d h, Eigen::Vector3d k){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -49,8 +49,8 @@ float calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
         // Get neighboring spin
         Spin& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
-        energyOld += -interactionStrength * (oldSpin | neighborSpin) - (oldSpin | H) - pow((oldSpin | k), 2);
-        energyNew += -interactionStrength * (newSpin | neighborSpin) - (newSpin | H) - pow((newSpin | k), 2);
+        energyOld += -J * (oldSpin | neighborSpin) - (oldSpin | h) - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | neighborSpin) - (newSpin | h) - pow((newSpin | k), 2);
     }   
 
     // Calculate energy difference (deltaE)

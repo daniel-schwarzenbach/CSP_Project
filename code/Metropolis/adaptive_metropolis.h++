@@ -2,7 +2,7 @@
 #define ADAPTIVE_METROPOLIS_HPP
 
 #include <Heisenberg.h++>
-#include <Timekeeper.h++>
+#include <Measure/Timekeeper.h++>
 #include <random>
 #include <cmath>
 
@@ -14,10 +14,10 @@ ado algorithm for the Heisenber3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool adaptive_metropolis(Lattice& lattice, flt T, flt maxTime,
-                        flt maxSteps, flt interactionStrength,
-                        Eigen::Vector3d H = Eigen::Vector3d::Zero(),
-                        Eigen::Vector3d k = Eigen::Vector3d::Zero(),
-                        flt maxFactor = 60);
+bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
+                         uint maxSteps,
+                         Eigen::Vector3d h = Eigen::Vector3d::Zero(),
+                         Eigen::Vector3d k = Eigen::Vector3d::Zero(),
+                         F64 maxFactor = 60);
 
 #endif

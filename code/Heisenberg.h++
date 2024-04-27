@@ -16,7 +16,7 @@ Spin class
 - with compareration operator: ==
 - with assignment operator: =
 */
-using Spin = SpinCartesian;
+using Spin = SpinVector;
 #define LAMBDA [=]
 
 #ifdef IPPL_H
@@ -39,7 +39,7 @@ Lattice class
 - Lx(), Ly(), Lz() // size of the lattice
 - comunicate_ghost_cells() // does nothing in Serial
 */
-using Lattice = LatticeSerial<Spin>;
+using Lattice = Lattice3d<Spin>;
 
 #define PARALLEL_FOR  // theoretical parallel
 #define REDUCTION_SUM // theretical reduction
@@ -47,5 +47,18 @@ using Lattice = LatticeSerial<Spin>;
 #define CRITICAL      // theoretical critical
 
 #endif // IPPL_H
+
+/*Define the Boltzmann constant*/
+static constexpr double kB = 1.38064852e-23;
+
+/*
+Definition of thermodynamic beta
+
+/ @param T: temperature
+*/
+static double Beta(double T)
+{
+    return 1. / (kB * T);
+};
 
 #endif // __HEISENBERG_H__
