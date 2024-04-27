@@ -9,7 +9,10 @@
                 "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 "${workspaceFolder}/code",
                 "${workspaceFolder}/libraries/matplotplusplus/source",
-                "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot"
+                "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot",
+                "${workspaceFolder}/libraries/Ippl/build/ippl/src/",
+                "${workspaceFolder}/libraries/Ippl/build/Heffte/Heffte_omp/include/",
+                "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_omp/include/"
             ],
             "defines": [
                 "CSP_DEBUG"

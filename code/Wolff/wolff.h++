@@ -1,3 +1,4 @@
+
 #ifndef WOLF_HPP
 #define WOLF_HPP
 
@@ -5,18 +6,14 @@
 #include <algorithm>
 #include <cmath>
 
-using flt = float;
-using namespace std;
-
-
 /*
-wolf algorithm for the Heisenberg3D model
+wolff algorithm for the Heisenberg3D model
 
 / @brief
 / @param lattice our 3d lattice, where to perform the simulation on
 / @return if the procedure succeds
 / @exception may fail
 */
-flt wolf(Lattice& lattice, flt T, flt J, flt Time);
+F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps);
 
 #endif

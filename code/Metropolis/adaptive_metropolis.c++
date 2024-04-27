@@ -34,16 +34,16 @@
 // Output: 
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
-                        float maxSteps, float interactionStrength,
-                        Eigen::Vector3d H, Eigen::Vector3d k, float maxFactor) {
+bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
+                         uint maxSteps, Eigen::Vector3d h, Eigen::Vector3d k,
+                         F64 maxFactor) {
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dis(0.0, 1.0);
     // Start time and set step counter to 0
     int step_count = 0;
-    float sigma = maxFactor;
+    F64 sigma = maxFactor;
     TimeKeeper watch;
     int proposed_count = 0;
     float beta = Beta(T);
@@ -63,8 +63,8 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        float deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
-                                        newSpin, interactionStrength, H, k);
+        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, J, h, k);
         // increase count of proposed changes
         ++proposed_count;
 
@@ -87,7 +87,7 @@ bool adaptive_metropolis(Lattice& lattice, float T, float maxTimeSeconds,
         }
 
         // Check if maximum time has been reached
-        if (watch.time() >= maxTimeSeconds) {
+        if (watch.time() >= maxTime) {
             break; // Stop simulation if maximum time reached
         }
         // Increase step counter

@@ -3,46 +3,27 @@
 
 #include <Heisenberg.h++>
 
-namespace measure{
+namespace measure
+{
 
-/*
-calculate the magnetization of all the spins inside the lattice
+    /*
+    calculate the magnetization of all the spins inside the lattice
 
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return the magnetization of the lattice
-*/
-flt get_magnetization(const Lattice& lattice);
+    / @brief
+    / @param lattice our 3d lattice, where to perform the simulation on
+    / @return the non normalized magnetization of the lattice
+    */
+    Vector3 get_magnetization(const Lattice &lattice);
 
-/*
-calculate the energy of all the spins inside the lattice
+    /*
+    calculate the energy of all the spins inside the lattice
 
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return the energy of the lattice
-*/
-flt get_energy(const Lattice& lattice);
+    / @brief
+    / @param lattice our 3d lattice, where to perform the simulation on
+    / @return the energy of the lattice
+    */
+    F64 get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0}, F64 J = 1);
 
-/*
-calculate the specific heat of all the spins inside the lattice
-
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return the specific heat of the lattice
-*/
-flt get_specific_heat(const Lattice& lattice);
-
-
-/*
-calculate all the observables of the lattice
-
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return a vector with all the observables
-*/
-vector<flt> get_all_observables(const Lattice& lattice);
-
-
-} // namespace measure
+}
 
 #endif // __OBSERVABLES_H__

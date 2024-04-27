@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.txt": "cmake",
         "array": "cpp",
         "atomic": "cpp",
         "bit": "cpp",
@@ -75,7 +76,8 @@
         "core": "cpp",
         "geometry": "cpp",
         "hash_map": "cpp",
-        "*.h++": "cpp"
+        "*.h++": "cpp",
+        "numbers": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "cmake.configureOnOpen": true,
