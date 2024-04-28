@@ -3,7 +3,7 @@
 
 #include <Heisenberg.h++>
 
-
+namespace dat{
 
 bool plot_lattice_slice(Lattice &lattice, int z = 0, 
                         string filename = "");
@@ -12,7 +12,7 @@ bool plot_lattice_slice(Lattice &lattice, int z = 0,
 bool plot_lattice(  Lattice &lattice, 
                     string filename = "");
 
-string get_filename(string Folder,uint L, F64 J, F64 T, F64 Time);
+string get_filename(string prefix,uint L, F64 J, F64 T, F64 Time);
 
 /*
     @brief: convert_pngs_to_gif
@@ -25,8 +25,9 @@ string get_filename(string Folder,uint L, F64 J, F64 T, F64 Time);
 */
 bool convert_pngs_to_gif(string gifname, string pngfilePrefix);
 
-bool make_folder(string foldername);
 
 bool test_all_colors();
+
+}
 
 #endif // __PLOTLATTICE_H__
