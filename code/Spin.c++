@@ -63,8 +63,8 @@ SpinVector SpinVector::from_phi_theata(flt phi, flt theta)
 SpinVector SpinVector::get_random()
 {
     SpinVector s;
-    flt theta = rng::randflt() * _pi_;
-    flt phi = rng::randflt() * _2pi_;
+    F64 theta = rng::rand_f64() * _pi_;
+    F64 phi = rng::rand_f64() * _2pi_;
     s << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),
         std::cos(theta);
@@ -93,9 +93,9 @@ void SpinVector::small_step_move(flt openingAngle)
 
 void SpinVector::adaptive_step(flt sigma)
 {
-    F64 dx = rng::randf64();
-    F64 dy = rng::randf64();
-    F64 dz = rng::randf64();
+    F64 dx = rng::rand_f64();
+    F64 dy = rng::rand_f64();
+    F64 dz = rng::rand_f64();
     *this += sigma * SpinVector(dx, dy, dz);
     this->normalize();
 }
@@ -129,8 +129,8 @@ flt SpinCompressed::z() const { return cos(theta()); }
 // generate random spin
 SpinCompressed::SpinCompressed()
 {
-    phi_byte = round(rng::randflt() * 0xff);
-    theta_byte = round(rng::randflt() * 0xfe);
+    phi_byte = round(rng::rand_f64() * 0xff);
+    theta_byte = round(rng::rand_f64() * 0xfe);
 }
 // to initialize a zero Spin
 SpinCompressed::SpinCompressed(flt zero)
@@ -197,8 +197,8 @@ SpinCompressed SpinCompressed::from_phi_theata(flt phi, flt theta)
 SpinCompressed SpinCompressed::get_random()
 {
     SpinCompressed s;
-    s.phi_byte = round(rng::randflt() * 0xff);
-    s.theta_byte = round(rng::randflt() * 0xfe);
+    s.phi_byte = round(rng::rand_f64() * 0xff);
+    s.theta_byte = round(rng::rand_f64() * 0xfe);
     return s;
 }
 

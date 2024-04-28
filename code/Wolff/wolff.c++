@@ -33,7 +33,7 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
     flt activate_prob;
     F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
-    flt p = rng::randflt();
+    flt p = rng::rand_f64();
     return (p <= active);
 }
 
@@ -56,9 +56,9 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::randflt()*Lx;
-    int y = rng::randflt()*Ly;
-    int z = rng::randflt()*Lz;
+    int x = rng::rand_f64()*Lx;
+    int y = rng::rand_f64()*Ly;
+    int z = rng::rand_f64()*Lz;
     
     //Define spin_x to be flipped, first point of the cluster
     Spin& spin_x = lattice(x,y,z);

@@ -1,4 +1,4 @@
-#include <Ploting/PlotLattice.h++>
+#include <Data/Plot.h++>
 #include <Measure/Observables.h++>
 #include <matplot/matplot.h>
 #include <tuple>
@@ -36,7 +36,7 @@ static Array<Array<double>> heat {
     {0.0, 0.0, 0.6}
 };
 
-Array<Array<flt>> lattice_slice(Lattice &lattice, uint z = 0)
+Array<Array<flt>> lattice_slice(Lattice &lattice, uint z)
 {
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
@@ -91,7 +91,7 @@ StaticArray<Array<F64>, 7> lattice_Arrays(Lattice &lattice)
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
 }
 
-bool plot_lattice_slice(Lattice &lattice, int z, std::string filename)
+bool dat::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
 {
 
     Array<Array<flt>> latticeSlice = lattice_slice(lattice, z);
@@ -113,7 +113,7 @@ bool plot_lattice_slice(Lattice &lattice, int z, std::string filename)
     return 0;
 }
 
-bool plot_lattice(Lattice &lattice, std::string filename)
+bool dat::plot_lattice(Lattice &lattice, std::string filename)
 {
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
     F64 mag = mean(arrays[6]);
@@ -148,7 +148,7 @@ bool plot_lattice(Lattice &lattice, std::string filename)
     return 0;
 }
 
-bool convert_pngs_to_gif(string gifname, string pngfilePrefix)
+bool dat::convert_pngs_to_gif(string gifname, string pngfilePrefix)
 {
     double delay = 5;
     string command =
@@ -157,14 +157,10 @@ bool convert_pngs_to_gif(string gifname, string pngfilePrefix)
     return i;
 }
 
-bool make_folder(string foldername)
-{
-    string command = "mkdir -p " + foldername;
-    int i = std::system(command.c_str());
-    return i;
-}
 
-bool test_all_colors()
+
+
+bool dat::test_all_colors()
 {
     plt::palette::rdbu();
     plt::palette::pastel2();
@@ -223,9 +219,9 @@ bool test_all_colors()
     return true;
 }
 
-string get_filename(string Folder, uint L, F64 J, F64 T, F64 Time)
+string dat::get_filename(string Prefix, uint L, F64 J, F64 T, F64 Time)
 {
-    string filename = Folder + "/L=" + to_string(L) + "_J=" 
+    string filename = Prefix + "L=" + to_string(L) + "_J=" 
                     + to_string(J) + "_T=" + to_string(T) + "K_Time=" 
                     + to_string(Time) + "s.png";
     return filename;

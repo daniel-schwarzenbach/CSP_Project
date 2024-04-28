@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <string>
 using std::string;
+using std::to_string;
 
 static const string RESET = "\033[0m";   //   RESET
 static const string RED = "\033[31m";    //   RED
@@ -103,50 +104,7 @@ static constexpr F64 _kB_ = 1.38064852e-23;
 static constexpr uint maxUint = 0xff'ff'ff'ff;
 
 //          --- Functions
-
-//          --- Random
-#include <random>
-namespace rng
-{
-
-    static std::mt19937 engine;
-    /*
-
-
-    */
-    static void set_seed(uint seed)
-    {
-        engine.seed(seed);
-    }
-
-    /*
-    random number generator for our floats
-
-    / @brief
-    / @return uniform random number r ∈ [0,1]
-    */
-    static flt randflt()
-    {
-        static std::uniform_real_distribution<flt> dis(0, 1);
-        return dis(engine);
-    }
-
-    /*
-    random number generator F64
-
-    / @brief
-    / @return uniform random number r ∈ [0,1]
-    */
-    static F64 randf64()
-    {
-        static std::uniform_real_distribution<F64> dis(0, 1);
-        return dis(engine);
-    }
-
-    template<class T>
-    static T get_random(){return T(randflt());}
-
-}
+#include <RNG.h++>
 
 
 
