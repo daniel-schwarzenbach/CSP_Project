@@ -1,10 +1,10 @@
 #include "Eigen.h++"
 #include <Eigen/QR>
 
-VectorN fit_lst_sqr(const MatrixNxM &A, const VectorN &b)
+Vector fit_lst_sqr(const Matrix &A, const Vector &b)
 {
-    MatrixNxM A_t = A.transpose() * A;
-    VectorN b_t = A.transpose() * b;
+    Matrix A_t = A.transpose() * A;
+    Vector b_t = A.transpose() * b;
     return A_t.colPivHouseholderQr().solve(b_t);
 }
 

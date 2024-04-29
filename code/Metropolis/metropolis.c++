@@ -37,8 +37,7 @@ bool metropolis(Lattice &lattice,
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    while (step_count < maxSteps)
-    {
+    for(uint step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -71,7 +70,8 @@ bool metropolis(Lattice &lattice,
         // SAME IN ADAPTIVE
 
         // Acceptance condition
-        if (deltaE <= 0 || rng::randf64() < exp(-deltaE / T))
+        F64 beta = Beta(T);
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE / beta))
         {                   // Boltzmann constant k is
                             // normalized with interaction strength J in this implementation
             spin = newSpin; // Accept the new configuration

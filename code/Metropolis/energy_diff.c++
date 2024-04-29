@@ -1,5 +1,7 @@
 #include <Metropolis/energy_diff.h++>
 
+
+using Indiex = StaticArray<int, 3>;
 // Calculate Energy Difference //
 
 // This function calculates and returns the energy difference of two spin
@@ -21,8 +23,8 @@
 // Output: 
 //      Returns the energy difference of the two spin configurations.
 F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
-                          Spin& oldSpin, Spin& newSpin, 
-                          F64 J /*interactionStrength*/){
+                        Spin& oldSpin, Spin& newSpin, 
+                        F64 J /*interactionStrength*/){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -30,28 +32,31 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     int Lz = lattice.Lz();
 
     // Indices of nearest neighbors (periodic boundary conditions assumed)
-    int neighbors[6][3] = {
-        {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
-        {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
-        {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
+    // int neighbors[6][3] = {
+    //     {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
+    //     {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
+    //     {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
+    // };
+    Array<Indiex> neighbors = {
+        {x+1, y, z}, {x-1, y, z},
+        {x, y+1, z}, {x, y-1, z},
+        {x, y, z+1}, {x, y, z-1}
     };
-
     // Energies of old and new configuration
-    float energyOld = 0.0;
-    float energyNew = 0.0;
+    F64 energyOld = 0.0;
+    F64 energyNew = 0.0;
     for (int i = 0; i < 6; ++i) {
         // Get indices of neighbors
         int nx = neighbors[i][0];
         int ny = neighbors[i][1];
         int nz = neighbors[i][2];
         // Get neighboring spin
-        Spin& neighborSpin = lattice(nx, ny, nz);
+        const Spin& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
-        energyOld += -J * (oldSpin.x() * neighborSpin.x() + oldSpin.y() * neighborSpin.y() + oldSpin.z() * neighborSpin.z());
-        energyNew += -J * (newSpin.x() * neighborSpin.x() + newSpin.y() * neighborSpin.y() + newSpin.z() * neighborSpin.z());
+        energyOld += -J * (oldSpin | neighborSpin);
+        energyNew += -J * (newSpin | neighborSpin);
     }   
-
     // Calculate energy difference (deltaE)
-    float deltaE = energyNew - energyOld;
+    F64 deltaE = energyNew - energyOld;
     return deltaE;
 }
