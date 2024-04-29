@@ -77,21 +77,24 @@ void SpinVector::spin_flip()
 }
 void SpinVector::random_move()
 {
-    *this = get_random();
+    *this = SpinVector::get_random();
 }
-void SpinVector::small_step_move(flt openingAngle)
+void SpinVector::small_step_move(F64 openingAngle)
 {
-    Vector3 randomVector = SpinVector::get_random();
+    F64 theta = rng::rand_f64()*openingAngle;
+    F64 phi = rng::rand_f64()*_2pi_;
+    Vector3 randomPole;
+    randomPole <<   std::sin(theta) * std::cos(phi),
+                    std::sin(theta) * std::sin(phi),
+                    std::cos(theta);
     Vector3 northPole(0, 0, 1);
-    Vector3 originalSpin = *this;
     Eigen::Quaternion<flt> rotationToOriginal =
-        Eigen::Quaternion<flt>::FromTwoVectors(northPole,
-                                               originalSpin);
-    Vector3 rotatedNewSpin = rotationToOriginal * randomVector;
-    *this = rotatedNewSpin;
+            Eigen::Quaternion<flt>::FromTwoVectors(
+            northPole, *this);
+    *this = rotationToOriginal * randomPole;
 }
 
-void SpinVector::adaptive_step(flt sigma)
+void SpinVector::adaptive_step(F64 sigma)
 {
     F64 dx = rng::rand_f64();
     F64 dy = rng::rand_f64();

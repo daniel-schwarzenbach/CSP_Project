@@ -9,18 +9,21 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    Vector3 magnetization = {0, 0, 0};
+    F32 sx = 0; F32 sy = 0; F32 sz = 0;
+    #pragma omp parallel for reduction(+:sx, sy, sz)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
         {
             for (int z = 0; z < Lz; z++)
             {
-                magnetization += lattice(x, y, z);
+                sx += lattice(x, y, z)(0);
+                sy += lattice(x, y, z)(1);
+                sz += lattice(x, y, z)(2);
             }
         }
     }
-    return magnetization;
+    return {sx, sy, sz};
 }
 
 F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
@@ -63,16 +66,19 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
         break;
     }
 
-    uint lattice_lx = lattice.Lx();
-    uint lattice_ly = lattice.Ly();
-    uint lattice_lz = lattice.Lz();
-
+    uint Lx = lattice.Lx();
+    uint Ly = lattice.Ly();
+    uint Lz = lattice.Lz();
+    uint sizeX = Lx - bond_factor;
+    uint sizeY = Ly - bond_factor;
+    uint sizeZ = Lz - bond_factor;
     // sum over all bonds parallel to x-direction
-    for (int x = 0; x < lattice_lx - bond_factor; x++)
+    #pragma omp parallel for reduction(+: spin_interaction_energy)
+    for (int x = 0; x < sizeX; x++)
     {
-        for (int y = 0; y < lattice_ly; y++)
+        for (int y = 0; y < Ly; y++)
         {
-            for (int z = 0; z < lattice_lz; z++)
+            for (int z = 0; z < Lz; z++)
             {
                 spin_interaction_energy +=
                     lattice(x, y, z) | lattice(x + 1, y, z);
@@ -80,12 +86,14 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
         }
     }
 
+
     // sum over all bonds parallel to y-direction
-    for (int x = 0; x < lattice_lx; x++)
+    #pragma omp parallel for reduction(+: spin_interaction_energy)
+    for (int x = 0; x < Lx; x++)
     {
-        for (int y = 0; y < lattice_ly - bond_factor; y++)
+        for (int y = 0; y < sizeY; y++)
         {
-            for (int z = 0; z < lattice_lz; z++)
+            for (int z = 0; z < Lz; z++)
             {
                 spin_interaction_energy +=
                     lattice(x, y, z) | lattice(x, y + 1, z);
@@ -94,11 +102,12 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
     }
 
     // sum over all bonds parallel to z-direction
-    for (int x = 0; x < lattice_lx; x++)
+    #pragma omp parallel for reduction(+: spin_interaction_energy)
+    for (int x = 0; x < Lx; x++)
     {
-        for (int y = 0; y < lattice_ly; y++)
+        for (int y = 0; y < Ly; y++)
         {
-            for (int z = 0; z < lattice_lz - bond_factor; z++)
+            for (int z = 0; z < sizeZ; z++)
             {
                 spin_interaction_energy +=
                     lattice(x, y, z) | lattice(x, y, z + 1);
@@ -107,11 +116,12 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
     }
 
     // sum over spins to calculate the interaction with the magnetic field
-    for (int x = 0; x < lattice_lx; x++)
+    #pragma omp parallel for reduction(+: mag_interaction_energy)
+    for (int x = 0; x < Lx; x++)
     {
-        for (int y = 0; y < lattice_ly; y++)
+        for (int y = 0; y < Ly; y++)
         {
-            for (int z = 0; z < lattice_lz; z++)
+            for (int z = 0; z < Lz; z++)
             {
                 mag_interaction_energy += h_vec | lattice(x, y, z);
             }
@@ -127,6 +137,7 @@ F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec){
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
     F64 scalarAverage;
+    #pragma omp parallel for reduction(+: scalarAverage)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)

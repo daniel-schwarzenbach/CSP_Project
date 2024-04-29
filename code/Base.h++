@@ -97,8 +97,7 @@ static constexpr F64 _inf_ = INFINITY;
 // e: eulers number
 static constexpr F64 _e_ = M_E;
 
-// boltzmann constant
-static constexpr F64 _kB_ = 1.38064852e-23;
+
 
 
 static constexpr uint maxUint = 0xff'ff'ff'ff;
@@ -108,40 +107,7 @@ static constexpr uint maxUint = 0xff'ff'ff'ff;
 
 
 
-/*
-calculate the mean value of a vector
 
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-static F64 mean(Array<Float> array)
-{
-    Float sum = 0;
-    uint n = array.size();
-    for (uint i = 0; i < n; i++)
-        sum += array[i];
-    return sum / n;
-};
-
-/*
-calculate the variance of a vector
-
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-F64 variance(Array<Float> array)
-{
-    Float mean = mean(array);
-    uint n = array.size();
-    double sum = 0;
-    for (uint i = 0; i < n; i++)
-        sum += pow(array[i] - mean, 2);
-    return sum / F64(n);
-};
 
 //          --- Exeptions
 #include <exception>

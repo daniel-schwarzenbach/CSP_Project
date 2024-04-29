@@ -18,7 +18,7 @@ namespace rng
     random number generator for our floats
 
     / @brief
-    / @return uniform random number r ∈ [0,1]
+    / @return uniform random number r ∈ [0,1)
     */
     float rand_f32()
     {
@@ -30,7 +30,7 @@ namespace rng
     random number generator F64
 
     / @brief
-    / @return uniform random number r ∈ [0,1]
+    / @return uniform random number r ∈ [0,1)
     */
     double rand_f64()
     {

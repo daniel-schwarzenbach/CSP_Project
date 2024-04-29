@@ -65,6 +65,7 @@ StaticArray<Array<F64>, 7> lattice_Arrays(Lattice &lattice)
         u(sizeL, 0), v(sizeL, 0), w(sizeL, 0),
         color(sizeL, 0);
     uint i = 0;
+    #pragma omp parallel for
     for (uint ix = 0; ix < Lx; ++ix)
     {
         for (uint iy = 0; iy < Ly; ++iy)
@@ -78,10 +79,15 @@ StaticArray<Array<F64>, 7> lattice_Arrays(Lattice &lattice)
                 u[i] = s.x();
                 v[i] = s.y();
                 w[i] = s.z();
-                Vector3 mag =   measure::get_magnetization(lattice)
+                Vector3 mag;
+                #pragma omp critical
+                {
+                mag =   measure::get_magnetization(lattice)
                                 .normalized();
+                }
                 // color the spins according to the magnetization
                 color[i] = (s|mag);
+                #pragma omp critical
                 i++;
             }
         }
@@ -145,6 +151,8 @@ bool dat::plot_lattice(Lattice &lattice, std::string filename)
     {
         plt::show();
     }
+    fig.reset();
+    plt::figure(false);
     return 0;
 }
 
