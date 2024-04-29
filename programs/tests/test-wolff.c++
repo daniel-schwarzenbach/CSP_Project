@@ -1,5 +1,5 @@
 #include <Wolff/wolff.h++>
-#include <Ploting/PlotLattice.h++>
+#include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timekeeper.h++>
 
@@ -16,13 +16,13 @@ int main()
 
     //              --- Lattice
     Lattice lattice = Lattice::random_lattice(8, 8, 8, seed);
-    plot_lattice(lattice, "bWolff.png");
+    dat::plot_lattice(lattice, "bWolff.png");
 
     //             --- adaptive-metropolis
     cout << "running wolf ..." << endl;
     cout << wolff(lattice, T, J, Time, maxUint) << endl;
 
-    plot_lattice(lattice, "aWolff.png");
+    dat::plot_lattice(lattice, "aWolff.png");
 
     return 0;
 }
