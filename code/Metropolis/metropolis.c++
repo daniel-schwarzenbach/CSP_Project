@@ -27,8 +27,8 @@ bool metropolis(Lattice &lattice,
                 F64 T/*temperature*/, 
                 F64 J/*interaction Strength*/,
                 F64 maxTimeSeconds, 
-                uint maxSteps, Eigen::Vector3d h,
-                Eigen::Vector3d k,
+                uint maxSteps, Spin h,
+                Spin k,
                 MoveType moveType) {
     // Initialize random number generator
     std::random_device rd;

@@ -5,6 +5,6 @@
 
 F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
                           Spin& oldSpin, Spin& newSpin, 
-                          F64 J, Eigen::Vector3d h, Eigen::Vector3d k);
+                          F64 J, Spin h, Spin k);
 
 #endif // ENERGY_DIFF_H
