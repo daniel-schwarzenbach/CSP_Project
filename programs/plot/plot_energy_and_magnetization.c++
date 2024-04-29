@@ -14,16 +14,16 @@ namespace plt = matplot;
 // interaction
 const F64 J = 1.0;
 // maximal runtime
-const F64 dt = 0.001;
+const F64 dt = 0.0001;
 // end Time
-const F64 t_end = 2.0;
+const F64 t_end = 10.0;
 // Temerature
-const F64 T = 273.0;
+const F64 T = 1.0;
 // int Random Lattice Seed
 const int seed = 69; // hi hi
 
 // side Lenth
-const uint L = 64;
+const uint L = 8;
 
 int main(int mainArgCount, char **mainArgs)
 {
@@ -55,6 +55,8 @@ int main(int mainArgCount, char **mainArgs)
     Array<F64> wo_mag(0); wo_mag.reserve(size);
     Array<F64> wo_nrg(0); wo_nrg.reserve(size);
 
+
+    dat::plot_lattice(lattice, "aMet.png");
         //             --- metropolis
     cout << "running metropolis ..." << endl;
     {    
@@ -74,7 +76,7 @@ int main(int mainArgCount, char **mainArgs)
         nm_nrg.push_back(abs(measure::get_energy(lattice)));
 
         TimeKeeper timer; timer.start();
-        metropolis(lattice, T, J, dt, maxUint);
+        metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
         timer.stop(); t_elapsed += timer.time();
     }
 
@@ -86,6 +88,7 @@ int main(int mainArgCount, char **mainArgs)
     //             lattice, 
     //             "plots/addMetro/metro_" + to_string(i++) + ".png");
     }
+    dat::plot_lattice(lattice, "bMet.png");
 
     // save data
     cout << "Save data" << endl;

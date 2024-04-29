@@ -11,5 +11,5 @@ public:
     // set loadin bar in percent
     void update(F64 percent);
     // delete the loading bar
-    ~LoadingBar() = default;
+    ~LoadingBar();
 };

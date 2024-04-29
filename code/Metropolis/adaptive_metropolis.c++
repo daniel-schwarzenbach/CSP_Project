@@ -35,19 +35,13 @@
 bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
                          uint maxSteps,
                          F64 maxFactor) {
-    // Initialize random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0.0, 1.0);
-    // Start time and set step counter to 0
-    int step_count = 0;
     F64 sigma = maxFactor;
     TimeKeeper watch;
     int proposed_count = 0;
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    while (step_count < maxSteps) {
+    for(uint step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -68,7 +62,8 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        if (deltaE <= 0 || dis(gen) < exp(-deltaE / T)) {
+        F64 beta = Beta(T);
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE / beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
@@ -87,8 +82,6 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         if (watch.time() >= maxTime) {
             break; // Stop simulation if maximum time reached
         }
-        // Increase step counter
-        ++step_count;
     }    
     return true;
 }

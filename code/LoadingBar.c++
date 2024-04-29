@@ -6,7 +6,7 @@ LoadingBar::LoadingBar(uint width): barWidth(width){
 }
 // set loadin bar in percent
 void LoadingBar::update(F64 percent){
-    if(percent >= 0 && percent <= 100){
+    if(percent >= 0 && percent <= 100.0){
         progress = percent;
     }
     uint pos = static_cast<uint>(barWidth * progress/100.0);
@@ -19,6 +19,13 @@ void LoadingBar::update(F64 percent){
             else
                 std::cout << " ";
         }
-    std::cout << "] " << progress << " %\r";
+    std::cout   << "] " << setw(9) << std::left
+                << progress << " %               \r";
     std::cout.flush();
+}
+
+LoadingBar::~LoadingBar(){
+    update(100.0);
+    cout << endl;
+    ~barWidth;
 }
