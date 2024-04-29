@@ -34,7 +34,7 @@ namespace rng
     / @brief
     / @return uniform random number r ∈ [0,1]
     */
-    double rand_gaussion();
+    double rand_gaussian();
 
 
     template<class T>

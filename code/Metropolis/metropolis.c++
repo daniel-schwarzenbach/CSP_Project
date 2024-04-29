@@ -37,7 +37,7 @@ bool metropolis(Lattice &lattice,
     // Start time and set step counter to 0
     uint step_count = 0;
     TimeKeeper watch;
-    float beta = Beta(T); 
+    F64 beta = Beta(T); 
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
