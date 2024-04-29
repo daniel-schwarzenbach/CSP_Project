@@ -49,7 +49,8 @@ using Lattice = Lattice3d<Spin>;
 #endif // IPPL_H
 
 /*Define the Boltzmann constant*/
-static constexpr double kB = 1.38064852e-23;
+//static constexpr double kB = 1.38064852e-23;
+static constexpr double kB = 1;
 
 /*
 Definition of thermodynamic beta

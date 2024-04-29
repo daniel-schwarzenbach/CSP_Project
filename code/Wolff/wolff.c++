@@ -1,32 +1,12 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timekeeper.h++>
+#include <Wolff/duplicate_functions.h++>
 
 using Index = StaticArray<int, 3>;
 
 template <class T>
 using Array3D = Array<Array<Array<T>>>;
 
-// Function to build the cluster for checking if neighbors have been 
-// visited or not, initialize with false for all (x,y,z)
-Array3D<bool> checked(const int Lx, const int Ly, const int Lz) {
-    // Initialize the 3D vector representing the lattice
-    Array3D<bool> visited(Lx,Array<Array<bool>>(Ly, Array<bool>(Lz)));
-    // Assign false to all points in the checking_cluster
-    for (int i = 0; i < Lx; ++i) {
-        for (int j = 0; j < Ly; ++j) {
-            for (int k = 0; k < Lz; ++k) {
-                visited[i][j][k] = false;
-            }
-        }
-    }
-    return visited;
-}
-
-//Function to flip the spin
-void flip_spin(Spin& spin_r, Spin& spin_x){
-    flt cdot = spin_x | spin_r;
-    spin_x = spin_x - (2.0f * cdot)*spin_r;
-}
 
 //Function to activate bond depending on given probability 
 bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
@@ -36,6 +16,27 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     flt p = rng::randflt();
     return (p <= active);
 }
+
+// bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
+//     flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
+//     //flt activate_prob;
+//     F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
+//     flt p = rng::randflt();
+//     bool a = false;
+//     if (p <= active){bool a = true;}
+//     return (a);
+// }
+
+// bool activate_bond(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
+//     flt cdot = spin_x | spin_r;
+//     Spin spin_x_r = Spin::get_random();
+//     spin_x_r = spin_x - (2.0f * cdot)*spin_r;
+//     flt Z1 = spin_x_r | spin_y;
+//     flt Z2 = spin_x | spin_y;
+//     F64 active = min(0.0, 1 - std::exp(beta *( F64(Z1) - F64(Z2)) ));
+//     flt p = rng::randflt();
+//     return (p <= active);
+// }
 
 int wolf_algorithm(Lattice& lattice, flt beta){
 
@@ -98,7 +99,6 @@ int wolf_algorithm(Lattice& lattice, flt beta){
                     
                     if (!visited[nx][ny][nz]){
                         Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
-                        
 
                         //If Bond is activated...
                         if (activate_bond(spin_x, spin_r, beta, spin_y)){
@@ -116,7 +116,7 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     //Compute cluster size
     size_t clusterSize = cluster.size();
 
-    if (clusterSize == 0 ){
+    if (clusterSize == 0){
         return -1;
     }
 
