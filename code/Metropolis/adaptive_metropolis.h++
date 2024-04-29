@@ -18,6 +18,6 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
                          uint maxSteps,
                          Spin h = Spin(0.0, 0.0, 0.0),
                          Spin k = Spin(0.0, 0.0, 0.0),
-                         F64 maxFactor = 10.0);
+                         F64 maxFactor = 50.0);
 
 #endif
