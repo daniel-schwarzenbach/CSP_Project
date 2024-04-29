@@ -5,14 +5,14 @@
 #include <Measure/Timekeeper.h++>
 
 // temperature
-F64 T = 0.1;
+F64 T = 0.01;
 F64 J = 1.0;
-F64 Time = 10.0;
+F64 Time = 1.0;
 
 int main()
 {
     //              --- random seed
-    const uint seed = 42;
+    const uint seed = 80;
     rng::set_seed(seed);
 
     //              --- Lattice
@@ -30,9 +30,10 @@ int main()
 
     dat::plot_lattice(lattice, "Wolff_start_compare.png");
 
-    //wolff(lattice, T, J, Time, maxUint);
+    wolff(lattice, T, J, Time, maxUint);
 
-    //dat::plot_lattice(lattice, "Wolff_end.png");
+    dat::plot_lattice(lattice, "Wolff_end.png");
 
     return 0;
 }
+

@@ -46,9 +46,15 @@
             "program": "${workspaceFolder}/build/Heisenberg",
             "args": [],
             "stopAtEntry": false,
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": false
+                }
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
         },
         {
             "name": "mpiexec -n 2",

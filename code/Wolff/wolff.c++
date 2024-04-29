@@ -38,7 +38,7 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 //     return (p <= active);
 // }
 
-void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>> visited, Array<Index> stack, Array<Index> cluster, flt beta){
+void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta){
     Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
 
     //If Bond is activated...
@@ -101,12 +101,12 @@ int wolf_algorithm(Lattice& lattice, flt beta){
 
         Spin& spin_x = lattice(cx,cy,cz);
 
-        if(!visited[cx+1][cy][cz]){ check_neighbor(lattice, cx+1, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx-1][cy][cz]){ check_neighbor(lattice, cx-1, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy+1][cz]){ check_neighbor(lattice, cx, cy+1, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy-1][cz]){ check_neighbor(lattice, cx, cy-1, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][cz+1]){ check_neighbor(lattice, cx, cy, cz+1, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][cz-1]){ check_neighbor(lattice, cx, cy, cz-1, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
     }
 
