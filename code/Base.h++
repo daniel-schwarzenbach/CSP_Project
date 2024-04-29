@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <string>
 using std::string;
+using std::to_string;
 
 static const string RESET = "\033[0m";   //   RESET
 static const string RED = "\033[31m";    //   RED
@@ -103,87 +104,11 @@ static constexpr F64 _kB_ = 1;
 static constexpr uint maxUint = 0xff'ff'ff'ff;
 
 //          --- Functions
-
-//          --- Random
-#include <random>
-namespace rng
-{
-
-    static std::mt19937 engine;
-    /*
-
-
-    */
-    static void set_seed(uint seed)
-    {
-        engine.seed(seed);
-    }
-
-    /*
-    random number generator for our floats
-
-    / @brief
-    / @return uniform random number r ∈ [0,1]
-    */
-    static flt randflt()
-    {
-        static std::uniform_real_distribution<flt> dis(0, 1);
-        return dis(engine);
-    }
-
-    /*
-    random number generator F64
-
-    / @brief
-    / @return uniform random number r ∈ [0,1]
-    */
-    static F64 randf64()
-    {
-        static std::uniform_real_distribution<F64> dis(0, 1);
-        return dis(engine);
-    }
-
-    template<class T>
-    static T get_random(){return T(randflt());}
-
-}
+#include <RNG.h++>
 
 
 
-/*
-calculate the mean value of a vector
 
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-static F64 mean(Array<Float> array)
-{
-    Float sum = 0;
-    uint n = array.size();
-    for (uint i = 0; i < n; i++)
-        sum += array[i];
-    return sum / n;
-};
-
-/*
-calculate the variance of a vector
-
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-F64 variance(Array<Float> array)
-{
-    Float mean = mean(array);
-    uint n = array.size();
-    double sum = 0;
-    for (uint i = 0; i < n; i++)
-        sum += pow(array[i] - mean, 2);
-    return sum / F64(n);
-};
 
 //          --- Exeptions
 #include <exception>
