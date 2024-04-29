@@ -41,8 +41,8 @@ public:
     // Trial moves
     void spin_flip();
     void random_move();
-    void small_step_move(flt openingAngle);
-    void adaptive_step(flt sigma);
+    void small_step_move(F64 openingAngle);
+    void adaptive_step(F64 sigma);
 };
 
 template<>

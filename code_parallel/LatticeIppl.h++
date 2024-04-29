@@ -132,7 +132,7 @@ public:
 };
 
 #include <Spin.h++>
-template class LatticeIppl<SpinCartesian>;
+template class LatticeIppl<SpinVector>;
 template class LatticeIppl<SpinCompressed>;
 
 #endif // __LATTICEIPPL_H__

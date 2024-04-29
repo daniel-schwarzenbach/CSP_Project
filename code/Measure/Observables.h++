@@ -15,14 +15,18 @@ namespace measure
     */
     Vector3 get_magnetization(const Lattice &lattice);
 
+    F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec);
+
     /*
     calculate the energy of all the spins inside the lattice
 
     / @brief
-    / @param lattice our 3d lattice, where to perform the simulation on
+    / @param lattice our 3d lattice, where to perform the simulation 
+    on
     / @return the energy of the lattice
     */
-    F64 get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0}, F64 J = 1);
+    F64 get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0}, 
+                   F64 J = 1);
 
 }
 

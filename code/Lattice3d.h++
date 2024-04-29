@@ -151,11 +151,9 @@ public:
         return lattice;
     }
 
-    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_,
-                                    uint seed = 42)
+    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_)
     {
         Lattice3d lattice(Lx_, Ly_, Lz_);
-        srand(seed);
         for (uint x = 0; x < Lx_; ++x)
         {
             for (uint y = 0; y < Ly_; ++y)
@@ -178,6 +176,5 @@ public:
 #include <Spin.h++>
 template class Lattice3d<SpinVector>;
 template class Lattice3d<SpinCompressed>;
-template class Lattice3d<U8>;
 
 #endif

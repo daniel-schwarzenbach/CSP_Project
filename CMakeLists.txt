@@ -9,8 +9,8 @@ project(Heisenberg3d)
 
 add_subdirectory(libraries/matplotplusplus)
 
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 
 
 
@@ -29,8 +29,16 @@ add_executable(Heisenberg ${SRC_FILES} ./programs/tests/test-metropolis.c++ )
 # precompile header
 target_precompile_headers(Heisenberg
     PUBLIC
-    code/LatticeSerial.h++
+    code/Lattice3d.h++
 )
+
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (OMP_PROC_BIND=false and OMP_PLACES=threads)
+    add_definitions(-DWITH_OPENMP)
+endif()
+
 
 # IPPL STUFF
 option(IPPL "Use IPPL" OFF)
