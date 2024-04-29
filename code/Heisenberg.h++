@@ -32,8 +32,9 @@ using Spin = SpinVector;
 
 #else // NOT_WITH_OPENMP
 
-
-
+uint omp_get_num_threads()
+    return 1;
+}
 #define PARALLEL_FOR  // theoretical parallel
 #define REDUCTION_SUM // theretical reduction
 #define ATOMIC        // theoretical atomic
@@ -53,7 +54,7 @@ using Lattice = Lattice3d<SpinVector>;
 
 
 // boltzmann constant
-static constexpr F64 _kB_ = 1.38064852e-23;
+static constexpr F64 _kB_ = 1.0;//1.38064852e-23;
 
 /*
 Definition of thermodynamic beta

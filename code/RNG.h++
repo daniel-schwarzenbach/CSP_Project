@@ -24,21 +24,29 @@ namespace rng
     random number generator F64
 
     / @brief
-    / @return uniform random number r ∈ [0,1]
+    / @return uniform random number r ∈ [0,1)
     */
-    double rand_f64();
+    double rand_uniform();
 
     /*
     random number generator F64
 
     / @brief
-    / @return uniform random number r ∈ [0,1]
+    / @return
     */
     double rand_gaussion();
 
 
-    template<class T>
-    static T get_random(){return T(100*rand_f64());}
+    /*
+    random number generator int
+
+    / @brief
+    / @return r ∈ {a, a+1, ..., b-2, b-1}
+    */
+    int rand_int_range(int a,int b);
+
+    template <class T>
+    static T get_random() { return T(100 * rand_uniform()); }
 
 }
 #endif // __RNG_H__

@@ -6,7 +6,11 @@
 #include <random>
 #include <Heisenberg.h++>
 
-enum class MoveType { SpinFlip, Random, SmallStep };
+enum class MoveType { 
+    SpinFlip, 
+    Random, 
+    SmallStep,
+    Addaptive };
 
 /*
 metropolis algorithm for the Heisenberg 3D model

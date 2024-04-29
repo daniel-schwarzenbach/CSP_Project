@@ -23,7 +23,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
             }
         }
     }
-    return {sx, sy, sz};
+    return Vector3{sx, sy, sz} / (Lx*Ly*Lz);
 }
 
 F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
@@ -132,7 +132,7 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
 }
 
 
-F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec){
+F64 measure::get_scalar_average(Lattice const& lattice,Vector3 const& vec){
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
@@ -149,4 +149,24 @@ F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec){
         }
     }
     return scalarAverage;
+}
+
+// exp(T-T₀ / τ): autocorecaltion time
+F64 measure::get_auto_correlation(Lattice const& prev,Lattice const& next){
+    uint Lx = prev.Lx();
+    uint Ly = prev.Ly();
+    uint Lz = prev.Lz();
+    F32 correlation= 0;
+    #pragma omp parallel for reduction(+:correlation)
+    for (int x = 0; x < Lx; x++)
+    {
+        for (int y = 0; y < Ly; y++)
+        {
+            for (int z = 0; z < Lz; z++)
+            {
+                correlation += prev(x,y,z) | next(x,y,z);
+            }
+        }
+    }
+    return correlation / (Lx*Ly*Lz);
 }

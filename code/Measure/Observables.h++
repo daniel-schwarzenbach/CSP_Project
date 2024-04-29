@@ -17,6 +17,8 @@ namespace measure
 
     F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec);
 
+    F64 get_auto_correlation(Lattice const& prev,Lattice const& next);
+
     /*
     calculate the energy of all the spins inside the lattice
 
