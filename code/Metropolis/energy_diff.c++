@@ -47,11 +47,8 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     F64 energyNew = 0.0;
     for (int i = 0; i < 6; ++i) {
         // Get indices of neighbors
-        int nx = neighbors[i][0];
-        int ny = neighbors[i][1];
-        int nz = neighbors[i][2];
         // Get neighboring spin
-        const Spin& neighborSpin = lattice(nx, ny, nz);
+        const Spin& neighborSpin = lattice(neighbors[i]);
         // Calcualte and add energies
         energyOld += -J * (oldSpin | neighborSpin);
         energyNew += -J * (newSpin | neighborSpin);

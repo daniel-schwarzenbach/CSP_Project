@@ -2,6 +2,8 @@
 #define LATTICE3D_HPP
 #include <Base.h++>
 
+using Index = StaticArray<int, 3>;
+
 /*
 mathematical correct modulo
 
@@ -35,10 +37,6 @@ private:
     BC bc = BC::Periodic;
 
 public:
-    // // temperature
-    // flt T = 0;
-    // // interaction
-    // flt J = 1;
 
     // size of the lattice in x-direction
     inline uint Lx() const { return _Lx; }
@@ -103,6 +101,14 @@ public:
             ;
             break;
         }
+    }
+
+    inline T &operator()(Index const& id){
+        return this->operator()(id[0], id[1], id[2]);
+    }
+
+    inline T operator()(Index const& id) const{
+        return this->operator()(id[0], id[1], id[2]);
     }
 
     Lattice3d(uint Lx_, uint Ly_, uint Lz_)

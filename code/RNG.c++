@@ -32,7 +32,7 @@ namespace rng
     / @brief
     / @return uniform random number r ∈ [0,1)
     */
-    double rand_f64()
+    double rand_uniform()
     {
         static std::uniform_real_distribution<double> dist(0.0, 1.0);
         return dist(engine);
@@ -44,8 +44,14 @@ namespace rng
     / @brief
     / @return uniform random number r ∈ [0,1]
     */
-    double rand_gaussion(){
+    double rand_gaussion()
+    {
         static std::normal_distribution<double> dist(0, 1);
+        return dist(engine);
+    }
+
+    int rand_int_range(int a,int b){
+        std::uniform_int_distribution<int> dist(a,b-1);
         return dist(engine);
     }
 

@@ -21,7 +21,7 @@ flt SpinVector::phi() const
 {
     SpinVector s = this->normalized();
     flt phi = atan2(s.y(), s.x());
-    if(phi < 0) 
+    if (phi < 0)
         phi += _2pi_;
     return phi;
 }
@@ -63,8 +63,8 @@ SpinVector SpinVector::from_phi_theata(flt phi, flt theta)
 SpinVector SpinVector::get_random()
 {
     SpinVector s;
-    F64 theta = rng::rand_f64() * _pi_;
-    F64 phi = rng::rand_f64() * _2pi_;
+    F64 theta = rng::rand_uniform() * _pi_;
+    F64 phi = rng::rand_uniform() * _2pi_;
     s << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),
         std::cos(theta);
@@ -81,31 +81,27 @@ void SpinVector::random_move()
 }
 void SpinVector::small_step_move(F64 openingAngle)
 {
-    F64 theta = rng::rand_f64()*openingAngle;
-    F64 phi = rng::rand_f64()*_2pi_;
+    F64 theta = rng::rand_gaussion() * openingAngle;
+    F64 phi = rng::rand_gaussion() * _2pi_;
     Vector3 randomPole;
-    randomPole <<   std::sin(theta) * std::cos(phi),
-                    std::sin(theta) * std::sin(phi),
-                    std::cos(theta);
+    randomPole << std::sin(theta) * std::cos(phi),
+        std::sin(theta) * std::sin(phi),
+        std::cos(theta);
     Vector3 northPole(0, 0, 1);
     Eigen::Quaternion<flt> rotationToOriginal =
-            Eigen::Quaternion<flt>::FromTwoVectors(
+        Eigen::Quaternion<flt>::FromTwoVectors(
             northPole, *this);
     *this = rotationToOriginal * randomPole;
 }
 
 void SpinVector::adaptive_step(F64 sigma)
 {
-    F64 dx = rng::rand_f64();
-    F64 dy = rng::rand_f64();
-    F64 dz = rng::rand_f64();
+    F64 dx = rng::rand_gaussion();
+    F64 dy = rng::rand_gaussion();
+    F64 dz = rng::rand_gaussion();
     *this += sigma * SpinVector(dx, dy, dz);
     this->normalize();
 }
-
-
-
-
 
 //            --- SpinCompressed ---
 
@@ -132,8 +128,8 @@ flt SpinCompressed::z() const { return cos(theta()); }
 // generate random spin
 SpinCompressed::SpinCompressed()
 {
-    phi_byte = round(rng::rand_f64() * 0xff);
-    theta_byte = round(rng::rand_f64() * 0xfe);
+    phi_byte = round(rng::rand_uniform() * 0xff);
+    theta_byte = round(rng::rand_uniform() * 0xfe);
 }
 // to initialize a zero Spin
 SpinCompressed::SpinCompressed(flt zero)
@@ -200,12 +196,10 @@ SpinCompressed SpinCompressed::from_phi_theata(flt phi, flt theta)
 SpinCompressed SpinCompressed::get_random()
 {
     SpinCompressed s;
-    s.phi_byte = round(rng::rand_f64() * 0xff);
-    s.theta_byte = round(rng::rand_f64() * 0xfe);
+    s.phi_byte = round(rng::rand_uniform() * 0xff);
+    s.theta_byte = round(rng::rand_uniform() * 0xfe);
     return s;
 }
-
-
 
 // flt SpinCartesian::x() const { return x_; }
 // flt SpinCartesian::y() const { return y_; }
