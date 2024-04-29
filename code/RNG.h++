@@ -28,6 +28,15 @@ namespace rng
     */
     double rand_f64();
 
+    /*
+    random number generator F64
+
+    / @brief
+    / @return uniform random number r ∈ [0,1]
+    */
+    double rand_gaussion();
+
+
     template<class T>
     static T get_random(){return T(100*rand_f64());}
 
