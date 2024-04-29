@@ -38,4 +38,15 @@ namespace rng
         return dist(engine);
     }
 
+    /*
+    random number generator F64
+
+    / @brief
+    / @return uniform random number r ∈ [0,1]
+    */
+    double rand_gaussion(){
+        static std::normal_distribution<double> dist(0, 1);
+        return dist(engine);
+    }
+
 }
