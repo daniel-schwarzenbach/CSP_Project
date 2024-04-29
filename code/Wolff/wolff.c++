@@ -10,10 +10,10 @@ using Array3D = Array<Array<Array<T>>>;
 
 //Function to activate bond depending on given probability 
 bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
-    flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
+    flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
     flt activate_prob;
     F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
-    flt p = rng::randflt();
+    flt p = rng::rand_f64();
     return (p <= active);
 }
 
@@ -38,6 +38,18 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 //     return (p <= active);
 // }
 
+void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>> visited, Array<Index> stack, Array<Index> cluster, flt beta){
+    Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
+
+    //If Bond is activated...
+    if (activate_bond(spin_x, spin_r, beta, spin_y)){
+        flip_spin(spin_r, spin_y); //...flip spin
+        stack.push_back({nx,ny,nz}); // ...add to stack 
+        cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
+        visited[nx][ny][nz] = true; //Mark as visited
+    }
+}
+
 int wolf_algorithm(Lattice& lattice, flt beta){
 
     int Lx = lattice.Lx();
@@ -57,9 +69,9 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::randflt()*Lx;
-    int y = rng::randflt()*Ly;
-    int z = rng::randflt()*Lz;
+    int x = rng::rand_f64()*Lx;
+    int y = rng::rand_f64()*Ly;
+    int z = rng::rand_f64()*Lz;
     
     //Define spin_x to be flipped, first point of the cluster
     Spin& spin_x = lattice(x,y,z);
@@ -87,30 +99,15 @@ int wolf_algorithm(Lattice& lattice, flt beta){
         //Mark as visited
         visited[cx][cy][cz] = true;
 
-        for (int i = -1; i <= 1; ++i){
-            for (int j = -1; j <= 1; ++j){
-                for (int k = -1; k <=1; ++k){
-                    if (i==0 && j==0 && k==0) continue; //Skip original site
+        Spin& spin_x = lattice(cx,cy,cz);
 
-                    //Implement periodic boundary conditions
-                    int nx = modulo((cx + i), Lx);
-                    int ny = modulo((cy + j), Ly);
-                    int nz = modulo((cz + k), Lz);
-                    
-                    if (!visited[nx][ny][nz]){
-                        Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
+        if(!visited[cx+1][cy][cz]){ check_neighbor(lattice, cx+1, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx-1][cy][cz]){ check_neighbor(lattice, cx-1, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy+1][cz]){ check_neighbor(lattice, cx, cy+1, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy-1][cz]){ check_neighbor(lattice, cx, cy-1, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][cz+1]){ check_neighbor(lattice, cx, cy, cz+1, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][cz-1]){ check_neighbor(lattice, cx, cy, cz-1, spin_x, spin_r, visited, stack, cluster, beta); }
 
-                        //If Bond is activated...
-                        if (activate_bond(spin_x, spin_r, beta, spin_y)){
-                            flip_spin(spin_r, spin_y); //...flip spin
-                            stack.push_back({nx,ny,nz}); // ...add to stack 
-                            cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
-                            visited[nx][ny][nz] = true; //Mark as visited
-                        }
-                    }
-                }
-            }
-        }
     }
 
     //Compute cluster size
@@ -133,7 +130,6 @@ performs the wolff algoritm on the lattice
 */
 
 F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
-    // to implement
 
     F64 beta = Beta(T);
 
@@ -142,12 +138,10 @@ F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
     Array<int> clusters;
     uint nRuns = 0;
 
+    //Run MaxSteps wolff steps or until the maximal time has been reached
     for (uint i = 0; i <= MaxSteps; ++i){
         uint clusterSize = wolf_algorithm(lattice, beta);
-        if(clusterSize == -1){
-            return false;
-            std::cout << "ERROR" << std::endl;
-        }
+
         clusters.push_back(clusterSize);
 
         ++nRuns;
@@ -157,13 +151,16 @@ F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
         }
     }
 
+    //Compute total cluster size
     uint totalClusterSize = 0;
     for (int size : clusters) {
         totalClusterSize += size;
     }
     
+    //Compute mean cluster size
     F64 averageClusterSize = static_cast<F64>(totalClusterSize)/nRuns;
     
+    //Compute susceptibility, does this still hold, without a factor?
     F64 susceptibility = averageClusterSize;
 
     return susceptibility;

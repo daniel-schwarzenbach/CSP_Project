@@ -71,7 +71,7 @@ bool metropolis(Lattice &lattice,
 
         // Acceptance condition
         F64 beta = Beta(T);
-        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE / beta))
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta))
         {                   // Boltzmann constant k is
                             // normalized with interaction strength J in this implementation
             spin = newSpin; // Accept the new configuration

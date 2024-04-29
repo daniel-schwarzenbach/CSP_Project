@@ -1,5 +1,6 @@
 #include <Wolff/wolff_ghost.h++>
-#include <Ploting/PlotLattice.h++>
+#include <Wolff/wolff.h++>
+#include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timekeeper.h++>
 
@@ -15,14 +16,23 @@ int main()
     rng::set_seed(seed);
 
     //              --- Lattice
-    Lattice lattice = Lattice::random_lattice(8, 8, 8, seed);
-    plot_lattice(lattice, "Wolff_ghost_start.png");
+    Lattice lattice = Lattice::random_lattice(8, 8, 8);
+    dat::plot_lattice(lattice, "Wolff_start.png");
 
     //             --- wolff-ghost
     cout << "running wolff ghost ..." << endl;
-    cout << wolff_ghost(lattice, T, J, Time, maxUint) << endl;
+    wolff_ghost(lattice, T, J, Time, maxUint);
 
-    plot_lattice(lattice, "Wolff_ghost_end.png");
+    dat::plot_lattice(lattice, "Wolff_ghost_end.png");
+
+    rng::set_seed(seed);
+    lattice.randomize();
+
+    dat::plot_lattice(lattice, "Wolff_start_compare.png");
+
+    //wolff(lattice, T, J, Time, maxUint);
+
+    //dat::plot_lattice(lattice, "Wolff_end.png");
 
     return 0;
 }
