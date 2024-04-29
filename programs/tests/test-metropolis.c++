@@ -5,9 +5,9 @@
 #include <Measure/Timekeeper.h++>
 
 // temperature
-F64 T = 10;
+F64 T = 0.001;
 F64 J = 1.0;
-F64 Time = 10.0;
+F64 Time = 100.0;
 
 int main()
 {
