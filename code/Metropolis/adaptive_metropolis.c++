@@ -38,7 +38,6 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
                          uint maxSteps, Spin h, Spin k,
                          F64 maxFactor) {
     F64 sigma = maxFactor;
-    int step_count = 0;
     TimeKeeper watch;
     int proposed_count = 0;
     F64 beta = Beta(T);
@@ -85,8 +84,6 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         if (watch.time() >= maxTime) {
             break; // Stop simulation if maximum time reached
         }
-        // Increase step counter
-        ++step_count;
     }    
     return true;
 }

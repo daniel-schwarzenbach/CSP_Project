@@ -51,15 +51,10 @@ Lattice class
 */
 using Lattice = Lattice3d<Spin>;
 
-#define PARALLEL_FOR  // theoretical parallel
-#define REDUCTION_SUM // theretical reduction
-#define ATOMIC        // theoretical atomic
-#define CRITICAL      // theoretical critical
 
-#endif // IPPL_H
 
 /*Define the Boltzmann constant*/
-static constexpr double kB = 1;
+static constexpr double _kB_ = 1;
 
 /*
 Definition of thermodynamic beta
@@ -79,7 +74,7 @@ calculate the mean value of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-static F64 mean(Array<Float> array)
+static Float mean(Array<Float> array)
 {
     Float sum = 0;
     uint n = array.size();
@@ -97,7 +92,7 @@ calculate the variance of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-F64 variance(Array<Float> array)
+Float variance(Array<Float> array)
 {
     Float mean = mean(array);
     uint n = array.size();
