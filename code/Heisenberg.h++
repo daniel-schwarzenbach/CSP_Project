@@ -56,7 +56,6 @@ using Lattice = Lattice3d<Spin>;
 #define ATOMIC        // theoretical atomic
 #define CRITICAL      // theoretical critical
 
-#endif // IPPL_H
 
 /*Define the Boltzmann constant*/
 //static constexpr double kB = 1.38064852e-23;
@@ -69,7 +68,7 @@ Definition of thermodynamic beta
 */
 static F64 Beta(F64 T)
 {
-    return 1. / (_kB_ * T);
+    return 1. / (kB * T);
 };
 
 /*

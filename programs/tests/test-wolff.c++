@@ -1,12 +1,12 @@
 #include <Wolff/wolff.h++>
-#include <Ploting/PlotLattice.h++>
+#include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timekeeper.h++>
 
 // temperature
-F64 T = 0.1;
+F64 T = 1000.1;
 F64 J = 1.0;
-F64 Time = 10.0;
+F64 Time = 1.0;
 
 int main()
 {
@@ -15,14 +15,14 @@ int main()
     rng::set_seed(seed);
 
     //              --- Lattice
-    Lattice lattice = Lattice::random_lattice(8, 8, 8, seed);
-    plot_lattice(lattice, "bWolff.png");
+    Lattice lattice = Lattice::random_lattice(8, 8, 8);
+    dat::plot_lattice(lattice, "Wolff_start.png");
 
     //             --- adaptive-metropolis
     cout << "running wolf ..." << endl;
     cout << wolff(lattice, T, J, Time, maxUint) << endl;
 
-    plot_lattice(lattice, "aWolff.png");
+    dat::plot_lattice(lattice, "Wolff_end.png");
 
     return 0;
 }

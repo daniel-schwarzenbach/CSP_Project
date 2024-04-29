@@ -1,10 +1,10 @@
 #include <Metropolis/metropolis.h++>
-#include <Ploting/PlotLattice.h++>
+#include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timekeeper.h++>
 
 // temperature
-F64 T = 0.1;
+F64 T = 10000.1;
 F64 J = 1.0;
 F64 Time = 10.0;
 
@@ -15,13 +15,14 @@ int main()
     rng::set_seed(seed);
 
     //              --- Lattice
-    Lattice lattice = Lattice::random_lattice(8, 8, 8, seed);
+    Lattice lattice = Lattice::random_lattice(8, 8, 8);
+    dat::plot_lattice(lattice, "Metropolis_start.png");
 
     //             --- metropolis
     cout << "running metropolis ..." << endl;
     metropolis(lattice, T, J, Time, maxUint);
 
-    plot_lattice(lattice);
+    dat::plot_lattice(lattice, "Metropolis_end.png");
 
     return 0;
 }
