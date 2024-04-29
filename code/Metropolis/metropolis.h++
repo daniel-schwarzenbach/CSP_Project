@@ -22,6 +22,6 @@ bool metropolis(Lattice &lattice,
                 F64 maxTimeSeconds, 
                 uint maxSteps, Spin h = Spin(0.0, 0.0, 0.0), 
                 Spin k = Spin(0.0, 0.0, 0.0),
-                MoveType moveType=MoveType::SmallStep);
+                MoveType moveType=MoveType::Random);
 
 #endif

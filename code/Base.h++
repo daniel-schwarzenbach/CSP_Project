@@ -97,7 +97,7 @@ static constexpr F64 _inf_ = INFINITY;
 static constexpr F64 _e_ = M_E;
 
 // boltzmann constant
-static constexpr F64 _kB_ = 1.38064852e-23;
+static constexpr F64 _kB_ = 1;
 
 
 static constexpr uint maxUint = 0xff'ff'ff'ff;
