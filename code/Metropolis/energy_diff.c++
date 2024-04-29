@@ -24,7 +24,7 @@
 //      Returns the energy difference of the two spin configurations.
 F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
                           Spin& oldSpin, Spin& newSpin, 
-                          F64 J, Eigen::Vector3d h, Eigen::Vector3d k){
+                          F64 J, Spin h, Spin k){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();

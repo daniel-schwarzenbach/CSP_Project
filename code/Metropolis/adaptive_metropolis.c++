@@ -35,7 +35,7 @@
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
 bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
-                         uint maxSteps, Eigen::Vector3d h, Eigen::Vector3d k,
+                         uint maxSteps, Spin h, Spin k,
                          F64 maxFactor) {
     // Initialize random number generator
     std::random_device rd;

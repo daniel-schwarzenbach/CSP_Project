@@ -20,8 +20,8 @@ bool metropolis(Lattice &lattice,
                 F64 T/*temperature*/, 
                 F64 J/*interaction Strength*/,
                 F64 maxTimeSeconds, 
-                uint maxSteps, Eigen::Vector3d H = Eigen::Vector3d::Zero(), 
-                Eigen::Vector3d k = Eigen::Vector3d::Zero(),
+                uint maxSteps, Spin h = Spin(0.0, 0.0, 0.0), 
+                Spin k = Spin(0.0, 0.0, 0.0),
                 MoveType moveType=MoveType::SmallStep);
 
 #endif
