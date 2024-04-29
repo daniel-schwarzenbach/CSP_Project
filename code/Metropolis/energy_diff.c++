@@ -1,5 +1,7 @@
 #include <Metropolis/energy_diff.h++>
 
+
+using Indiex = StaticArray<int, 3>;
 // Calculate Energy Difference //
 
 // This function calculates and returns the energy difference of two spin
@@ -33,27 +35,25 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
 
     // Indices of nearest neighbors (periodic boundary conditions assumed)
     int neighbors[6][3] = {
-        {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
-        {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
-        {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
+         {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
+         {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
+         {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
     };
-
     // Energies of old and new configuration
-    float energyOld = 0.0;
-    float energyNew = 0.0;
+    F64 energyOld = 0.0;
+    F64 energyNew = 0.0;
     for (int i = 0; i < 6; ++i) {
         // Get indices of neighbors
         int nx = neighbors[i][0];
         int ny = neighbors[i][1];
         int nz = neighbors[i][2];
         // Get neighboring spin
-        Spin& neighborSpin = lattice(nx, ny, nz);
+        const Spin& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
         energyOld += -J * (oldSpin | neighborSpin) - (oldSpin | h) - pow((oldSpin | k), 2);
         energyNew += -J * (newSpin | neighborSpin) - (newSpin | h) - pow((newSpin | k), 2);
     }   
-
     // Calculate energy difference (deltaE)
-    float deltaE = energyNew - energyOld;
+    F64 deltaE = energyNew - energyOld;
     return deltaE;
 }
