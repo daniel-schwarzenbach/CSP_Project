@@ -1,5 +1,6 @@
-#ifndef WOLF_HPP
-#define WOLF_HPP
+
+#ifndef WOLF_GHOST_HPP
+#define WOLF_GHOST_HPP
 
 #include <Heisenberg.h++>
 #include <algorithm>
@@ -13,6 +14,6 @@ wolff algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps);
+F64 wolff_ghost(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps);
 
 #endif
