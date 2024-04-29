@@ -44,7 +44,7 @@ namespace rng
     / @brief
     / @return uniform random number r ∈ [0,1]
     */
-    double rand_gaussion(){
+    double rand_gaussian(){
         static std::normal_distribution<double> dist(0, 1);
         return dist(engine);
     }

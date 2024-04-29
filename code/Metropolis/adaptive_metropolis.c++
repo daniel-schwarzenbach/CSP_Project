@@ -65,7 +65,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE / beta)) {
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
