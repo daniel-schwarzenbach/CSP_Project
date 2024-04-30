@@ -1,5 +1,7 @@
 #include <Measure/LoadingBar.h++>
 
+namespace measure{
+
 // init loading bar with 0%
 LoadingBar::LoadingBar(uint width) : barWidth(width)
 {
@@ -33,4 +35,6 @@ LoadingBar::~LoadingBar()
     update(100.0);
     cout << endl;
     ~barWidth;
+}
+
 }

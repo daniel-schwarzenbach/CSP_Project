@@ -109,7 +109,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
 }
 
-bool dat::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
+bool data::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
 {
 
     Array<Array<f32>> latticeSlice = lattice_slice(lattice, z);
@@ -131,7 +131,7 @@ bool dat::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
     return 0;
 }
 
-bool dat::plot_lattice(Lattice &lattice, std::string filename)
+bool data::plot_lattice(Lattice &lattice, std::string filename)
 {
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
     f64 mag = mean(arrays[6]);
@@ -168,7 +168,7 @@ bool dat::plot_lattice(Lattice &lattice, std::string filename)
     return 0;
 }
 
-bool dat::convert_pngs_to_gif(string gifname, string pngfilePrefix)
+bool data::convert_pngs_to_gif(string gifname, string pngfilePrefix)
 {
     double delay = 5;
     string command =
@@ -177,7 +177,7 @@ bool dat::convert_pngs_to_gif(string gifname, string pngfilePrefix)
     return i;
 }
 
-bool dat::test_all_colors()
+bool data::test_all_colors()
 {
     plt::palette::rdbu();
     plt::palette::pastel2();
@@ -236,7 +236,7 @@ bool dat::test_all_colors()
     return true;
 }
 
-string dat::get_filename(string Prefix, uint L, f64 J, f64 T, f64 Time)
+string data::get_filename(string Prefix, uint L, f64 J, f64 T, f64 Time)
 {
     string filename = Prefix + "L=" + to_string(L) + "_J=" + to_string(J) + "_T=" + to_string(T) + "K_Time=" + to_string(Time) + "s.png";
     return filename;

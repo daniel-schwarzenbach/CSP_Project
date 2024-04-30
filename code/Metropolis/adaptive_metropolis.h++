@@ -2,7 +2,7 @@
 #define ADAPTIVE_METROPOLIS_HPP
 
 #include <Heisenberg.h++>
-#include <Measure/Timekeeper.h++>
+#include <Measure/Timer.h++>
 #include <random>
 #include <cmath>
 

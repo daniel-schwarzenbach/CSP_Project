@@ -37,7 +37,7 @@ bool metropolis(Lattice &lattice,
     {
         maxSteps /= omp_get_num_threads();
         flt maxFactor = 5;
-        TimeKeeper watch;
+        measure::Timer watch;
         uint proposed_count = 0;
         flt sigma = maxFactor;
         uint Lx = lattice.Lx();
@@ -81,16 +81,16 @@ bool metropolis(Lattice &lattice,
             // Acceptance condition
             flt beta = Beta(T);
 
-            if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE*beta))
+            if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
             { // Boltzmann constant k is
               // normalized with interaction strength J in this implementation
               // Accept the new configuration
-                #pragma omp critical
+#pragma omp critical
                 {
                     lattice(x, y, z) = newSpin;
                 }
                 sigma = std::min(maxFactor, sigma * 0.5 /
-                            (1.0 - (1.0 / proposed_count) + 1e-2));
+                                                (1.0 - (1.0 / proposed_count) + 1e-2));
 
                 proposed_count = 0;
             }

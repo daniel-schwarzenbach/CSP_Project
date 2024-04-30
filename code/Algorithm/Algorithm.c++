@@ -1,22 +1,23 @@
-#include <Metropolis/metropolis.h++>
-#include <Wolff/wolff.h++>
-#include <Heisenberg.h++>
-#include <Measure/LoadingBar.h++>
-#include <Measure/Observables.h++>
+#include <Algorithm/Algorithm.h++>
 
-using AlgoData = StaticArray<Array<flt>, 4>;
 
-AlgoData test_algorithm(Lattice const& lattice, 
-                        flt const& dt, flt const& t_end,
-                        function<void(Lattice, flt)> const& algo){
+algo::AlgoData algo::test_function_delta_t(
+        Lattice& lattice,
+        flt const &dt, flt const &t_end, flt const& T,
+        function<void(Lattice&, flt const&, flt const&)> const &algo)
+{
     uint maxSize = ceil(t_end);
-    Array<flt> time(0); time.reserve(maxSize);
-    Array<flt> magn(0); magn.reserve(maxSize);
-    Array<flt> enrg(0); enrg.reserve(maxSize);
-    Array<flt> auco(0); auco.reserve(maxSize);
-    LoadingBar lbar(60);
+    Array<flt> time(0);
+    time.reserve(maxSize);
+    Array<flt> magn(0);
+    magn.reserve(maxSize);
+    Array<flt> enrg(0);
+    enrg.reserve(maxSize);
+    Array<flt> auco(0);
+    auco.reserve(maxSize);
+    measure::LoadingBar lbar(60);
     // not zero
-    flt t_elapsed = dt;
+    flt t_elapsed = 0;
     Lattice lcopy = lattice;
     // i = 0;
     auco.push_back(1);
@@ -27,9 +28,9 @@ AlgoData test_algorithm(Lattice const& lattice,
         Vector3 magnVec = measure::get_magnetization(lattice);
         magn.push_back(magnVec.norm());
         enrg.push_back(abs(measure::get_energy(lattice)));
-        TimeKeeper timer;
+        measure::Timer timer;
         timer.start();
-        algo(lattice, dt);
+        algo(lattice, T, dt);
         timer.stop();
         t_elapsed += timer.time();
         flt autcorr = measure::get_auto_correlation(lcopy, lattice);

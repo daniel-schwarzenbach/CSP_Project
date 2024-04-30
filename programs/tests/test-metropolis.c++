@@ -16,13 +16,13 @@ int main()
 
     //              --- Lattice
     Lattice lattice = Lattice::random_lattice(8, 8, 8);
-    dat::plot_lattice(lattice, "Metropolis_start.png");
+    data::plot_lattice(lattice, "Metropolis_start.png");
 
     //             --- metropolis
     cout << "running metropolis ..." << endl;
     metropolis(lattice, T, J, Time, maxUint);
 
-    dat::plot_lattice(lattice, "Metropolis_end.png");
+    data::plot_lattice(lattice, "Metropolis_end.png");
 
     return 0;
 }
