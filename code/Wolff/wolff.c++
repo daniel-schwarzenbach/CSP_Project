@@ -1,51 +1,24 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timekeeper.h++>
 #include <Wolff/LatticeBool.h++>
+#include <Wolff/duplicate_functions.h++>
 
 using Index = StaticArray<int, 3>;
 
 template <class T>
 using Array3D = Array<Array<Array<T>>>;
 
-// Function to build the cluster for checking if neighbors have been
-// visited or not, initialize with false for all (x,y,z)
-Array3D<bool> checked(const int Lx, const int Ly, const int Lz)
-{
 
-    // Initialize the 3D vector representing the lattice
-    Array3D<bool> visited(Lx, Array<Array<bool>>(Ly, Array<bool>(Lz)));
-    // Assign false to all points in the checking_cluster
-    #pragma omp parallel for collapse(3)
-    for (int i = 0; i < Lx; ++i)
-    {
-        for (int j = 0; j < Ly; ++j)
-        {
-            for (int k = 0; k < Lz; ++k)
-            {
-                visited[i][j][k] = false;
-            }
-        }
-    }
-    return visited;
-}
+//Function to activate bond depending on given probability 
+bool activate_bond(flt J, Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 
-// Function to flip the spin
-void flip_spin(Spin &spin_r, Spin &spin_x)
-{
-    f32 cdot = spin_x | spin_r;
-    spin_x = spin_x - (2.0f * cdot) * spin_r;
-}
-
-// Function to activate bond depending on given probability
-bool activate_bond(flt J, Spin &spin_x, Spin &spin_r,
-                   flt beta, Spin &spin_y)
-{
     flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);
     flt activate_prob;
     flt active = 1.0 - std::exp(min(flt(cdot), 0.0));
     flt p = rng::rand_uniform();
     return (p <= active);
 }
+
 
 int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 {
@@ -55,9 +28,9 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 
     // Create vector that checks whether the site has been checked
     LatticeBool visited =
-        LatticeBool::constant_lattice(Lx, Ly, Lz, false);
-    visited.set_boundary_conditions(
-        lattice.get_boundary_conditions());
+            LatticeBool::constant_lattice(Lx, Ly, Lz, false);
+    visited.set_boundary_conditions(BC::_0);
+            //lattice.get_boundary_conditions());
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     Array<Index> stack(0);
@@ -123,8 +96,7 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     // Compute cluster size
     size_t clusterSize = cluster.size();
 
-    if (clusterSize == 0)
-    {
+    if (clusterSize == 0){
         return -1;
     }
 
@@ -168,6 +140,7 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps)
         }
     }
 
+    //Compute total cluster size
     uint totalClusterSize = 0;
     for (int size : clusters)
     {

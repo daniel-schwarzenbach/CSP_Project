@@ -17,6 +17,17 @@ Spin class
 - with assignment operator: =
 */
 using Spin = SpinVector;
+#include <Lattice3d.h++>
+/*
+Lattice class
+- with acces operator: (x,y,z)
+- with boundry conditions: set_boundry_conditions()
+- Lx(), Ly(), Lz() // size of the lattice
+- comunicate_ghost_cells() // does nothing in Serial
+*/
+using Lattice = Lattice3d<Spin>;
+
+
 #define LAMBDA [=]
 
 #ifdef WITH_OPENMP
@@ -42,15 +53,12 @@ uint omp_get_num_threads()
 
 #endif // WITH_OPENMP
 
-#include <Lattice3d.h++>
-/*
-Lattice class
-- with acces operator: (x,y,z)
-- with boundry conditions: set_boundry_conditions()
-- Lx(), Ly(), Lz() // size of the lattice
-- comunicate_ghost_cells() // does nothing in Serial
-*/
-using Lattice = Lattice3d<SpinVector>;
+
+
+#define PARALLEL_FOR  // theoretical parallel
+#define REDUCTION_SUM // theretical reduction
+#define ATOMIC        // theoretical atomic
+#define CRITICAL      // theoretical critical
 
 
 // boltzmann constant
