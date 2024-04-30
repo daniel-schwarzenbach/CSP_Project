@@ -54,14 +54,14 @@ using Lattice = Lattice3d<SpinVector>;
 
 
 // boltzmann constant
-static constexpr F64 _kB_ = 1.0; // 1.38064852e-23;
+static constexpr flt _kB_ = 1.0; // 1.38064852e-23;
 
 /*
 Definition of thermodynamic beta
 
 / @param T: temperature in K
 */
-static F64 Beta(F64 T)
+static flt Beta(flt T)
 {
     return 1. / (_kB_ * T);
 };
@@ -74,7 +74,7 @@ calculate the mean value of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-static F64 mean(Array<Float> array)
+static Float mean(Array<Float> array)
 {
     Float sum = 0;
     uint n = array.size();
@@ -92,7 +92,7 @@ calculate the variance of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-F64 variance(Array<Float> array)
+Float variance(Array<Float> array)
 {
     Float mean = mean(array);
     uint n = array.size();
@@ -100,7 +100,26 @@ F64 variance(Array<Float> array)
     #pragma omp parallel for collapse(1) reduction(+: sum)
     for (uint i = 0; i < n; i++)
         sum += pow(array[i] - mean, 2);
-    return sum / F64(n);
+    return sum / flt(n);
 };
+
+/*
+- alternative to to_string
+- only gives 3 digits after the comma and removes zeros
+
+*/
+static string to_str(flt const& value){
+    string longstr = to_string(value);
+    longstr.resize(longstr.length()-3);
+    for(uint i = 0; i < 2; ++i){
+        uint id = longstr.length() - 1;
+        if(longstr[id] == '0'){
+            longstr.resize(id);
+        } else{
+            break;
+        }
+    }
+    return longstr;
+}
 
 #endif // __HEISENBERG_H__

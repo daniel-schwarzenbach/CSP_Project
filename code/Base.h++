@@ -35,34 +35,26 @@ using std::cos;
 using std::min;
 using std::sin;
 
-
-
-
 //          --- Types
 
+// 32 bit floating point
+using f32 = float;
+// 64 bit floating point
+using f64 = double;
 
 /*
 standart floatingpoint type
 
-usign a generic float has the advantage that we can easily
-change it.
- also writing flt is shorter than double/float/long double
+its shorter and faster written than double
 */
-using flt = float;
-
-
-
-// 32 bit floating point
-using F32 = float;
-// 64 bit floating point
-using F64 = double;
+using flt = double;
 
 // 8 bit unsigned integer
-using U8 = unsigned char;
+using u8 = unsigned char;
 // 16 bit unsigned integer
-using U16 = unsigned short;
+using u16 = unsigned short;
 // 8 bit signed integer
-using I8 = signed char;
+using i8 = signed char;
 // Memory Adress
 using Adress = size_t;
 
@@ -70,12 +62,13 @@ using Adress = size_t;
 using std::function;
 using std::mem_fn;
 
-
 #include <vector>
+#include <list>
 // dynamic array
 template <typename T>
-using Array = std::vector<T, std::allocator<T>>;
-
+using Array = std::vector<T, std::allocator<T>>; // std::vector<T, std::allocator<T>>;
+template <typename T>
+using List = std::list<T, std::allocator<T>>;
 
 #include <array>
 // static array
@@ -85,29 +78,22 @@ using StaticArray = std::array<T, I>;
 //          --- Constants
 
 // π
-static constexpr F64 _pi_ = M_PI;
+static constexpr flt _pi_ = M_PI;
 // 2π
-static constexpr F64 _2pi_ = 2 * _pi_;
+static constexpr flt _2pi_ = 2 * _pi_;
 // π/2
-static constexpr F64 _pi_2_ = _pi_ / 2.;
+static constexpr flt _pi_2_ = _pi_ / 2.;
 
 // ∞
-static constexpr F64 _inf_ = INFINITY;
+static constexpr flt _inf_ = INFINITY;
 
 // e: eulers number
-static constexpr F64 _e_ = M_E;
-
-
-
+static constexpr flt _e_ = M_E;
 
 static constexpr uint maxUint = 0xff'ff'ff'ff;
 
 //          --- Functions
 #include <RNG.h++>
-
-
-
-
 
 //          --- Exeptions
 #include <exception>

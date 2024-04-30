@@ -27,7 +27,7 @@ namespace rng
     }
 
     /*
-    random number generator F64
+    random number generator flt
 
     / @brief
     / @return uniform random number r ∈ [0,1)
@@ -39,7 +39,7 @@ namespace rng
     }
 
     /*
-    random number generator F64
+    random number generator flt
 
     / @brief
     / @return uniform random number r ∈ [0,1]
@@ -50,8 +50,9 @@ namespace rng
         return dist(engine);
     }
 
-    int rand_int_range(int a,int b){
-        std::uniform_int_distribution<int> dist(a,b-1);
+    int rand_int_range(int a, int b)
+    {
+        std::uniform_int_distribution<int> dist(a, b - 1);
         return dist(engine);
     }
 

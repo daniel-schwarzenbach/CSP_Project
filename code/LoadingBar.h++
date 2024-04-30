@@ -1,15 +1,17 @@
 #include <Base.h++>
 
-class LoadingBar{
+class LoadingBar
+{
 private:
     // 0 - 100
     uint barWidth = 100;
-    F64 progress = 0.0;
+    flt progress = 0.0;
+
 public:
     // init loading bar with 0%
     LoadingBar(uint barWith);
     // set loadin bar in percent
-    void update(F64 percent);
+    void update(flt percent);
     // delete the loading bar
     ~LoadingBar();
 };

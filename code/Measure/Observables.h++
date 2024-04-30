@@ -15,23 +15,21 @@ namespace measure
     */
     Vector3 get_magnetization(const Lattice &lattice);
 
-    F64 get_scalar_average(Lattice const& lattice,Vector3 const& vec);
+    flt get_scalar_average(Lattice const &lattice, Vector3 const &vec);
 
-    F64 get_auto_correlation(Lattice const& prev,Lattice const& next);
+    flt get_auto_correlation(Lattice const &prev, Lattice const &next);
 
     /*
     calculate the energy of all the spins inside the lattice
 
     / @brief
-    / @param lattice our 3d lattice, where to perform the simulation 
+    / @param lattice our 3d lattice, where to perform the simulation
     on
     / @return the energy of the lattice
     */
-    F64 get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0}, 
-                   F64 J = 1);
+    flt get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0},
+                   flt J = 1);
 
-
-    
     /*
     calculate τ  s.d  min(|| yᵢ = exp(Tᵢ-T₀ / τ) ||²)
 
@@ -41,8 +39,8 @@ namespace measure
     on
     / @return the energy of the lattice
     */
-    F64 calculate_auto_correlation_time(Array<F64> const& y, 
-                                        Array<F64> const& T);
+    flt calculate_auto_correlation_time(Array<flt> const &y,
+                                        Array<flt> const &T);
 
 }
 

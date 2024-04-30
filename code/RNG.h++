@@ -21,7 +21,7 @@ namespace rng
     float rand_f32();
 
     /*
-    random number generator F64
+    random number generator flt
 
     / @brief
     / @return uniform random number r ∈ [0,1)
@@ -29,13 +29,12 @@ namespace rng
     double rand_uniform();
 
     /*
-    random number generator F64
+    random number generator flt
 
     / @brief
     / @return
     */
     double rand_gaussion();
-
 
     /*
     random number generator int
@@ -43,7 +42,7 @@ namespace rng
     / @brief
     / @return r ∈ {a, a+1, ..., b-2, b-1}
     */
-    int rand_int_range(int a,int b);
+    int rand_int_range(int a, int b);
 
     template <class T>
     static T get_random() { return T(100 * rand_uniform()); }

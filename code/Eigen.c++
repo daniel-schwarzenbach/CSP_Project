@@ -8,7 +8,7 @@ Vector fit_lst_sqr(const Matrix &A, const Vector &b)
     return A_t.colPivHouseholderQr().solve(b_t);
 }
 
-flt operator|(const Vector3 &a, const Vector3 &b)
+f32 operator|(const Vector3 &a, const Vector3 &b)
 {
     return a.dot(b);
 }

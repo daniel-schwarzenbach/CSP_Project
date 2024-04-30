@@ -12,13 +12,13 @@
 namespace plt = matplot;
 
 // interaction
-const F64 J = 1.0;
+const flt J = 1.0;
 // maximal runtime
-const F64 dt = 0.1;
+const flt dt = 0.01;
 // end Time
-const F64 t_end = 10.0;
+const flt t_end = 5.0;
 // Temerature
-const F64 T = 1.;
+const flt T = 0.5;
 // int Random Lattice Seed
 const int seed = 69; // hi hi
 
@@ -46,49 +46,51 @@ int main(int mainArgCount, char **mainArgs)
     Lattice lcopy = lattice;
 
     uint size = t_end / dt;
-    Array<F64> nm_time(0);
-    nm_time.reserve(size);
-    Array<F64> nm_mag(0);
-    nm_mag.reserve(size);
-    Array<F64> nm_nrg(0);
-    nm_nrg.reserve(size);
-    Array<F64> nm_aut(0);
-    nm_aut.reserve(size);
-
-    Array<F64> am_time(0);
+    // metropolis small step
+    Array<flt> ms_time(0);
+    ms_time.reserve(size);
+    Array<flt> ms_mag(0);
+    ms_mag.reserve(size);
+    Array<flt> ms_nrg(0);
+    ms_nrg.reserve(size);
+    Array<flt> ms_aut(0);
+    ms_aut.reserve(size);
+    // metropolis adaptive
+    Array<flt> am_time(0);
     am_time.reserve(size);
-    Array<F64> am_mag(0);
+    Array<flt> am_mag(0);
     am_mag.reserve(size);
-    Array<F64> am_nrg(0);
+    Array<flt> am_nrg(0);
     am_nrg.reserve(size);
-    Array<F64> am_aut(0);
+    Array<flt> am_aut(0);
     am_aut.reserve(size);
+    // metropolis random
+    Array<flt> mr_time(0);
+    mr_time.reserve(size);
+    Array<flt> mr_mag(0);
+    mr_mag.reserve(size);
+    Array<flt> mr_nrg(0);
+    mr_nrg.reserve(size);
+    Array<flt> mr_aut(0);
+    mr_aut.reserve(size);
 
-    Array<F64> wo_time(0);
+    Array<flt> wo_time(0);
     wo_time.reserve(size);
-    Array<F64> wo_mag(0);
+    Array<flt> wo_mag(0);
     wo_mag.reserve(size);
-    Array<F64> wo_nrg(0);
+    Array<flt> wo_nrg(0);
     wo_nrg.reserve(size);
-    Array<F64> wo_aut(0);
+    Array<flt> wo_aut(0);
     wo_aut.reserve(size);
 
-    dat::plot_lattice(lattice, "aMet.png");
-    #pragma omp parallel
-    {
-        string str =    "hello throm thread" 
-                        + to_string(omp_get_thread_num());
-    #pragma omp critical
-        cout << str << endl;
-    } cout << endl;
-    //             --- metropolis
-    cout << "running metropolis ..." << endl;
+    //             --- metropolis small step
+    cout << "running metropolis small step ..." << endl;
     {
         LoadingBar lbar(60);
         // not zero
-        F64 t_elapsed = dt;
+        flt t_elapsed = dt;
         int i = 0;
-        nm_aut.push_back(1);
+        ms_aut.push_back(1);
         while (t_elapsed < t_end)
         {
             lbar.update(t_elapsed / t_end * 100.0);
@@ -96,23 +98,23 @@ int main(int mainArgCount, char **mainArgs)
             //         lattice,
             //         "plots/addMetro/metro_" + to_string(i++) + ".png");
 
-            nm_time.push_back(t_elapsed);
+            ms_time.push_back(t_elapsed);
             Vector3 magn = measure::get_magnetization(lattice);
-            nm_mag.push_back(magn.norm());
-            nm_nrg.push_back(abs(measure::get_energy(lattice)));
+            ms_mag.push_back(magn.norm());
+            ms_nrg.push_back(abs(measure::get_energy(lattice)));
             TimeKeeper timer;
             timer.start();
-            metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
+            metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
             timer.stop();
             t_elapsed += timer.time();
-            F64 aut = measure::get_auto_correlation(lcopy,lattice);
-            nm_aut.push_back(aut);
+            flt aut = measure::get_auto_correlation(lcopy, lattice);
+            ms_aut.push_back(aut);
         }
 
-        nm_time.push_back(t_elapsed);
+        ms_time.push_back(t_elapsed);
         Vector3 magn = measure::get_magnetization(lattice);
-        nm_mag.push_back(magn.norm());
-        nm_nrg.push_back(abs(measure::get_energy(lattice)));
+        ms_mag.push_back(magn.norm());
+        ms_nrg.push_back(abs(measure::get_energy(lattice)));
         // dat::plot_lattice(
         //             lattice,
         //             "plots/addMetro/metro_" + to_string(i++) + ".png");
@@ -120,9 +122,55 @@ int main(int mainArgCount, char **mainArgs)
     dat::plot_lattice(lattice, "bMet.png");
 
     // save data
-    cout << "Save data" << endl;
-    Array<Array<F64>> data_nm = {nm_time, nm_mag, nm_nrg};
-    dat::store_data(data_nm, "data/metr.dat");
+    cout << "Save metropolis small step data" << endl;
+    Array<Array<flt>> data_nm = {ms_time, ms_mag, ms_nrg};
+    dat::store_data(data_nm, "data/metr_small_" + to_str(T) + ".dat");
+
+    rng::set_seed(seed);
+    lattice.randomize();
+
+    //             --- metropolis random
+    cout << "running metropolis random step ..." << endl;
+    {
+        LoadingBar lbar(60);
+        // not zero
+        flt t_elapsed = dt;
+        int i = 0;
+        mr_aut.push_back(1);
+        while (t_elapsed < t_end)
+        {
+            lbar.update(t_elapsed / t_end * 100.0);
+            // dat::plot_lattice(
+            //         lattice,
+            //         "plots/addMetro/metro_" + to_string(i++) + ".png");
+
+            mr_time.push_back(t_elapsed);
+            Vector3 magn = measure::get_magnetization(lattice);
+            mr_mag.push_back(magn.norm());
+            mr_nrg.push_back(abs(measure::get_energy(lattice)));
+            TimeKeeper timer;
+            timer.start();
+            metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
+            timer.stop();
+            t_elapsed += timer.time();
+            flt aut = measure::get_auto_correlation(lcopy, lattice);
+            mr_aut.push_back(aut);
+        }
+
+        mr_time.push_back(t_elapsed);
+        Vector3 magn = measure::get_magnetization(lattice);
+        mr_mag.push_back(magn.norm());
+        mr_nrg.push_back(abs(measure::get_energy(lattice)));
+        // dat::plot_lattice(
+        //             lattice,
+        //             "plots/addMetro/metro_" + to_string(i++) + ".png");
+    }
+    dat::plot_lattice(lattice, "bMet.png");
+
+    // save data
+    cout << "Save metropolis small step data" << endl;
+    Array<Array<flt>> data_mr = {mr_time, mr_mag, mr_nrg, mr_aut};
+    dat::store_data(data_mr, "data/metr_small_" + to_str(T) + ".dat");
 
     rng::set_seed(seed);
     lattice.randomize();
@@ -133,7 +181,7 @@ int main(int mainArgCount, char **mainArgs)
         am_aut.push_back(1);
         LoadingBar lbar(60);
         // not zero
-        F64 t_elapsed = dt;
+        flt t_elapsed = dt;
         int i = 0;
         while (t_elapsed < t_end)
         {
@@ -147,13 +195,13 @@ int main(int mainArgCount, char **mainArgs)
             am_mag.push_back(magn.norm());
             am_nrg.push_back(abs(measure::get_energy(lattice)));
             TimeKeeper timer;
-            
+
             timer.start();
             metropolis(lattice, T, J, dt, maxUint, MoveType::Addaptive);
             timer.stop();
             t_elapsed += timer.time();
 
-            F64 aut = measure::get_auto_correlation(lcopy,lattice);
+            flt aut = measure::get_auto_correlation(lcopy, lattice);
             am_aut.push_back(aut);
         }
 
@@ -168,8 +216,8 @@ int main(int mainArgCount, char **mainArgs)
 
     // save data
     cout << "Save data" << endl;
-    Array<Array<F64>> data_am = {am_time, am_mag, am_nrg};
-    dat::store_data(data_am, "data/addmetr.dat");
+    Array<Array<flt>> data_am = {am_time, am_mag, am_nrg};
+    dat::store_data(data_am, "data/addmetr_" + to_str(T) + ".dat");
 
     //              --- randomiz Lattice
     rng::set_seed(seed);
@@ -180,7 +228,7 @@ int main(int mainArgCount, char **mainArgs)
     {
         wo_aut.push_back(1);
         LoadingBar lbar(60);
-        F64 t_elapsed = dt;
+        flt t_elapsed = dt;
         int i = 0;
         while (t_elapsed < t_end)
         {
@@ -198,7 +246,7 @@ int main(int mainArgCount, char **mainArgs)
             timer.stop();
             t_elapsed += timer.time();
 
-            F64 aut = measure::get_auto_correlation(lcopy,lattice);
+            flt aut = measure::get_auto_correlation(lcopy, lattice);
             wo_aut.push_back(aut);
         }
         wo_time.push_back(t_elapsed);
@@ -211,44 +259,49 @@ int main(int mainArgCount, char **mainArgs)
     }
     // save data
     cout << "Sava data" << endl;
-    Array<Array<F64>> data_wo = {wo_time, wo_mag, wo_nrg};
-    dat::store_data(data_wo, "data/wolff.dat");
+    Array<Array<flt>> data_wo = {wo_time, wo_mag, wo_nrg};
+    dat::store_data(data_wo, "data/wolff_" + to_str(T) + ".dat");
 
     //              --- plot data
-    
 
     // plot magnitisation
     cout << "plot magnitisation" << endl;
     {
 
-        auto p1 = plt::plot(nm_time, nm_mag, "--gs");
+        auto p1 = plt::plot(mr_time, mr_mag, "--gs");
         plt::hold(true);
+        auto p4 = plt::plot(ms_time, ms_mag, "--ys");
         auto p2 = plt::plot(am_time, am_mag, "--rs");
         auto p3 = plt::plot(wo_time, wo_mag, "--bs");
 
-        auto l = plt::legend({"Metropolis", "Adaptive Metropolis", "Wolff"});
+        auto l = plt::legend({"Metropolis Random",
+                              "Metropolis Small Step", "Adaptive Metropolis",
+                              "Wolff"});
         l->location(plt::legend::general_alignment::bottomright);
         plt::xlabel("Time in s");
         plt::ylabel("Magnitisation");
-        plt::title("T = " + to_string(uint(T)) + ", L = " + to_string(L));
-        plt::save("plots/mag.png");
+        plt::title("T = " + to_str(T) + ", L = " + to_string(L));
+        plt::save("plots/mag_" + to_str(T) + ".png");
         plt::hold(false);
     }
 
-        // plot magnitisation
+    // plot aut
     cout << "plot autocorrelation" << endl;
     {
-        auto p1 = plt::plot(nm_time, nm_aut, "--gs");
+        auto p1 = plt::plot(mr_time, mr_aut, "--gs");
         plt::hold(true);
+        auto p4 = plt::plot(ms_time, ms_aut, "--ys");
         auto p2 = plt::plot(am_time, am_aut, "--rs");
         auto p3 = plt::plot(wo_time, wo_aut, "--bs");
 
-        auto l = plt::legend({"Metropolis", "Adaptive Metropolis", "Wolff"});
-        l->location(plt::legend::general_alignment::bottomright);
+        auto l = plt::legend({"Metropolis Random",
+                              "Metropolis Small Step", "Adaptive Metropolis",
+                              "Wolff"});
+        l->location(plt::legend::general_alignment::topright);
         plt::xlabel("Time in s");
         plt::ylabel("AutoCorrelation");
-        plt::title("T = " + to_string(uint(T)) + ", L = " + to_string(L));
-        plt::save("plots/aut.png");
+        plt::title("T = " + to_str(T) + ", L = " + to_string(L));
+        plt::save("plots/aut_" + to_str(T) + ".png");
         plt::hold(false);
     }
 
@@ -256,22 +309,21 @@ int main(int mainArgCount, char **mainArgs)
     cout << wo_nrg.size() << ", " << am_nrg.size();
     cout << "plot energy" << endl;
     {
-
-        auto p1 = plt::plot(nm_time, nm_nrg, "--gs");
+        auto p1 = plt::plot(mr_time, mr_nrg, "--gs");
         plt::hold(true);
+        auto p4 = plt::plot(ms_time, ms_nrg, "--ys");
         auto p2 = plt::plot(am_time, am_nrg, "--rs");
         auto p3 = plt::plot(wo_time, wo_nrg, "--bs");
 
-        auto l = plt::legend({"Metropolis SmallStep", 
-                              "Adaptive Metropolis", 
+        auto l = plt::legend({"Metropolis Random",
+                              "Metropolis Small Step", "Adaptive Metropolis",
                               "Wolff"});
         l->location(plt::legend::general_alignment::bottomright);
         plt::xlabel("Time in s");
         plt::ylabel("Energy in J");
-        plt::title("T = " + to_string(uint(T)) + ", L = " + to_string(L));
-        plt::save("plots/energy.png");
+        plt::title("T = " + to_str(T) + ", L = " + to_string(L));
+        plt::save("plots/energy_" + to_str(T) + ".png");
         plt::hold(false);
     }
-
     return 0;
 }

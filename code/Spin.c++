@@ -8,25 +8,25 @@ SpinVector &SpinVector::operator=(Vector3 const &other)
     return *this;
 }
 
-flt SpinVector::x() const { return this->base::operator()(0); }
-flt SpinVector::y() const { return this->base::operator()(1); }
-flt SpinVector::z() const { return this->base::operator()(2); }
+f32 SpinVector::x() const { return this->base::operator()(0); }
+f32 SpinVector::y() const { return this->base::operator()(1); }
+f32 SpinVector::z() const { return this->base::operator()(2); }
 
-flt SpinVector::theta() const
+f32 SpinVector::theta() const
 {
     SpinVector s = this->base::normalized();
     return acos(s.z());
 }
-flt SpinVector::phi() const
+f32 SpinVector::phi() const
 {
     SpinVector s = this->normalized();
-    flt phi = atan2(s.y(), s.x());
+    f32 phi = atan2(s.y(), s.x());
     if (phi < 0)
         phi += _2pi_;
     return phi;
 }
 
-SpinVector::SpinVector(flt x, flt y, flt z) : base(x, y, z) {}
+SpinVector::SpinVector(f32 x, f32 y, f32 z) : base(x, y, z) {}
 SpinVector &SpinVector::operator=(SpinVector const &other)
 {
     this->base::operator=(other);
@@ -45,13 +45,13 @@ std::ostream &operator<<(std::ostream &os,
     return os;
 }
 
-SpinVector SpinVector::from_xyz(flt x, flt y, flt z)
+SpinVector SpinVector::from_xyz(f32 x, f32 y, f32 z)
 {
     SpinVector s;
     s << x, y, z;
     return s;
 }
-SpinVector SpinVector::from_phi_theata(flt phi, flt theta)
+SpinVector SpinVector::from_phi_theata(f32 phi, f32 theta)
 {
     SpinVector s;
     s << std::sin(theta) * std::cos(phi),
@@ -63,42 +63,44 @@ SpinVector SpinVector::from_phi_theata(flt phi, flt theta)
 SpinVector SpinVector::get_random()
 {
     SpinVector s;
-    F64 theta = rng::rand_uniform() * _pi_;
-    F64 phi = rng::rand_uniform() * _2pi_;
+    flt theta = rng::rand_uniform() * _pi_;
+    flt phi = rng::rand_uniform() * _2pi_;
     s << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),
         std::cos(theta);
     return s;
 }
 
-void SpinVector::spin_flip()
+void SpinVector::spin_flip_step()
 {
     *this *= -1;
 }
-void SpinVector::random_move()
+void SpinVector::random_step()
 {
-    *this = SpinVector::get_random();
+    *this += get_random()*rng::rand_gaussion();
+    this->normalize();
 }
-void SpinVector::small_step_move(F64 openingAngle)
+
+void SpinVector::small_step(flt openingAngle)
 {
-    F64 theta = rng::rand_gaussion() * openingAngle;
-    F64 phi = rng::rand_uniform() * _2pi_;
+    flt theta = rng::rand_gaussion() * openingAngle;
+    flt phi = rng::rand_uniform() * _2pi_;
     Vector3 randomPole;
     randomPole << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),
         std::cos(theta);
     Vector3 northPole(0, 0, 1);
-    Eigen::Quaternion<flt> rotationToOriginal =
-        Eigen::Quaternion<flt>::FromTwoVectors(
+    Eigen::Quaternion<f32> rotationToOriginal =
+        Eigen::Quaternion<f32>::FromTwoVectors(
             northPole, *this);
     *this = rotationToOriginal * randomPole;
 }
 
-void SpinVector::adaptive_step(F64 sigma)
+void SpinVector::adaptive_step(flt sigma)
 {
-    F64 dx = rng::rand_gaussion();
-    F64 dy = rng::rand_gaussion();
-    F64 dz = rng::rand_gaussion();
+    flt dx = rng::rand_gaussion();
+    flt dy = rng::rand_gaussion();
+    flt dz = rng::rand_gaussion();
     *this += sigma * SpinVector(dx, dy, dz);
     this->normalize();
 }
@@ -106,8 +108,8 @@ void SpinVector::adaptive_step(F64 sigma)
 //            --- SpinCompressed ---
 
 // @constants for SpinCompressed:
-constexpr flt thetaFac = _pi_ / 0xfe;
-constexpr flt phiFac = _2pi_ / 0xff;
+constexpr f32 thetaFac = _pi_ / 0xfe;
+constexpr f32 phiFac = _2pi_ / 0xff;
 /*
 x = sin(theta) ⋅ cos(phi)
 y = sin(theta) ⋅ sin(phi)
@@ -119,11 +121,11 @@ compute: inefficient, 20.77 ns, 50x slower than SpinCartesian
 memory: efficient, 16Bit, 1/6 of SpinCartesian
 */
 
-flt SpinCompressed::phi() const { return phi_byte * phiFac; }
-flt SpinCompressed::theta() const { return theta_byte * thetaFac; }
-flt SpinCompressed::x() const { return sin(theta()) * cos(phi()); }
-flt SpinCompressed::y() const { return sin(theta()) * sin(phi()); }
-flt SpinCompressed::z() const { return cos(theta()); }
+f32 SpinCompressed::phi() const { return phi_byte * phiFac; }
+f32 SpinCompressed::theta() const { return theta_byte * thetaFac; }
+f32 SpinCompressed::x() const { return sin(theta()) * cos(phi()); }
+f32 SpinCompressed::y() const { return sin(theta()) * sin(phi()); }
+f32 SpinCompressed::z() const { return cos(theta()); }
 
 // generate random spin
 SpinCompressed::SpinCompressed()
@@ -132,7 +134,7 @@ SpinCompressed::SpinCompressed()
     theta_byte = round(rng::rand_uniform() * 0xfe);
 }
 // to initialize a zero Spin
-SpinCompressed::SpinCompressed(flt zero)
+SpinCompressed::SpinCompressed(f32 zero)
 {
     if (zero == 0)
     {
@@ -155,10 +157,10 @@ SpinCompressed &SpinCompressed::operator=(SpinCompressed const &other)
 
 // scalar product (1,θ₁,ϕ₁) ⋅ (1,θ₂,ϕ₂)
 // - returns 0 if any theta=0xff
-flt SpinCompressed::operator|(SpinCompressed const &other) const
+f32 SpinCompressed::operator|(SpinCompressed const &other) const
 {
-    flt t1 = this->theta();
-    flt t2 = other.theta();
+    f32 t1 = this->theta();
+    f32 t2 = other.theta();
     if (t1 == 0xff || t2 == 0xff)
         return 0; // => zero Spin
     // Wolfram Alpha told me that
@@ -178,14 +180,14 @@ bool SpinCompressed::operator==(SpinCompressed const &other)
            this->theta_byte == other.theta_byte;
 }
 
-SpinCompressed SpinCompressed::from_xyz(flt x, flt y, flt z)
+SpinCompressed SpinCompressed::from_xyz(f32 x, f32 y, f32 z)
 {
     SpinCompressed s;
     s.theta_byte = round(acos(z) / thetaFac);
     s.phi_byte = round(atan2(y, x) / phiFac);
     return s;
 }
-SpinCompressed SpinCompressed::from_phi_theata(flt phi, flt theta)
+SpinCompressed SpinCompressed::from_phi_theata(f32 phi, f32 theta)
 {
     SpinCompressed s;
     s.theta_byte = round(theta / thetaFac);
@@ -201,21 +203,21 @@ SpinCompressed SpinCompressed::get_random()
     return s;
 }
 
-// flt SpinCartesian::x() const { return x_; }
-// flt SpinCartesian::y() const { return y_; }
-// flt SpinCartesian::z() const { return z_; }
-// flt SpinCartesian::theta() const
+// f32 SpinCartesian::x() const { return x_; }
+// f32 SpinCartesian::y() const { return y_; }
+// f32 SpinCartesian::z() const { return z_; }
+// f32 SpinCartesian::theta() const
 // {
 //     SpinCartesian s = this->normalized();
 //     return acos(s.z_);
 // }
-// flt SpinCartesian::phi() const
+// f32 SpinCartesian::phi() const
 // {
 //     SpinCartesian s = this->normalized();
 //     return atan2(y_, x_);
 // }
 
-// SpinCartesian::SpinCartesian(flt x, flt y, flt z)
+// SpinCartesian::SpinCartesian(f32 x, f32 y, f32 z)
 //     : x_(x), y_(y), z_(z) {}
 
 // SpinCartesian &SpinCartesian::operator=(SpinCartesian const &other)
@@ -226,7 +228,7 @@ SpinCompressed SpinCompressed::get_random()
 //     return *this;
 // };
 // // scalar product
-// flt SpinCartesian::operator|(SpinCartesian const &other) const
+// f32 SpinCartesian::operator|(SpinCartesian const &other) const
 // {
 //     return this->x_ * other.x_ + this->y_ * other.y_ + this->z_ * other.z_;
 // }
@@ -246,7 +248,7 @@ SpinCompressed SpinCompressed::get_random()
 //     this->z_ *= other.z_;
 //     return *this;
 // }
-// SpinCartesian operator*(flt const &lhs, SpinCartesian const &rhs)
+// SpinCartesian operator*(f32 const &lhs, SpinCartesian const &rhs)
 // {
 //     SpinCartesian s;
 //     s.x_ = lhs * rhs.x_;
@@ -254,7 +256,7 @@ SpinCompressed SpinCompressed::get_random()
 //     s.z_ = lhs * rhs.z_;
 //     return s;
 // }
-// SpinCartesian SpinCartesian::operator*(flt const &other) const
+// SpinCartesian SpinCartesian::operator*(f32 const &other) const
 // {
 //     SpinCartesian s;
 //     s.x_ = this->x_ * other;
@@ -262,7 +264,7 @@ SpinCompressed SpinCompressed::get_random()
 //     s.z_ = this->z_ * other;
 //     return s;
 // }
-// SpinCartesian &SpinCartesian::operator*=(flt const &other)
+// SpinCartesian &SpinCartesian::operator*=(f32 const &other)
 // {
 //     this->x_ *= other;
 //     this->y_ *= other;
@@ -306,7 +308,7 @@ SpinCompressed SpinCompressed::get_random()
 // // normalize the spin
 // void SpinCartesian::normalize()
 // {
-//     flt norm = sqrt(x_ * x_ + y_ * y_ + z_ * z_);
+//     f32 norm = sqrt(x_ * x_ + y_ * y_ + z_ * z_);
 //     x_ /= norm;
 //     y_ /= norm;
 //     z_ /= norm;
@@ -332,7 +334,7 @@ SpinCompressed SpinCompressed::get_random()
 //     return os;
 // }
 
-// SpinCartesian SpinCartesian::from_xyz(flt x, flt y, flt z)
+// SpinCartesian SpinCartesian::from_xyz(f32 x, f32 y, f32 z)
 // {
 //     SpinCartesian s;
 //     s.x_ = x;
@@ -340,7 +342,7 @@ SpinCompressed SpinCompressed::get_random()
 //     s.z_ = z;
 //     return s;
 // }
-// SpinCartesian SpinCartesian::from_phi_theata(flt phi, flt theta)
+// SpinCartesian SpinCartesian::from_phi_theata(f32 phi, f32 theta)
 // {
 //     SpinCartesian s;
 //     s.x_ = sin(theta) * cos(phi);
@@ -352,8 +354,8 @@ SpinCompressed SpinCompressed::get_random()
 // SpinCartesian SpinCartesian::get_random()
 // {
 //     SpinCartesian s;
-//     flt phi = rng::randflt() * _2pi_;
-//     flt theta = rng::randflt() * _pi_;
+//     f32 phi = rng::randflt() * _2pi_;
+//     f32 theta = rng::randflt() * _pi_;
 //     s.x_ = sin(phi) * sin(theta);
 //     s.y_ = cos(phi) * sin(theta);
 //     s.z_ = cos(theta);
@@ -363,7 +365,7 @@ SpinCompressed SpinCompressed::get_random()
 // // Trial moves //
 
 // // Reflects the initial spin across the origin
-// void SpinCartesian::spin_flip()
+// void SpinCartesian::spin_flip_step()
 // {
 //     x_ = -x_;
 //     y_ = -y_;
@@ -372,7 +374,7 @@ SpinCompressed SpinCompressed::get_random()
 // }
 
 // // Changes the spin to a random spin
-// void SpinCartesian::random_move()
+// void SpinCartesian::random_step()
 // {
 //     *this = get_random();
 // }
@@ -382,24 +384,24 @@ SpinCompressed SpinCompressed::get_random()
 
 // // Used both in the standard Metropolis when using the small step
 // // trial move and the adaptive Metropolis
-// void SpinCartesian::small_step_move(flt openingAngle)
+// void SpinCartesian::small_step(f32 openingAngle)
 // {
 //     // Sample angles uniformly within the cone specified by the opening angle
 //     std::random_device rd;
 //     std::mt19937 gen(rd());
 //     // Sampling from this interval makes sure we stay within a certain
 //     // distance/opening angle from the initial spin
-//     std::uniform_real_distribution<flt> dis_theta(0.0, openingAngle);
-//     std::uniform_real_distribution<flt> dis_phi(0.0, 2.0 * M_PI);
+//     std::uniform_real_distribution<f32> dis_theta(0.0, openingAngle);
+//     std::uniform_real_distribution<f32> dis_phi(0.0, 2.0 * M_PI);
 
-//     flt theta = dis_theta(gen); // Sample theta from [0, openingAngle]
-//     flt phi = dis_phi(gen);     // Sample phi from [0, 2*pi)
+//     f32 theta = dis_theta(gen); // Sample theta from [0, openingAngle]
+//     f32 phi = dis_phi(gen);     // Sample phi from [0, 2*pi)
 
 //     // Calculate the new spin vector components from the sampled angles
 //     // The two angles fully characterize the point on the unit sphere
-//     flt newX = std::sin(theta) * std::cos(phi);
-//     flt newY = std::sin(theta) * std::sin(phi);
-//     flt newZ = std::cos(theta);
+//     f32 newX = std::sin(theta) * std::cos(phi);
+//     f32 newY = std::sin(theta) * std::sin(phi);
+//     f32 newZ = std::cos(theta);
 
 //     // Compute rotation quaternion from north pole (zero angles) to
 //     // the initial spin direction (this)
@@ -420,17 +422,17 @@ SpinCompressed SpinCompressed::get_random()
 // // Performs the step of the adaptive Metropolis algorithm: adds the
 // // initial spin with a Gaussian distributed random vector multiplied
 // // by an adaptive factor sigma
-// void SpinCartesian::adaptive_step(flt sigma)
+// void SpinCartesian::adaptive_step(f32 sigma)
 // {
 //     // Initialize random number generator for Gaussian distribution
 //     std::random_device rd;
 //     std::mt19937 gen(rd());
-//     std::normal_distribution<flt> dist(0.0, 1.0); // Mean 0.0, Standard deviation 1.0
+//     std::normal_distribution<f32> dist(0.0, 1.0); // Mean 0.0, Standard deviation 1.0
 
 //     // Generate Gaussian-distributed random components
-//     flt dx = dist(gen);
-//     flt dy = dist(gen);
-//     flt dz = dist(gen);
+//     f32 dx = dist(gen);
+//     f32 dy = dist(gen);
+//     f32 dz = dist(gen);
 
 //     // Add Gaussian-distributed random vector to the spin
 //     x_ += sigma * dx;

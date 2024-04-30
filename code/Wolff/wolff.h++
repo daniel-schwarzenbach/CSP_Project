@@ -14,6 +14,6 @@ wolff algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps);
+flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps);
 
 #endif
