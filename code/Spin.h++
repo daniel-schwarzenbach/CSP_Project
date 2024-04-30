@@ -7,7 +7,7 @@
 /*
 [x, y, z]†
 compute: efficient, 0.42 ns
-memory: inefficient, sizeof(flt)*3 ~ (float)96bit
+memory: inefficient, sizeof(f32)*3 ~ (float)96bit
 */
 class SpinVector : public Vector3
 {
@@ -15,13 +15,13 @@ private:
     using base = Vector3;
 
 public:
-    flt x() const;
-    flt y() const;
-    flt z() const;
-    flt theta() const;
-    flt phi() const;
+    f32 x() const;
+    f32 y() const;
+    f32 z() const;
+    f32 theta() const;
+    f32 phi() const;
     // Constructor
-    SpinVector(flt x = 0, flt y = 0, flt z = 0);
+    SpinVector(f32 x = 0, f32 y = 0, f32 z = 0);
     // Constructor from Vector3
     SpinVector(Vector3 const &v);
     // Assignment operator
@@ -34,19 +34,20 @@ public:
     // output operator
     friend std::ostream &operator<<(std::ostream &os,
                                     SpinVector const &s);
-    SpinVector from_xyz(flt x, flt y, flt z);
-    SpinVector from_phi_theata(flt phi, flt theta);
+    SpinVector from_xyz(f32 x, f32 y, f32 z);
+    SpinVector from_phi_theata(f32 phi, f32 theta);
     static SpinVector get_random();
 
     // Trial moves
-    void spin_flip();
-    void random_move();
-    void small_step_move(F64 openingAngle);
-    void adaptive_step(F64 sigma);
+    void spin_flip_step();
+    void random_step();
+    void small_step(flt openingAngle);
+    void adaptive_step(flt sigma);
 };
 
-template<>
-SpinVector rng::get_random<SpinVector>(){
+template <>
+SpinVector rng::get_random<SpinVector>()
+{
     return SpinVector::get_random();
 }
 
@@ -63,25 +64,25 @@ memory: efficient, 16Bit, 1/6 of SpinCartesian
 class SpinCompressed
 {
 private:
-    U8 phi_byte = 0;
-    U8 theta_byte = 0;
+    u8 phi_byte = 0;
+    u8 theta_byte = 0;
 
 public:
-    flt phi() const;
-    flt theta() const;
-    flt x() const;
-    flt y() const;
-    flt z() const;
+    f32 phi() const;
+    f32 theta() const;
+    f32 x() const;
+    f32 y() const;
+    f32 z() const;
     // generate random spin
     SpinCompressed();
     // to initialize a zero Spin
-    SpinCompressed(flt zero);
+    SpinCompressed(f32 zero);
 
     SpinCompressed &operator=(SpinCompressed const &other);
 
     // scalar product (1,θ₁,ϕ₁) ⋅ (1,θ₂,ϕ₂)
     // - returns 0 if any θ=0xff
-    flt operator|(SpinCompressed const &other) const;
+    f32 operator|(SpinCompressed const &other) const;
     // standard product: is always normalized!
     SpinCompressed operator*(SpinCompressed const &other) const;
     SpinCompressed &operator*=(SpinCompressed const &other);
@@ -99,48 +100,49 @@ public:
     // compare operator
     bool operator==(SpinCompressed const &other);
     // generates a spin from x,y,z
-    static SpinCompressed from_xyz(flt x, flt y, flt z);
+    static SpinCompressed from_xyz(f32 x, f32 y, f32 z);
     // generates a spin from ϕ,θ
-    static SpinCompressed from_phi_theata(flt ϕ, flt θ);
+    static SpinCompressed from_phi_theata(f32 ϕ, f32 θ);
     // generates a random spin
     static SpinCompressed get_random();
 };
 
-template<>
-SpinCompressed rng::get_random<SpinCompressed>(){
+template <>
+SpinCompressed rng::get_random<SpinCompressed>()
+{
     return SpinCompressed::get_random();
 }
 
 /*
 [x, y, z]†
 compute: efficient, 0.42 ns
-memory: inefficient, sizeof(flt)*3 ~ (float)96bit
+memory: inefficient, sizeof(f32)*3 ~ (float)96bit
 */
 // class SpinCartesian
 // {
 // private:
-//     flt x_ = 1, y_ = 0, z_ = 0;
+//     f32 x_ = 1, y_ = 0, z_ = 0;
 
 // public:
-//     flt x() const;
-//     flt y() const;
-//     flt z() const;
-//     flt theta() const;
-//     flt phi() const;
+//     f32 x() const;
+//     f32 y() const;
+//     f32 z() const;
+//     f32 theta() const;
+//     f32 phi() const;
 //     // generate random spin
 //     SpinCartesian();
 //     // to initialize a with north pole [zero,0,0]
-//     SpinCartesian(flt zero);
+//     SpinCartesian(f32 zero);
 //     // to initialize a with x,y,z
-//     SpinCartesian(flt x, flt y, flt z);
+//     SpinCartesian(f32 x, f32 y, f32 z);
 //     // assignment operator
 //     SpinCartesian &operator=(SpinCartesian const &other);
 //     // scalar product
-//     flt operator|(SpinCartesian const &other) const;
+//     f32 operator|(SpinCartesian const &other) const;
 //     // standard product
-//     SpinCartesian operator*(flt const &other) const;
-//     SpinCartesian &operator*=(flt const &other);
-//     friend SpinCartesian operator*(flt const &lhs,
+//     SpinCartesian operator*(f32 const &other) const;
+//     SpinCartesian &operator*=(f32 const &other);
+//     friend SpinCartesian operator*(f32 const &lhs,
 //                                    SpinCartesian const &rhs);
 //     SpinCartesian operator*(SpinCartesian const &other) const;
 //     SpinCartesian &operator*=(SpinCartesian const &other);
@@ -160,15 +162,15 @@ memory: inefficient, sizeof(flt)*3 ~ (float)96bit
 //     friend std::ostream &operator<<(std::ostream &os,
 //                                     SpinCartesian const &s);
 
-//     static SpinCartesian from_xyz(flt x, flt y, flt z);
-//     static SpinCartesian from_phi_theata(flt ϕ, flt θ);
+//     static SpinCartesian from_xyz(f32 x, f32 y, f32 z);
+//     static SpinCartesian from_phi_theata(f32 ϕ, f32 θ);
 //     static SpinCartesian get_random();
 
 //     // Trial moves
-//     void spin_flip();
-//     void random_move();
-//     void small_step_move(flt openingAngle);
-//     void adaptive_step(flt sigma);
+//     void spin_flip_step();
+//     void random_step();
+//     void small_step(f32 openingAngle);
+//     void adaptive_step(f32 sigma);
 //     Vector3 to_vector3() const;
 // };
 

@@ -59,7 +59,7 @@ public:
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
             {
-                return data.at(x * _Ly * _Lz + y * _Lz + z);
+                return data[x * _Ly * _Lz + y * _Lz + z];
             }
             else
             {
@@ -85,11 +85,11 @@ public:
                 y >= 0 && y < _Ly &&
                 z >= 0 && z < _Lz)
             {
-                return data.at(x * _Ly * _Lz + y * _Lz + z);
+                return data[x * _Ly * _Lz + y * _Lz + z];
             }
             else
             {
-                return data.at(_Lx * _Ly * _Lz) = T(0);
+                return data[_Lx * _Ly * _Lz] = T(0);
             }
             break;
 
@@ -97,7 +97,7 @@ public:
             uint x_ = modulo(x, _Lx);
             uint y_ = modulo(y, _Ly);
             uint z_ = modulo(z, _Lz);
-            return data.at(x_ * _Ly * _Lz + y_ * _Lz + z_);
+            return data[x_ * _Ly * _Lz + y_ * _Lz + z_];
             ;
             break;
         }
@@ -115,7 +115,7 @@ public:
         : _Lx(Lx_), _Ly(Ly_), _Lz(Lz_), data(Lx_ * Ly_ * Lz_ + 1)
     {
         data.resize(Lx_ * Ly_ * Lz_ + 1);
-        data.shrink_to_fit();
+        //data.shrink_to_fit();
     }
     Lattice3d(Lattice3d &other) = default;
     Lattice3d(Lattice3d const &other) = default;

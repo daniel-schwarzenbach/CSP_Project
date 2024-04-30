@@ -1,5 +1,6 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timekeeper.h++>
+#include <Wolff/LatticeBool.h++>
 
 using Index = StaticArray<int, 3>;
 
@@ -31,29 +32,32 @@ Array3D<bool> checked(const int Lx, const int Ly, const int Lz)
 // Function to flip the spin
 void flip_spin(Spin &spin_r, Spin &spin_x)
 {
-    flt cdot = spin_x | spin_r;
+    f32 cdot = spin_x | spin_r;
     spin_x = spin_x - (2.0f * cdot) * spin_r;
 }
 
 // Function to activate bond depending on given probability
-bool activate_bond(Spin &spin_x, Spin &spin_r, flt beta, Spin &spin_y)
+bool activate_bond(flt J, Spin &spin_x, Spin &spin_r,
+                   flt beta, Spin &spin_y)
 {
-    flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
+    flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);
     flt activate_prob;
-    F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
+    flt active = 1.0 - std::exp(min(flt(cdot), 0.0));
     flt p = rng::rand_uniform();
     return (p <= active);
 }
 
-int wolf_algorithm(Lattice &lattice, flt beta)
+int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 {
-
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
     int Lz = lattice.Lz();
 
     // Create vector that checks whether the site has been checked
-    Array<Array<Array<bool>>> visited = checked(Lx, Ly, Lz);
+    LatticeBool visited =
+        LatticeBool::constant_lattice(Lx, Ly, Lz, false);
+    visited.set_boundary_conditions(
+        lattice.get_boundary_conditions());
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     Array<Index> stack(0);
@@ -65,21 +69,21 @@ int wolf_algorithm(Lattice &lattice, flt beta)
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::rand_uniform() * Lx;
-    int y = rng::rand_uniform() * Ly;
-    int z = rng::rand_uniform() * Lz;
+    int sx = rng::rand_uniform() * Lx;
+    int sy = rng::rand_uniform() * Ly;
+    int sz = rng::rand_uniform() * Lz;
 
     // Define spin_x to be flipped, first point of the cluster
-    Spin &spin_x = lattice(x, y, z);
+    Spin &spin_x = lattice(sx, sy, sz);
 
     // Flip sigma_x and mark x
     flip_spin(spin_r, spin_x);
 
     // Add spin_x to stack & cluster, mark site as checked
     // stack.push_back({x,y,z});
-    stack.push_back({x, y, z});
-    cluster.push_back({x, y, z});
-    visited[x][y][z] = true;
+    stack.push_back({sx, sy, sz});
+    cluster.push_back({sx, sy, sz});
+    visited.set(sx, sy, sz, true);
 
     // Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
     while (!stack.empty())
@@ -89,43 +93,28 @@ int wolf_algorithm(Lattice &lattice, flt beta)
         stack.pop_back();
 
         // Get current lattice position
-        int cx = current[0];
-        int cy = current[1];
-        int cz = current[2];
+        int x = current[0];
+        int y = current[1];
+        int z = current[2];
 
         // Mark as visited
-        visited[cx][cy][cz] = true;
-        #pragma omp parallel for collapse(3)
-        for (int i = -1; i <= 1; ++i)
+        visited.set(current, true);
+
+        Array<Index> neighbors = {
+            {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+        for (int i = 0; i < 6; ++i)
         {
-            for (int j = -1; j <= 1; ++j)
+            if (!visited.get(neighbors[i]))
             {
-                for (int k = -1; k <= 1; ++k)
+                Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y
+
+                // If Bond is activated...
+                if (activate_bond(J, spin_x, spin_r, beta, spin_y))
                 {
-                    if (i == 0 && j == 0 && k == 0)
-                        continue; // Skip original site
-
-                    // Implement periodic boundary conditions
-                    int nx = modulo((cx + i), Lx);
-                    int ny = modulo((cy + j), Ly);
-                    int nz = modulo((cz + k), Lz);
-
-                    if (!visited[nx][ny][nz])
-                    {
-                        Spin &spin_y = lattice(nx, ny, nz); // Define spin sigma_y
-
-                        // If Bond is activated...
-                        if (activate_bond(spin_x, spin_r, beta, spin_y))
-                        {
-                            #pragma omp critical
-                            {
-                            flip_spin(spin_r, spin_y);       //...flip spin
-                            stack.push_back({nx, ny, nz});   // ...add to stack
-                            cluster.push_back({nx, ny, nz}); // ...add to cluster (mark y)
-                            visited[nx][ny][nz] = true;      // Mark as visited
-                            }
-                        }
-                    }
+                    flip_spin(spin_r, spin_y);       //...flip spin
+                    stack.push_back(neighbors[i]);   // ...add to stack
+                    cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
+                    visited.set(neighbors[i], true); // Mark as visited
                 }
             }
         }
@@ -142,7 +131,6 @@ int wolf_algorithm(Lattice &lattice, flt beta)
     return clusterSize;
 }
 
-// bool wolff(Lattice& lattice);
 /*
 performs the wolff algoritm on the lattice
 
@@ -151,11 +139,11 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-F64 wolff(Lattice &lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps)
+flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps)
 {
     // to implement
 
-    F64 beta = Beta(T);
+    flt beta = Beta(T);
 
     TimeKeeper watch;
 
@@ -164,7 +152,7 @@ F64 wolff(Lattice &lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps)
 
     for (uint i = 0; i <= MaxSteps; ++i)
     {
-        uint clusterSize = wolf_algorithm(lattice, beta);
+        uint clusterSize = wolf_algorithm(lattice, beta, J);
         if (clusterSize == -1)
         {
             return false;
@@ -186,9 +174,9 @@ F64 wolff(Lattice &lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps)
         totalClusterSize += size;
     }
 
-    F64 averageClusterSize = static_cast<F64>(totalClusterSize) / nRuns;
+    flt averageClusterSize = static_cast<flt>(totalClusterSize) / nRuns;
 
-    F64 susceptibility = averageClusterSize;
+    flt susceptibility = averageClusterSize;
 
     return susceptibility;
 }

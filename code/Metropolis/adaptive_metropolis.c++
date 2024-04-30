@@ -31,11 +31,11 @@
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
+bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
                          uint maxSteps,
-                         F64 maxFactor)
+                         flt maxFactor)
 {
-    F64 sigma = maxFactor;
+    flt sigma = maxFactor;
     TimeKeeper watch;
     int proposed_count = 0;
 
@@ -55,7 +55,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
+        flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
                                          newSpin, J);
         // increase count of proposed changes
         ++proposed_count;
@@ -63,7 +63,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        F64 beta = Beta(T);
+        flt beta = Beta(T);
         if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
         {
             // Accept the new configuration
@@ -75,7 +75,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
             // To avoid division by zero we add a small number to the
             // denominator.
             sigma = std::min(maxFactor, sigma * float(0.5 /
-                                (1.0 - 1 / proposed_count + 1e-8)));
+                                                      (1.0 - 1 / proposed_count + 1e-8)));
             // Reset counter for proposed steps
             proposed_count = 0;
         }

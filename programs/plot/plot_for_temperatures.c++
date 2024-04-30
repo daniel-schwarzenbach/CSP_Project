@@ -12,62 +12,63 @@
 namespace plt = matplot;
 
 // interaction
-const F64 J = 1.0;
+const flt J = 1.0;
 // maximal runtime
-const F64 dt = 10.0;
-const F64 at = 60.0;
+const flt dt = 10.0;
+const flt at = 60.0;
 // end Time
-const F64 time = 120.0;
+const flt time = 120.0;
 
-const F64 dT = 0.1;
+const flt dT = 0.1;
 // int Random Lattice Seed
 const int seed = 69; // hi hi
 
 // side Lenth
 const uint L = 16;
 
-int main(int mainArgCount, char **mainArgs){
+int main(int mainArgCount, char **mainArgs)
+{
     rng::set_seed(seed);
-    Lattice lattice = Lattice::random_lattice(L,L,L);
+    Lattice lattice = Lattice::random_lattice(L, L, L);
 
     uint tmpSize = 100;
-    Array<F64> tmp(tmpSize);
+    Array<flt> tmp(tmpSize);
 
-    Array<F64> nm_mag(tmpSize);
-    Array<F64> nm_nrg(tmpSize);
-    Array<F64> nm_mag_err(tmpSize);
-    Array<F64> nm_nrg_err(tmpSize);
+    Array<flt> nm_mag(tmpSize);
+    Array<flt> nm_nrg(tmpSize);
+    Array<flt> nm_mag_err(tmpSize);
+    Array<flt> nm_nrg_err(tmpSize);
 
-    Array<F64> am_mag(tmpSize);
-    Array<F64> am_nrg(tmpSize);
-    Array<F64> am_mag_err(tmpSize);
-    Array<F64> am_nrg_err(tmpSize);
+    Array<flt> am_mag(tmpSize);
+    Array<flt> am_nrg(tmpSize);
+    Array<flt> am_mag_err(tmpSize);
+    Array<flt> am_nrg_err(tmpSize);
 
-    Array<F64> wo_mag(tmpSize);
-    Array<F64> wo_nrg(tmpSize);
-    Array<F64> wo_mag_err(tmpSize);
-    Array<F64> wo_nrg_err(tmpSize);
-    
-    for (uint i = 0; i < tmpSize; ++i){
+    Array<flt> wo_mag(tmpSize);
+    Array<flt> wo_nrg(tmpSize);
+    Array<flt> wo_mag_err(tmpSize);
+    Array<flt> wo_nrg_err(tmpSize);
+
+    for (uint i = 0; i < tmpSize; ++i)
+    {
         uint timeSize = 10;
-        
-        Array<F64> nm_mag(timeSize);
-        Array<F64> nm_nrg(timeSize);
-        Array<F64> nm_aut(timeSize);
 
-        
-        Array<F64> am_mag(timeSize);
-        Array<F64> am_nrg(timeSize);
-        Array<F64> am_aut(timeSize);
+        Array<flt> nm_mag(timeSize);
+        Array<flt> nm_nrg(timeSize);
+        Array<flt> nm_aut(timeSize);
 
-        
-        Array<F64> wo_mag(timeSize);
-        Array<F64> wo_nrg(timeSize);
-        Array<F64> wo_aut(timeSize);
+        Array<flt> am_mag(timeSize);
+        Array<flt> am_nrg(timeSize);
+        Array<flt> am_aut(timeSize);
+
+        Array<flt> wo_mag(timeSize);
+        Array<flt> wo_nrg(timeSize);
+        Array<flt> wo_aut(timeSize);
 
         rng::set_seed(seed);
         lattice.randomize();
-        for(uint j = 0; j < timeSize; ++j){
+        for (uint j = 0; j < timeSize; ++j)
+        {
             nm_mag
         }
     }
