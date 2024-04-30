@@ -28,9 +28,6 @@ public:
     SpinVector &operator=(SpinVector const &other);
     // Assignment operator Vector3
     SpinVector &operator=(Vector3 const &other);
-    // Cast operator
-    operator Vector3() const;
-
     // output operator
     friend std::ostream &operator<<(std::ostream &os,
                                     SpinVector const &s);

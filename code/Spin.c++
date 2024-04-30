@@ -33,11 +33,6 @@ SpinVector &SpinVector::operator=(SpinVector const &other)
     return *this;
 }
 
-SpinVector::operator Vector3() const
-{
-    return this->base::normalized();
-}
-
 std::ostream &operator<<(std::ostream &os,
                          SpinVector const &s)
 {

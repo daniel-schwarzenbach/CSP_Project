@@ -21,7 +21,7 @@ flt dat::read_f64(char *in)
     return valueF64;
 }
 
-flt dat::read_int(char *in)
+int dat::read_int(char *in)
 {
     int valueInt = 1;
     string valueStr = in;
@@ -71,4 +71,36 @@ bool dat::store_data(const Array<Array<flt>> &data,
     outfile.close();
     cout << "Data successfully stored in " << filename << endl;
     return true;
+}
+
+Array<Array<flt>> dat::load_data(string const& filename){
+    Array<Array<flt>> data;
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        cerr <<"Could not open the file - '"<< filename << "'"<< endl;
+        // Return an empty vector if the file can't be opened
+        return data;
+    }
+    //
+    std::string line;
+    while (getline(file, line)) {
+        Array<flt> row;
+        std::stringstream lineStream(line);
+        string cell;
+
+        while (getline(lineStream, cell, ',')) {
+            try {
+                // Convert string to double and add to row
+                row.push_back(stod(cell)); 
+            } catch (const std::invalid_argument& e) {
+                cerr << "Could not convert the string to double: " 
+                     << cell << std::endl;
+                // Handle the conversion error or add a default value
+            }
+        }
+        data.push_back(row);
+    }
+
+    file.close();
+    return data;
 }

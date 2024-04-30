@@ -12,18 +12,13 @@ mathematical correct modulo
 / @param u uint < 2³¹
 / @return i mod u
 */
-inline uint modulo(int const &i, uint u)
-{
-    constexpr uint max_u = 1 << 31;
-    // u = min(max_u, u); to expensive
-    return (i % static_cast<int>(u) + static_cast<int>(u)) % static_cast<int>(u);
-}
+uint modulo(int const &i, uint u);
 
 // Lattice Containder
 /*
 
-Acsess
-T x = lattice<T>(x,y,z)
+
+T value = lattice<T>(x,y,z)
 
 */
 template <class T>
@@ -33,154 +28,62 @@ private:
     // datavector
     Array<T> data;
     // dimentions
-    uint _Lx, _Ly, _Lz;
+    uint Lx_, Ly_, Lz_;
     BC bc = BC::Periodic;
-
+    T zero_element;
+    T dummy_element;
 public:
 
     // size of the lattice in x-direction
-    inline uint Lx() const { return _Lx; }
+    uint Lx() const;
     // size of the lattice in y-direction
-    inline uint Ly() const { return _Ly; }
+    uint Ly() const;
     // size of the lattice in z-direction
-    inline uint Lz() const { return _Lz; }
+    uint Lz() const;
 
     // get boundary condition
-    inline BC get_boundary_conditions() const { return bc; }
+    BC get_boundary_conditions() const;
 
-    void set_boundary_conditions(BC bc_) { bc = bc_; }
-    // acess operator const
-    inline T operator()(int x, int y, int z) const
-    {
-        switch (bc)
-        {
-        case BC::_0:
-            if (x >= 0 && x < _Lx &&
-                y >= 0 && y < _Ly &&
-                z >= 0 && z < _Lz)
-            {
-                return data[x * _Ly * _Lz + y * _Lz + z];
-            }
-            else
-            {
-                return T(0);
-            }
-            break;
+    // set value of the BC::_0
+    void set_zero_element(T const& zero);
 
-        default:
-            uint x_ = modulo(x, _Lx);
-            uint y_ = modulo(y, _Ly);
-            uint z_ = modulo(x, _Lz);
-            return data.at(x_ * _Ly * _Lz + y_ * _Lz + z_);
-            break;
-        }
-    }
-    // acess operator refrence
-    inline T &operator()(int x, int y, int z)
-    {
-        switch (bc)
-        {
-        case BC::_0:
-            if (x >= 0 && x < _Lx &&
-                y >= 0 && y < _Ly &&
-                z >= 0 && z < _Lz)
-            {
-                return data[x * _Ly * _Lz + y * _Lz + z];
-            }
-            else
-            {
-                return data[_Lx * _Ly * _Lz] = T(0);
-            }
-            break;
-
-        default:
-            uint x_ = modulo(x, _Lx);
-            uint y_ = modulo(y, _Ly);
-            uint z_ = modulo(z, _Lz);
-            return data[x_ * _Ly * _Lz + y_ * _Lz + z_];
-            ;
-            break;
-        }
-    }
-
-    inline T &operator()(Index const& id){
-        return this->operator()(id[0], id[1], id[2]);
-    }
-
-    inline T operator()(Index const& id) const{
-        return this->operator()(id[0], id[1], id[2]);
-    }
-
-    Lattice3d(uint Lx_, uint Ly_, uint Lz_)
-        : _Lx(Lx_), _Ly(Ly_), _Lz(Lz_), data(Lx_ * Ly_ * Lz_ + 1)
-    {
-        data.resize(Lx_ * Ly_ * Lz_ + 1);
-        //data.shrink_to_fit();
-    }
+    // set the desired boundary condition
+    void set_boundary_conditions(BC bc);
+    // acess operator const, doesn't work for bools!
+    T operator()(int x, int y, int z) const;
+    // acess operator refrence, doesn't work for bools!
+    T &operator()(int x, int y, int z);
+    // acess operator refrence, doesn't work for bools!
+    T &operator()(Index const& id);
+    // acess operator refrence, doesn't work for bools!
+    T operator()(Index const& id) const;
+    // set operator, works for bools
+    void set(int const& x, int  const& y, int const& z, T const& v);
+    // set operator, works for bools
+    void set(Index const& id, T const& v);
+    // set operator, works for bools
+    T get(int const& x, int  const& y, int const& z) const;
+    // set operator, works for bools
+    T get(Index const& id) const;
+    // consturctor
+    Lattice3d(uint Lx, uint Ly, uint Lz);
+    // copy constructor
     Lattice3d(Lattice3d &other) = default;
     Lattice3d(Lattice3d const &other) = default;
 
-    bool randomize()
-    {
-        for (uint x = 0; x < _Lx; ++x)
-        {
-            for (uint y = 0; y < _Ly; ++y)
-            {
-                for (uint z = 0; z < _Lz; ++z)
-                {
-                    (*this)(x, y, z) = rng::get_random<T>();
-                }
-            }
-        }
-        return true;
-    }
+    // randomizes the Lattice, same effect as Lattice::random_lattice
+    bool randomize();
 
-    int memory_size() const
-    {
-        return data.size() * sizeof(T);
-    }
+    static Lattice3d constant_lattice(uint Lx, uint Ly, uint Lz,
+                                      T const &value);
 
-    static Lattice3d constant_lattice(uint Lx_, uint Ly_, uint Lz_,
-                                      T const &value)
-    {
-        Lattice3d lattice(Lx_, Ly_, Lz_);
-        for (uint x = 0; x < Lx_; ++x)
-        {
-            for (uint y = 0; y < Ly_; ++y)
-            {
-                for (uint z = 0; z < Lz_; ++z)
-                {
-                    lattice(x, y, z) = value;
-                }
-            }
-        }
-        return lattice;
-    }
+    // randomizes the Lattice, same effect as Lattice::random_lattice
+    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_);
 
-    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_)
-    {
-        Lattice3d lattice(Lx_, Ly_, Lz_);
-        for (uint x = 0; x < Lx_; ++x)
-        {
-            for (uint y = 0; y < Ly_; ++y)
-            {
-                for (uint z = 0; z < Lz_; ++z)
-                {
-                    lattice(x, y, z) = rng::get_random<T>();
-                }
-            }
-        }
-        return lattice;
-    }
-
-    uint get_total_size() const
-    {
-        return _Lx * _Ly * _Lz;
-    }
+    // size of the entire lattice
+    uint get_total_size() const;
 };
 
 #include <Spin.h++>
-template class Lattice3d<SpinVector>;
-template class Lattice3d<SpinCompressed>;
 
 #endif
