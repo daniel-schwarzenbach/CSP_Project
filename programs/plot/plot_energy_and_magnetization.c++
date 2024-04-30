@@ -1,4 +1,3 @@
-#include <Metropolis/adaptive_metropolis.h++>
 #include <Metropolis/metropolis.h++>
 #include <Wolff/wolff.h++>
 #include <Data/Plot.h++>

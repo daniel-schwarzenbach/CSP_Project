@@ -2,6 +2,7 @@
 #include <Measure/Timekeeper.h++>
 #include <Wolff/LatticeBool.h++>
 #include <Wolff/duplicate_functions.h++>
+#include <thread>
 
 using Index = StaticArray<int, 3>;
 
@@ -29,7 +30,7 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     // Create vector that checks whether the site has been checked
     LatticeBool visited =
             LatticeBool::constant_lattice(Lx, Ly, Lz, false);
-    visited.set_boundary_conditions(BC::_0);
+    visited.set_boundary_conditions(BC::Periodic);
             //lattice.get_boundary_conditions());
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
@@ -58,40 +59,71 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     cluster.push_back({sx, sy, sz});
     visited.set(sx, sy, sz, true);
 
+
     // Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
-    while (!stack.empty())
+    Array<Index> stack_local = stack;
+    #pragma omp parallel
+    { // parallel
+    while (!stack_local.empty())
     {
+        Index current;
+        bool isEmpty;
 
-        Index current = stack.back();
-        stack.pop_back();
-
+        #pragma omp critical
+        {
+        isEmpty = stack.empty();
+        if(!isEmpty){
+            current = stack.back();
+            stack.pop_back();
+        }
+        }
+        if(isEmpty){
+            // wait
+            std::this_thread::sleep_for(
+                    std::chrono::microseconds(10));
+            // update local stack
+            #pragma omp critical
+            stack_local = stack;
+            cout << "stack local: " << stack_local.size();
+            continue; // try again
+        }
         // Get current lattice position
         int x = current[0];
         int y = current[1];
         int z = current[2];
 
         // Mark as visited
+        #pragma omp critical
         visited.set(current, true);
 
         Array<Index> neighbors = {
-            {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+            {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
+            {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
         for (int i = 0; i < 6; ++i)
         {
-            if (!visited.get(neighbors[i]))
+            bool wasVisited;
+            #pragma omp critical
+            bool wasVisited = visited.get(neighbors[i]);
+            if (!wasVisited)
             {
                 Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y
 
                 // If Bond is activated...
                 if (activate_bond(J, spin_x, spin_r, beta, spin_y))
                 {
+                    #pragma omp critical
+                    {
                     flip_spin(spin_r, spin_y);       //...flip spin
                     stack.push_back(neighbors[i]);   // ...add to stack
                     cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
                     visited.set(neighbors[i], true); // Mark as visited
+                    }
                 }
             }
         }
     }
+
+    } // end parallel
 
     // Compute cluster size
     size_t clusterSize = cluster.size();
