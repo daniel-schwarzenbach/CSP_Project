@@ -1,7 +1,7 @@
 #include <Metropolis/energy_diff.h++>
 
 
-using Indiex = StaticArray<int, 3>;
+using Index = StaticArray<int, 3>;
 // Calculate Energy Difference //
 
 // This function calculates and returns the energy difference of two spin
@@ -22,8 +22,8 @@ using Indiex = StaticArray<int, 3>;
 
 // Output: 
 //      Returns the energy difference of the two spin configurations.
-F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
-                        Spin& oldSpin, Spin& newSpin, 
+F64 calculateEnergyDiff(Lattice const& lattice, int x, int y, int z, 
+                        Spin const& oldSpin, Spin const& newSpin, 
                         F64 J /*interactionStrength*/){
 
     // Get dimensions of the lattice
@@ -31,13 +31,7 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     int Ly = lattice.Ly();
     int Lz = lattice.Lz();
 
-    // Indices of nearest neighbors (periodic boundary conditions assumed)
-    // int neighbors[6][3] = {
-    //     {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
-    //     {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
-    //     {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
-    // };
-    Array<Indiex> neighbors = {
+    Array<Index> neighbors = {
         {x+1, y, z}, {x-1, y, z},
         {x, y+1, z}, {x, y-1, z},
         {x, y, z+1}, {x, y, z-1}
@@ -48,7 +42,10 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     for (int i = 0; i < 6; ++i) {
         // Get indices of neighbors
         // Get neighboring spin
-        const Spin& neighborSpin = lattice(neighbors[i]);
+        Spin neighborSpin;
+        #pragma omp critical
+        neighborSpin = lattice(neighbors[i]);
+        
         // Calcualte and add energies
         energyOld += -J * (oldSpin | neighborSpin);
         energyNew += -J * (newSpin | neighborSpin);

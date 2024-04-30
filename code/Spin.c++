@@ -82,7 +82,7 @@ void SpinVector::random_move()
 void SpinVector::small_step_move(F64 openingAngle)
 {
     F64 theta = rng::rand_gaussion() * openingAngle;
-    F64 phi = rng::rand_gaussion() * _2pi_;
+    F64 phi = rng::rand_uniform() * _2pi_;
     Vector3 randomPole;
     randomPole << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),

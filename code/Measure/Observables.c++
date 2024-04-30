@@ -1,5 +1,8 @@
 #include <Measure/Observables.h++>
 
+#include <numeric>
+#include <algorithm>
+
 Vector3 measure::get_magnetization(const Lattice &lattice)
 {
 
@@ -151,7 +154,7 @@ F64 measure::get_scalar_average(Lattice const& lattice,Vector3 const& vec){
     return scalarAverage;
 }
 
-// exp(T-T₀ / τ): autocorecaltion time
+
 F64 measure::get_auto_correlation(Lattice const& prev,Lattice const& next){
     uint Lx = prev.Lx();
     uint Ly = prev.Ly();
@@ -169,4 +172,42 @@ F64 measure::get_auto_correlation(Lattice const& prev,Lattice const& next){
         }
     }
     return correlation / (Lx*Ly*Lz);
+}
+
+// exp(t-t₀ / τ): autocorecaltion time
+F64 calculate_auto_correlation_time(Array<F64> const& y, 
+                                    Array<F64> const& t){
+    F64 t0 = t[0];
+    F64 min_energy = std::numeric_limits<F64>::max();
+
+    // Define the objective function to minimize
+    auto objective_function = [y,t,t0] (F64 tau) {
+        F64 sum = 0.0;
+        #pragma omp parrallel for
+        for (size_t i = 0; i < y.size(); ++i) {
+            F64 diff = y[i] - std::exp((t[i] - t0) / tau);
+            sum += diff;
+        }
+        return sum;
+    };
+
+    // Minimization process (simplified example, use a proper minimization algorithm)
+    F64 maxTau = 1'000'000;
+    F64 minTau = 0.000'1;
+    F64 midTau = (maxTau + minTau) / 2.0;
+    for (uint i = 0; i < 100; ++i){
+        F64 diff = objective_function(midTau);
+        if(diff < 0){
+            minTau = midTau;
+        }
+        else if(diff > 0){
+            maxTau = midTau;
+        }
+        else if(diff == 0){
+            return midTau;
+        }
+        midTau = (maxTau + minTau) / 2.0;
+    }
+    // Return the value of τ that minimizes the energy
+    return midTau;
 }

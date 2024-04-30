@@ -3,8 +3,8 @@
 
 #include <Heisenberg.h++>
 
-F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
-                          Spin& oldSpin, Spin& newSpin, 
+F64 calculateEnergyDiff(Lattice const& lattice, int x, int y, int z, 
+                          Spin const& oldSpin, Spin const& newSpin, 
                           F64 J /*interactionStrength*/);
 
 #endif // ENERGY_DIFF_H
