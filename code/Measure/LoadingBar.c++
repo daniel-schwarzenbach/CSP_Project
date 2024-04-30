@@ -1,4 +1,4 @@
-#include <LoadingBar.h++>
+#include <Measure/LoadingBar.h++>
 
 // init loading bar with 0%
 LoadingBar::LoadingBar(uint width) : barWidth(width)
@@ -24,7 +24,7 @@ void LoadingBar::update(flt percent)
             std::cout << " ";
     }
     std::cout << "] " << setw(9) << std::left
-              << progress << " %               \r";
+              << progress << "%  \r";
     std::cout.flush();
 }
 

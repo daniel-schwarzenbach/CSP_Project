@@ -1,6 +1,5 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timekeeper.h++>
-#include <Wolff/LatticeBool.h++>
 #include <Wolff/duplicate_functions.h++>
 #include <thread>
 
@@ -28,10 +27,11 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     int Lz = lattice.Lz();
 
     // Create vector that checks whether the site has been checked
-    LatticeBool visited =
-            LatticeBool::constant_lattice(Lx, Ly, Lz, false);
-    visited.set_boundary_conditions(BC::Periodic);
-            //lattice.get_boundary_conditions());
+    Lattice3d<bool> visited =
+            Lattice3d<bool>::constant_lattice(Lx, Ly, Lz, false);
+    visited.set_boundary_conditions(
+            lattice.get_boundary_conditions()
+    );
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     Array<Index> stack(0);
@@ -80,11 +80,10 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
         if(isEmpty){
             // wait
             std::this_thread::sleep_for(
-                    std::chrono::microseconds(10));
+                    std::chrono::microseconds(2));
             // update local stack
             #pragma omp critical
             stack_local = stack;
-            cout << "stack local: " << stack_local.size();
             continue; // try again
         }
         // Get current lattice position
@@ -117,6 +116,7 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
                     stack.push_back(neighbors[i]);   // ...add to stack
                     cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
                     visited.set(neighbors[i], true); // Mark as visited
+                    stack_local = stack;
                     }
                 }
             }

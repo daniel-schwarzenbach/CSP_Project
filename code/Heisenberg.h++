@@ -18,6 +18,9 @@ Spin class
 */
 using Spin = SpinVector;
 #include <Lattice3d.h++>
+
+extern template class Lattice3d<SpinVector>;
+extern template class Lattice3d<bool>;
 /*
 Lattice class
 - with acces operator: (x,y,z)
@@ -27,8 +30,6 @@ Lattice class
 */
 using Lattice = Lattice3d<Spin>;
 
-
-#define LAMBDA [=]
 
 #ifdef WITH_OPENMP
 
@@ -67,12 +68,10 @@ static constexpr flt _kB_ = 1.0; // 1.38064852e-23;
 /*
 Definition of thermodynamic beta
 
-/ @param T: temperature in K
+/ @param T: temperature
+/ @return 1 / (T * _kB_)
 */
-static flt Beta(flt T)
-{
-    return 1. / (_kB_ * T);
-};
+flt Beta(flt T);
 
 /*
 calculate the mean value of a vector
@@ -82,16 +81,7 @@ calculate the mean value of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-static Float mean(Array<Float> array)
-{
-    Float sum = 0;
-    uint n = array.size();
-    #pragma omp parallel for collapse(1) reduction(+: sum)
-    for (uint i = 0; i < n; i++)
-        sum += array[i];
-    return sum / n;
-};
-
+Float mean(Array<Float> const& array);
 /*
 calculate the variance of a vector
 
@@ -100,34 +90,18 @@ calculate the variance of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-Float variance(Array<Float> array)
-{
-    Float mean = mean(array);
-    uint n = array.size();
-    double sum = 0;
-    #pragma omp parallel for collapse(1) reduction(+: sum)
-    for (uint i = 0; i < n; i++)
-        sum += pow(array[i] - mean, 2);
-    return sum / flt(n);
-};
+Float variance(Array<Float> const& array);
 
 /*
 - alternative to to_string
 - only gives 3 digits after the comma and removes zeros
 
 */
-static string to_str(flt const& value){
-    string longstr = to_string(value);
-    longstr.resize(longstr.length()-3);
-    for(uint i = 0; i < 2; ++i){
-        uint id = longstr.length() - 1;
-        if(longstr[id] == '0'){
-            longstr.resize(id);
-        } else{
-            break;
-        }
-    }
-    return longstr;
-}
+string to_str(flt const& value);
+
+extern template f32 mean<f32>(Array<f32> const&);
+extern template f64 mean<f64>(Array<f64> const&);
+extern template f32 variance<f32>(Array<f32> const&);
+extern template f64 variance<f64>(Array<f64> const&);
 
 #endif // __HEISENBERG_H__

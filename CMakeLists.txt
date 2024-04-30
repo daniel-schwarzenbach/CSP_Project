@@ -26,11 +26,6 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 # programs
 add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_energy_and_magnetization.c++)
 
-# precompile header
-target_precompile_headers(Heisenberg
-    PUBLIC
-    code/Lattice3d.h++
-)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)

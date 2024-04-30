@@ -6,7 +6,7 @@
 #include <Measure/Observables.h++>
 #include <Data/DataHandler.h++>
 #include <matplot/matplot.h>
-#include <LoadingBar.h++>
+#include <Measure/LoadingBar.h++>
 
 namespace plt = matplot;
 
@@ -17,7 +17,7 @@ const flt dt = 0.01;
 // end Time
 const flt t_end = 5.0;
 // Temerature
-const flt T = 0.5;
+const flt T = 0.2;
 // int Random Lattice Seed
 const int seed = 69; // hi hi
 
@@ -103,7 +103,7 @@ int main(int mainArgCount, char **mainArgs)
             ms_nrg.push_back(abs(measure::get_energy(lattice)));
             TimeKeeper timer;
             timer.start();
-            metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
+            metropolis(lattice, T, J, dt, maxUint,MoveType::SmallStep);
             timer.stop();
             t_elapsed += timer.time();
             flt aut = measure::get_auto_correlation(lcopy, lattice);

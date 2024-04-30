@@ -12,13 +12,6 @@ namespace rng
     */
     void set_seed(unsigned int seed);
 
-    /*
-    random number generator for our floats
-
-    / @brief
-    / @return uniform random number r ∈ [0,1]
-    */
-    float rand_f32();
 
     /*
     random number generator flt
