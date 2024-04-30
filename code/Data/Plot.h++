@@ -3,7 +3,7 @@
 
 #include <Heisenberg.h++>
 
-namespace dat
+namespace data
 {
 
     bool plot_lattice_slice(Lattice &lattice, int z = 0,

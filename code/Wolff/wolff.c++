@@ -1,5 +1,5 @@
 #include <Wolff/wolff.h++>
-#include <Measure/Timekeeper.h++>
+#include <Measure/Timer.h++>
 #include <Wolff/duplicate_functions.h++>
 #include <thread>
 
@@ -8,9 +8,9 @@ using Index = StaticArray<int, 3>;
 template <class T>
 using Array3D = Array<Array<Array<T>>>;
 
-
-//Function to activate bond depending on given probability 
-bool activate_bond(flt J, Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
+// Function to activate bond depending on given probability
+bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta, Spin &spin_y)
+{
 
     flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);
     flt activate_prob;
@@ -18,7 +18,6 @@ bool activate_bond(flt J, Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     flt p = rng::rand_uniform();
     return (p <= active);
 }
-
 
 int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 {
@@ -28,10 +27,9 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 
     // Create vector that checks whether the site has been checked
     Lattice3d<bool> visited =
-            Lattice3d<bool>::constant_lattice(Lx, Ly, Lz, false);
+        Lattice3d<bool>::constant_lattice(Lx, Ly, Lz, false);
     visited.set_boundary_conditions(
-            lattice.get_boundary_conditions()
-    );
+        lattice.get_boundary_conditions());
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     Array<Index> stack(0);
@@ -59,76 +57,77 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     cluster.push_back({sx, sy, sz});
     visited.set(sx, sy, sz, true);
 
-
     // Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
     Array<Index> stack_local = stack;
-    #pragma omp parallel
+#pragma omp parallel
     { // parallel
-    while (!stack_local.empty())
-    {
-        Index current;
-        bool isEmpty;
-
-        #pragma omp critical
+        while (!stack_local.empty())
         {
-        isEmpty = stack.empty();
-        if(!isEmpty){
-            current = stack.back();
-            stack.pop_back();
-        }
-        }
-        if(isEmpty){
-            // wait
-            std::this_thread::sleep_for(
-                    std::chrono::microseconds(2));
-            // update local stack
-            #pragma omp critical
-            stack_local = stack;
-            continue; // try again
-        }
-        // Get current lattice position
-        int x = current[0];
-        int y = current[1];
-        int z = current[2];
+            Index current;
+            bool isEmpty;
 
-        // Mark as visited
-        #pragma omp critical
-        visited.set(current, true);
-
-        Array<Index> neighbors = {
-            {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
-            {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
-        for (int i = 0; i < 6; ++i)
-        {
-            bool wasVisited;
-            #pragma omp critical
-            bool wasVisited = visited.get(neighbors[i]);
-            if (!wasVisited)
+#pragma omp critical
             {
-                Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y
-
-                // If Bond is activated...
-                if (activate_bond(J, spin_x, spin_r, beta, spin_y))
+                isEmpty = stack.empty();
+                if (!isEmpty)
                 {
-                    #pragma omp critical
+                    current = stack.back();
+                    stack.pop_back();
+                }
+            }
+            if (isEmpty)
+            {
+                // wait
+                std::this_thread::sleep_for(
+                    std::chrono::microseconds(2));
+// update local stack
+#pragma omp critical
+                stack_local = stack;
+                continue; // try again
+            }
+            // Get current lattice position
+            int x = current[0];
+            int y = current[1];
+            int z = current[2];
+
+// Mark as visited
+#pragma omp critical
+            visited.set(current, true);
+
+            Array<Index> neighbors = {
+                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+            for (int i = 0; i < 6; ++i)
+            {
+                bool wasVisited;
+#pragma omp critical
+                bool wasVisited = visited.get(neighbors[i]);
+                if (!wasVisited)
+                {
+                    Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y
+
+                    // If Bond is activated...
+                    if (activate_bond(J, spin_x, spin_r, beta, spin_y))
                     {
-                    flip_spin(spin_r, spin_y);       //...flip spin
-                    stack.push_back(neighbors[i]);   // ...add to stack
-                    cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
-                    visited.set(neighbors[i], true); // Mark as visited
-                    stack_local = stack;
+#pragma omp critical
+                        {
+                            flip_spin(spin_r, spin_y);       //...flip spin
+                            stack.push_back(neighbors[i]);   // ...add to stack
+                            cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
+                            visited.set(neighbors[i], true); // Mark as visited
+                            stack_local = stack;
+                        }
                     }
                 }
             }
         }
-    }
 
     } // end parallel
 
     // Compute cluster size
     size_t clusterSize = cluster.size();
 
-    if (clusterSize == 0){
+    if (clusterSize == 0)
+    {
         return -1;
     }
 
@@ -148,8 +147,7 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps)
     // to implement
 
     flt beta = Beta(T);
-
-    TimeKeeper watch;
+    measure::Timer watch;
 
     Array<int> clusters;
     uint nRuns = 0;
@@ -172,7 +170,7 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps)
         }
     }
 
-    //Compute total cluster size
+    // Compute total cluster size
     uint totalClusterSize = 0;
     for (int size : clusters)
     {

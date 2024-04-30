@@ -1,7 +1,7 @@
 #ifndef METROPOLIS_HPP
 #define METROPOLIS_HPP
 
-#include <Measure/Timekeeper.h++>
+#include <Measure/Timer.h++>
 #include <cmath>
 #include <random>
 #include <Heisenberg.h++>

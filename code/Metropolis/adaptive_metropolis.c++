@@ -36,7 +36,7 @@ bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
                          flt maxFactor)
 {
     flt sigma = maxFactor;
-    TimeKeeper watch;
+    measure::Timer watch;
     int proposed_count = 0;
 
     // Main Metropolis loop until number of steps or max time is reached

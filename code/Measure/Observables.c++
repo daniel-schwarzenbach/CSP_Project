@@ -132,7 +132,8 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
         }
     }
 
-    return -J * spin_interaction_energy - mag_interaction_energy;
+    return -J * spin_interaction_energy - mag_interaction_energy
+            / (Lx*Ly*Lz);
 }
 
 flt measure::get_scalar_average(Lattice const &lattice, Vector3 const &vec)

@@ -1,5 +1,7 @@
 #include <Base.h++>
 
+namespace measure{
+
 class LoadingBar
 {
 private:
@@ -15,3 +17,5 @@ public:
     // delete the loading bar
     ~LoadingBar();
 };
+
+}

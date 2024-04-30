@@ -156,9 +156,9 @@ T Lattice3d<T>::get(Index const& id) const{
 template <typename T>
 Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
         :   zero_element(0), Lx_(Lx), Ly_(Ly), Lz_(Lz), 
-            data(Lx_ * Ly_ * Lz_ + 1)
+            data(Lx * Ly * Lz)
 {
-    data.resize(Lx_ * Ly_ * Lz_ + 1);
+    data.resize(Lx * Ly * Lz);
     data.shrink_to_fit();
 }
 
