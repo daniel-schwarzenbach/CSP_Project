@@ -16,14 +16,14 @@ const F64 J = 1.0;
 // maximal runtime
 const F64 dt = 0.1;
 // end Time
-const F64 t_end = 30.0;
+const F64 t_end = 10.0;
 // Temerature
-const F64 T = 1.0;
+const F64 T = 1.;
 // int Random Lattice Seed
 const int seed = 69; // hi hi
 
 // side Lenth
-const uint L = 16;
+const uint L = 10;
 
 int main(int mainArgCount, char **mainArgs)
 {
@@ -102,7 +102,7 @@ int main(int mainArgCount, char **mainArgs)
             nm_nrg.push_back(abs(measure::get_energy(lattice)));
             TimeKeeper timer;
             timer.start();
-            metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
+            metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
             timer.stop();
             t_elapsed += timer.time();
             F64 aut = measure::get_auto_correlation(lcopy,lattice);
@@ -257,10 +257,10 @@ int main(int mainArgCount, char **mainArgs)
     cout << "plot energy" << endl;
     {
 
-        auto p1 = plt::loglog(nm_time, nm_nrg, "--gs");
+        auto p1 = plt::plot(nm_time, nm_nrg, "--gs");
         plt::hold(true);
-        auto p2 = plt::loglog(am_time, am_nrg, "--rs");
-        auto p3 = plt::loglog(wo_time, wo_nrg, "--bs");
+        auto p2 = plt::plot(am_time, am_nrg, "--rs");
+        auto p3 = plt::plot(wo_time, wo_nrg, "--bs");
 
         auto l = plt::legend({"Metropolis SmallStep", 
                               "Adaptive Metropolis", 

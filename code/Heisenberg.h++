@@ -54,7 +54,7 @@ using Lattice = Lattice3d<SpinVector>;
 
 
 // boltzmann constant
-static constexpr F64 _kB_ = 1.0;//1.38064852e-23;
+static constexpr F64 _kB_ = 1.0; // 1.38064852e-23;
 
 /*
 Definition of thermodynamic beta

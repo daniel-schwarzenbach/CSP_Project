@@ -29,18 +29,22 @@ bool metropolis(Lattice &lattice,
                 MoveType moveType)
 {
     // max factor
-    F64 maxFactor = 60;
-    uint Lx = lattice.Lx(); uint Ly = lattice.Ly(); 
-    uint Lz=lattice.Lz();
+    
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    maxSteps /= omp_get_num_threads();
+    
     #pragma omp parallel
     {  
+    maxSteps /= omp_get_num_threads();
+    F64 maxFactor = 5;
     TimeKeeper watch;
     uint proposed_count = 0;
     F64 sigma = maxFactor;
+    uint Lx = lattice.Lx(); 
+    uint Ly = lattice.Ly(); 
+    uint Lz=lattice.Lz();
+
     for (uint step = 0; step < maxSteps; ++step)
     {
         // Choose a random lattice site
@@ -49,7 +53,9 @@ bool metropolis(Lattice &lattice,
         int z = rng::rand_int_range(0,Lz);
 
         // Get the spin at the chosen site (cartesian)
-        Spin &spin = lattice(x, y, z);
+        Spin spin;
+        #pragma omp critical
+        spin = lattice(x, y, z);
 
         // Propose spin change based on given trial move
         Spin newSpin = spin;
@@ -82,10 +88,12 @@ bool metropolis(Lattice &lattice,
             // Accept the new configuration
             #pragma omp critical
             {
-            spin = newSpin;
+            lattice(x,y,z) = newSpin;
             }
-            sigma = std::min(maxFactor, sigma * float(0.5 /
-                                (1.0 - 1 / proposed_count + 1e-8)));
+            sigma = std::min( maxFactor, sigma * 0.5 /
+                    (1.0 - (1.0 / proposed_count) + 1e-2) );
+            
+            proposed_count = 0;
             
         }
 
