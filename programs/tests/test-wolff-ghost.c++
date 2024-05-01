@@ -19,7 +19,7 @@ Spin h = Spin(0.0,0.0,0.0);
 int main()
 {
     //              --- random seed
-    const uint seed = 80;
+    const uint seed = 42;
     rng::set_seed(seed);
 
     //              --- Lattice
@@ -72,10 +72,10 @@ int main()
             Vector3 magnetisation = measure::get_magnetization(lattice);
             flt energy = measure::get_energy(lattice, h, J);
             magnetisations[j] = magnetisation;
-            flt mag = magnetisations[j].norm();
+            flt mag = magnetisation.norm();
             energies[j] = energy;
 
-            adaptive_metropolis(lattice, temperature, J, Time, Ns, h);
+            adaptive_metropolis(lattice, temperature, J, Time, Ns);
 
             outFile << Ns*j << " " << mag << " " << energy << std::endl; //Write current total step number, mag and E into file
         }
