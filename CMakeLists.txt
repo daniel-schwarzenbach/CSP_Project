@@ -24,7 +24,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/tests/test-metropolis.c++ )
+add_executable(Heisenberg ${SRC_FILES} ./programs/tests/test-wolff-ghost.c++ )
 
 # precompile header
 target_precompile_headers(Heisenberg
