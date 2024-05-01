@@ -30,8 +30,8 @@ void flip_spin(Spin& spin_r, Spin& spin_x){
 
 bool activate_spin_spin( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
-    F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
-    flt p = rng::rand_f64();
+    flt active = 1.0 - std::exp(min(cdot, 0.0));
+    flt p = rng::rand_uniform();
     return (p <= active);
 }
 
