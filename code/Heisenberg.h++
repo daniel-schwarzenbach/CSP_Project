@@ -35,12 +35,6 @@ using Lattice = Lattice3d<Spin>;
 
 #include <omp.h>
 
-// #define PARALLEL_FOR_COLLAPSE_3 #pragma omp parallel for
-// #define PARALLEL_FOR_ #pragma omp parallel for
-// #define REDUCTION_SUM #pragma omp reduction(+ : sum)
-// #define ATOMIC #pragma omp atomic
-// #define CRITICAL #pragma omp critical
-// #define COLLAPSE_3_SUM #pragma omp parallel for collapse(3) reduction(+: sum)
 
 #else // NOT_WITH_OPENMP
 
@@ -54,11 +48,6 @@ void omp_set_num_threads(int);
 #endif // WITH_OPENMP
 
 
-
-#define PARALLEL_FOR  // theoretical parallel
-#define REDUCTION_SUM // theretical reduction
-#define ATOMIC        // theoretical atomic
-#define CRITICAL      // theoretical critical
 
 
 // boltzmann constant

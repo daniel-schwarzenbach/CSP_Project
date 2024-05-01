@@ -26,19 +26,22 @@
 //      - max running time of the algorithm
 //      - max number of steps
 //      - interaction strength of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 //      - initial and max factor of the Gaussian
 
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
-                         uint maxSteps,
-                         flt maxFactor)
-{
-    flt sigma = maxFactor;
-    measure::Timer watch;
-    int proposed_count = 0;
-
+bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
+                         uint maxSteps, Spin h, Spin k,
+                         F64 maxFactor) {
+    // Initialize sigma with the max value, start timer, calculate 
+    // Boltzmann factor and initialize counter of accepted steps
+    F64 sigma = maxFactor;
+    TimeKeeper watch;
+    F64 beta = Beta(T);
+    int accepted_count = 0;
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
     for (uint step = 0; step < maxSteps; ++step)
@@ -55,17 +58,12 @@ bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
-                                         newSpin, J);
-        // increase count of proposed changes
-        ++proposed_count;
-
+        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+                                        newSpin, J, h, k);
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        flt beta = Beta(T);
-        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
-        {
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
@@ -74,12 +72,16 @@ bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
             // initial value with f = 0.5 / (1 - R).
             // To avoid division by zero we add a small number to the
             // denominator.
-            sigma = std::min(maxFactor, sigma * float(0.5 /
-                                                      (1.0 - 1 / proposed_count + 1e-8)));
-            // Reset counter for proposed steps
-            proposed_count = 0;
-        }
 
+            // Increase counter of accepted steps
+            ++accepted_count;
+            // Update acceptance rate
+            F64 R = accepted_count/(step+1.0);
+            // Calculate update factor
+            F64 f = 0.5 / (1.0 - R + 1e-18);
+            // Update sigma
+            sigma = std::min(maxFactor, sigma * f );
+        }
         // Check if maximum time has been reached
         if (watch.time() >= maxTime)
         {

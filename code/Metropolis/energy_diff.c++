@@ -18,13 +18,14 @@ using Index = StaticArray<int, 3>;
 //      - initial spin
 //      - proposed spin update
 //      - interaction strength J of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 
 // Output:
 //      Returns the energy difference of the two spin configurations.
-flt calculateEnergyDiff(Lattice const &lattice, int x, int y, int z,
-                        Spin const &oldSpin, Spin const &newSpin,
-                        flt J /*interactionStrength*/)
-{
+F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
+                          Spin& oldSpin, Spin& newSpin, 
+                          F64 J, Spin h, Spin k){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -46,9 +47,9 @@ flt calculateEnergyDiff(Lattice const &lattice, int x, int y, int z,
         neighborSpin = lattice(neighbors[i]);
 
         // Calcualte and add energies
-        energyOld += -J * (oldSpin | neighborSpin);
-        energyNew += -J * (newSpin | neighborSpin);
-    }
+        energyOld += -J * (oldSpin | neighborSpin) - (oldSpin | h) - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | neighborSpin) - (newSpin | h) - pow((newSpin | k), 2);
+    }   
     // Calculate energy difference (deltaE)
     flt deltaE = energyNew - energyOld;
     return deltaE;
