@@ -19,12 +19,14 @@ using Indiex = StaticArray<int, 3>;
 //      - initial spin
 //      - proposed spin update
 //      - interaction strength J of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 
 // Output: 
 //      Returns the energy difference of the two spin configurations.
 F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
-                        Spin& oldSpin, Spin& newSpin, 
-                        F64 J /*interactionStrength*/){
+                          Spin& oldSpin, Spin& newSpin, 
+                          F64 J, Spin h, Spin k){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
@@ -32,15 +34,10 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     int Lz = lattice.Lz();
 
     // Indices of nearest neighbors (periodic boundary conditions assumed)
-    // int neighbors[6][3] = {
-    //     {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
-    //     {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
-    //     {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
-    // };
-    Array<Indiex> neighbors = {
-        {x+1, y, z}, {x-1, y, z},
-        {x, y+1, z}, {x, y-1, z},
-        {x, y, z+1}, {x, y, z-1}
+    int neighbors[6][3] = {
+         {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
+         {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors
+         {x, y, (z + 1) % Lz}, {x, y, (z - 1 + Lz) % Lz}  // +z, -z neighbors
     };
     // Energies of old and new configuration
     F64 energyOld = 0.0;
@@ -53,8 +50,8 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
         // Get neighboring spin
         const Spin& neighborSpin = lattice(nx, ny, nz);
         // Calcualte and add energies
-        energyOld += -J * (oldSpin | neighborSpin);
-        energyNew += -J * (newSpin | neighborSpin);
+        energyOld += -J * (oldSpin | neighborSpin) - (oldSpin | h) - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | neighborSpin) - (newSpin | h) - pow((newSpin | k), 2);
     }   
     // Calculate energy difference (deltaE)
     F64 deltaE = energyNew - energyOld;
