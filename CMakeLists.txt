@@ -9,8 +9,8 @@ project(Heisenberg3d)
 
 add_subdirectory(libraries/matplotplusplus)
 
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 
 
 

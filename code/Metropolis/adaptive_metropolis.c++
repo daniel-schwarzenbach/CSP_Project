@@ -63,7 +63,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // J in this implementation
         // Acceptance condition
         F64 beta = Beta(T);
-        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE / beta)) {
+        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
