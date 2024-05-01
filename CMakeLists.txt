@@ -4,6 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 23)
 
+enable_testing()
+
 
 project(Heisenberg3d)
 
@@ -12,7 +14,7 @@ add_subdirectory(libraries/matplotplusplus)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_BUILD_TYPE Debug)
 
-add_definitions(-DDEBUG)
+
 
 
 
@@ -27,6 +29,7 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
 add_executable(Heisenberg ${SRC_FILES} ./programs/tests/daniel.c++)
+# google-tests
 
 
 find_package(OpenMP)
@@ -110,6 +113,19 @@ else()# without IPPL
     )
 
 endif()
+
+add_definitions(-DDEBUG)
+
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(googletest)
 
 # link libraries
 target_link_libraries(Heisenberg ${LIBRARIES})

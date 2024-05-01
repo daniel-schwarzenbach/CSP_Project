@@ -1,3 +1,10 @@
+#ifndef __LOADINGBAR_H__
+#define __LOADINGBAR_H__
+/*
+    create a loading bar in the terminal
+    usefull for large wait times
+*/
+
 #include <Base.h++>
 
 namespace measure{
@@ -19,3 +26,4 @@ public:
 };
 
 }
+#endif // __LOADINGBAR_H__

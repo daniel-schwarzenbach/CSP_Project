@@ -1,8 +1,10 @@
 #ifndef __EIGEN_H__
 #define __EIGEN_H__
+/*
+includes the eigen files and defines our vectors and matices
+*/
 
 #include <Base.h++>
-
 #include <Eigen/Dense>
 // represents an MxN real matrix
 using Matrix = Eigen::Matrix<f32, Eigen::Dynamic,

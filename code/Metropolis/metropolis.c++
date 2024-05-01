@@ -44,11 +44,12 @@ bool metropolis(Lattice &lattice,
 
         flt maxFactor = 20;
         measure::Timer watch;
-        uint proposed_count = 0;
+        uint accepted_count = 0;
         flt sigma = maxFactor;
         uint Lx = lattice.Lx();
         uint Ly = lattice.Ly();
         uint Lz = lattice.Lz();
+        flt beta = Beta(T);
         watch.start();
         for (uint step = 0; step < numSteps; ++step)
         {
@@ -82,23 +83,23 @@ bool metropolis(Lattice &lattice,
             // Calculate energy difference
             flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
                                              newSpin, J, h, k);
-            // increase count of proposed changes
-            ++proposed_count;
+            
             // Acceptance condition
-            flt beta = Beta(T);
-
             if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
             { // Boltzmann constant k is
               // normalized with interaction strength J in this implementation
               // Accept the new configuration
 #pragma omp critical
-                {
-                    lattice(x, y, z) = newSpin;
+                lattice(x, y, z) = newSpin;
+                if(moveType == MoveType::Addaptive){
+                    ++accepted_count;
+                    // Update acceptance rate
+                    flt R = accepted_count/(step+1.0);
+                    // Calculate update factor
+                    flt f = 0.5 / (1.0 - R + 1e-18);
+                    // Update sigma
+                    sigma = std::min(maxFactor, sigma * f );
                 }
-                sigma = std::min(maxFactor, sigma * 0.5 /
-                        (1.0 - (1.0 / proposed_count) + 1e-2));
-
-                proposed_count = 0;
             }
 
             // Check if maximum time has been reached

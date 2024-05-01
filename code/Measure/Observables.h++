@@ -1,5 +1,8 @@
 #ifndef __OBSERVABLES_H__
 #define __OBSERVABLES_H__
+/*
+    physical observables
+*/
 
 #include <Heisenberg.h++>
 
@@ -15,8 +18,15 @@ namespace measure
     */
     Vector3 get_magnetization(const Lattice &lattice);
 
+    /*
+    calculates the scalar average of the vector for every spin
+    */
     flt get_scalar_average(Lattice const &lattice, Vector3 const &vec);
 
+
+    /*
+    calculates the correlation between two lattices
+    */
     flt get_auto_correlation(Lattice const &prev, Lattice const &next);
 
     /*
@@ -28,9 +38,10 @@ namespace measure
     / @return the energy of the lattice
     */
     flt get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0},
-                   flt J = 1);
+                   flt J = 1, Vector3 k_vec = {0,0,0});
 
     /*
+    not tested!!!!!!!! danger
     calculate τ  s.d  min(|| yᵢ = exp(Tᵢ-T₀ / τ) ||²)
 
     / @brief

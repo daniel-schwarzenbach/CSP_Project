@@ -1,5 +1,9 @@
 #ifndef __PLOTLATTICE_H__
 #define __PLOTLATTICE_H__
+/*
+    simplified ploting for lattices
+
+*/
 
 #include <Heisenberg.h++>
 
@@ -13,8 +17,6 @@ namespace data
     bool plot_lattice(Lattice &lattice,
                       string filename = "");
 
-    string get_filename(string prefix, uint L, flt J, flt T, flt Time);
-
     /*
         @brief: convert_pngs_to_gif
         @param: gifname: name of the gif file
@@ -25,8 +27,6 @@ namespace data
         @return: true if successful, false otherwise
     */
     bool convert_pngs_to_gif(string gifname, string pngfilePrefix);
-
-    bool test_all_colors();
 
 }
 

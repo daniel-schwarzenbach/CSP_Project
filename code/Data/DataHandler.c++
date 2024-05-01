@@ -2,7 +2,7 @@
 #include <fstream>
 #include <Data/DataHandler.h++>
 
-flt data::read_f64(char *in)
+flt data::read_flt(char *in)
 {
     flt valueF64 = 1;
     string valueStr = in;
@@ -73,9 +73,10 @@ bool data::store_data(const Array<Array<flt>> &data,
     return true;
 }
 
-template<uint I>
+template <uint I>
 bool data::store_data(const StaticArray<Array<flt>, I> &data,
-                const string &filename){
+                      const string &filename)
+{
     std::ofstream outfile(filename);
 
     if (!outfile)
@@ -94,23 +95,21 @@ bool data::store_data(const StaticArray<Array<flt>, I> &data,
     }
     outfile.close();
     cout << "Data successfully stored in " << filename << endl;
-    return true; 
+    return true;
 }
 
 template bool data::store_data<2>(
-        const StaticArray<Array<flt>, 2> &,
-        const string &);
+    const StaticArray<Array<flt>, 2> &,
+    const string &);
 template bool data::store_data<3>(
-        const StaticArray<Array<flt>, 3> &,
-        const string &);
+    const StaticArray<Array<flt>, 3> &,
+    const string &);
 template bool data::store_data<4>(
-        const StaticArray<Array<flt>, 4> &,
-        const string &);
+    const StaticArray<Array<flt>, 4> &,
+    const string &);
 template bool data::store_data<5>(
-        const StaticArray<Array<flt>, 5> &,
-        const string &);
-
-
+    const StaticArray<Array<flt>, 5> &,
+    const string &);
 
 Array<Array<flt>> data::load_data(string const &filename)
 {

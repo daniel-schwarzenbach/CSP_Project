@@ -12,7 +12,6 @@ namespace rng
     */
     void set_seed(unsigned int seed);
 
-
     /*
     random number generator flt
 
@@ -27,7 +26,7 @@ namespace rng
     / @brief
     / @return
     */
-    double rand_gaussion();
+    double rand_gaussian();
 
     /*
     random number generator int

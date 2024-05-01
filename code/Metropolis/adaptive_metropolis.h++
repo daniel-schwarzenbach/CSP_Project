@@ -7,7 +7,7 @@
 #include <cmath>
 
 /*
-ado algorithm for the Heisenber3D model
+do algorithm for the Heisenber3D model
 
 / @brief
 / @param lattice our 3d lattice, where to perform the simulation on

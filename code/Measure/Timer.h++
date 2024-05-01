@@ -1,5 +1,8 @@
 #include <chrono>
 #include <Base.h++>
+/*
+    implements a timer to measure past time
+*/
 
 #ifndef TIMEKEEPER_HPP
 #define TIMEKEEPER_HPP

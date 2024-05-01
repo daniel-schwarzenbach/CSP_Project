@@ -1,3 +1,9 @@
+#ifndef __RNG_H__
+#define __RNG_H__
+/*
+    random number generation
+*/
+
 //          --- Random
 #include <RNG.h++>
 #include <random>
@@ -7,7 +13,7 @@ namespace rng
     std::mt19937 engine;
     /*
 
-
+    
     */
     void set_seed(unsigned int seed)
     {
@@ -44,7 +50,7 @@ namespace rng
     / @brief
     / @return uniform random number r ∈ [0,1]
     */
-    double rand_gaussion()
+    double rand_gaussian()
     {
         static std::normal_distribution<double> dist(0, 1);
         return dist(engine);
@@ -57,3 +63,4 @@ namespace rng
     }
 
 }
+#endif // __RNG_H__
