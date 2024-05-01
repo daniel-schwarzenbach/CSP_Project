@@ -21,13 +21,13 @@ namespace measure
     /*
     calculates the scalar average of the vector for every spin
     */
-    flt get_scalar_average(Lattice const &lattice, Vector3 const &vec);
+    flt get_scalar_average(Lattice const &lattice,Vector3 const &vec);
 
 
     /*
     calculates the correlation between two lattices
     */
-    flt get_auto_correlation(Lattice const &prev, Lattice const &next);
+    flt get_correlation(Lattice const &prev,Lattice const &next);
 
     /*
     calculate the energy of all the spins inside the lattice
@@ -37,8 +37,9 @@ namespace measure
     on
     / @return the energy of the lattice
     */
-    flt get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0},
-                   flt J = 1, Vector3 k_vec = {0,0,0});
+    flt get_energy(const Lattice &lattice, 
+                   Vector3 const& h_vec = {0, 0, 0},
+                   flt const& J = 1, Vector3 const& k_vec = {0,0,0});
 
     /*
     not tested!!!!!!!! danger

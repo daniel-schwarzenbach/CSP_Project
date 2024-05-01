@@ -24,8 +24,6 @@ static const string ERROR = "\033[31m [Error]: \033[0m";
 static const string WARNING = "\033[35m [Warning]: \033[0m";
 static const string INFO = "\033[32m [INFO]: \033[0m";
 
-
-
 // output
 using std::cerr;
 using std::cin;
@@ -34,12 +32,11 @@ using std::endl;
 using std::setw;
 
 #ifdef DEBUG
-#define what_is(expr)\
+#define what_is(expr) \
     std::cout << #expr << " = " << (expr) << std::endl
 #else
 #define what_is(expr)
 #endif
-
 
 //          --- Math
 #include <cmath>
@@ -79,7 +76,14 @@ using std::mem_fn;
 #include <list>
 // dynamic array
 template <typename T>
-using Array = std::vector<T, std::allocator<T>>; // std::vector<T, std::allocator<T>>;
+using Array = std::vector<T, std::allocator<T>>;
+
+template <typename T>
+using Array2D = Array<Array<T>>;
+
+template <typename T>
+using Array3D = Array<Array<Array<T>>>;
+
 template <typename T>
 using List = std::list<T, std::allocator<T>>;
 
@@ -103,7 +107,7 @@ static constexpr flt _inf_ = INFINITY;
 // e: eulers number
 static constexpr flt _e_ = M_E;
 
-static constexpr uint maxUint = 0xff'ff'ff'ff;
+static constexpr uint _maxUint_ = 0xff'ff'ff'ff;
 
 //          --- Functions
 #include <RNG.h++>

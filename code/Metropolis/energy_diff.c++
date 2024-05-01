@@ -39,17 +39,21 @@ flt calculateEnergyDiff(Lattice const& lattice, int  const& x,
     // Energies of old and new configuration
     flt energyOld = 0.0;
     flt energyNew = 0.0;
-    for (int i = 0; i < 6; ++i)
+    for (Index neighbor : neighbors)
     {
         // Get indices of neighbors
         // Get neighboring spin
         Spin neighborSpin;
 #pragma omp critical
-        neighborSpin = lattice(neighbors[i]);
+        neighborSpin = lattice(neighbor);
 
         // Calcualte and add energies
-        energyOld += -J * (oldSpin | neighborSpin) - (oldSpin | h) - pow((oldSpin | k), 2);
-        energyNew += -J * (newSpin | neighborSpin) - (newSpin | h) - pow((newSpin | k), 2);
+        energyOld += -J * (oldSpin | neighborSpin) 
+                     - (oldSpin | h) 
+                     - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | neighborSpin) 
+                     - (newSpin | h) 
+                     - pow((newSpin | k), 2);
     }   
     // Calculate energy difference (deltaE)
     flt deltaE = energyNew - energyOld;

@@ -4,67 +4,89 @@
 /*
 preprogramt test algoritms for creating standardiesed tests
 */
-
-#include <Metropolis/adaptive_metropolis.h++>
+#include <Base.h++>
 #include <Metropolis/metropolis.h++>
 #include <Wolff/wolff.h++>
 #include <Heisenberg.h++>
 #include <Measure/LoadingBar.h++>
 #include <Measure/Observables.h++>
 
-namespace algo{
+namespace algo
+{
+    namespace dt
+    {
 
+        /*
+        Function to measure after a certain time step
 
-static constexpr uint J = 1.0;
+        / @param lattice: lattice to work with
+        / @param dt: timestep
+        / @param T: temperature
+        */
+        using Algorithm = function<
+            void(Lattice &, flt const &, flt const &, flt const &)>;
 
-using AlgoData = StaticArray<Array<flt>, 4>;
+        static Algorithm wolff_omp_ =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            wolff_omp(lattice, T, J, dt, _maxUint_);
+        };
 
-/*
-Function to measure after a certain time step
+        static Algorithm metropolis_smallStep_omp =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, dt,
+                           _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::SmallStep);
+        };
 
-/ @param lattice: lattice to work with
-/ @param dt: timestep
-/ @param T: temperature
-*/
-using FunctionDeltaT=function<void(Lattice&, flt const&, flt const&, flt const&)>;
+        static Algorithm metropolis_adaptive_omp =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, dt,
+                           _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::Addaptive);
+        };
 
-static FunctionDeltaT wolff_singleCore
-        = [](Lattice& lattice, flt const& dt, flt const& T, flt const& J){
-    wolff(lattice, T, J, dt, maxUint);
-};
+        static Algorithm metropolis_random_omp =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, dt,
+                           _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::Random);
+        };
 
-static FunctionDeltaT metropolis_smallStep
-        = [](Lattice& lattice, flt const& dt, flt const& T, flt const& J){
-    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, 
-                maxUint, MoveType::SmallStep);
-};
+        static Algorithm metropolis_adaptive =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            adaptive_metropolis(lattice, T, J, dt,
+                                _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                                60);
+        };
 
-static FunctionDeltaT metropolis_adaptive
-        = [](Lattice& lattice, flt const& dt, flt const& T, flt const& J){
-    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, maxUint, MoveType::Addaptive);
-};
+        static Algorithm wolff_ =
+        [](Lattice &lattice, flt const &dt, flt const &T, flt const &J)
+        {
+            wolff(lattice, T, J, dt, _maxUint_);
+        };
 
-static FunctionDeltaT metropolis_random
-        = [](Lattice& lattice, flt const& dt, flt const& T, flt const& J){
-    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, maxUint, MoveType::Random);
-};
+        /*
+        function that runs the algorithm and collects the datat after
+        every time step dt
 
+        @param dt: time step size
+        @param t_end: simulation time
+        @param T: temperature
+        @param J: interaction Strenth
+        @return Array2D<flt>:
+        {time, magnetization, energy} with same size
 
-/*
-function that runs the algorithm and collects the datat after every
-time step dt
-returns arrays of the same size
+        */
+        Array2D<flt> test_algorithm(
+            Lattice &lattice,
+            flt const &dt, flt const &t_end,flt const &T,flt const &J,
+            Algorithm const &algorithmus);
 
-@param dt: time step size
-@param t_end: simulation time
-@param T: temperature
-@return StaticArray<Array<flt>>: {time, magnetization, energy, autocorolation}
-
-*/
-AlgoData test_function_delta_t(
-        Lattice& lattice,
-        flt const &dt, flt const &t_end, flt const& T, flt const& J,
-        function<void(Lattice&, flt const&, flt const&, flt const&)> const &algo);
-
+    }
 }
 #endif // __ALGORITHM_H__

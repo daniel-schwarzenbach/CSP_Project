@@ -8,66 +8,60 @@
 
 namespace plt = matplot;
 
-const flt dt = 0.001;
+const flt dt = 0.1;
 // end Time
 const flt t_end = 10.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
-const uint L = 16;
+const uint L = 8;
+
+const flt J = 1.0;
 
 int main(int mainArgCount, char **mainArgs)
 {
-    // Take input as temperature
-    // if (mainArgCount >= 1){
-    //     T = dat::read_flt(mainArgs[0]);
-    // }
-    // if (mainArgCount >= 2){
-    //     seed = dat::read_flt(mainArgs[1]);
-    // }
-    //              --- make folders
-
     data::make_folder("plots");
     data::make_folder("data");
     Lattice lattice(L, L, L);
-    for (flt T = 0.01; T <= 0.1; T += 0.01)
+    for (flt T = 0.1; T <= 10; T += 0.1)
     {
 
         //              --- adaptive step metropolis
         cout << "running adaptive step metropolis" << endl;
         rng::set_seed(seed);
         lattice.randomize();
-        algo::AlgoData metro_adapt = algo::test_function_delta_t(
-            lattice, dt, t_end, T, algo::metropolis_adaptive);
-        data::store_data<4>(metro_adapt,
+        Array2D<flt> metro_adapt = 
+                algo::dt::test_algorithm(lattice, dt, t_end, T,
+                J, algo::dt::metropolis_adaptive_omp);
+        data::store_data(metro_adapt,
                             "data/metro_adapt_" + to_str(T) + ".dat");
-        data::plot_lattice(lattice);
 
         //              --- small step metropolis
         cout << "running small step metropolis" << endl;
         rng::set_seed(seed);
         lattice.randomize();
-        algo::AlgoData metro_smst = algo::test_function_delta_t(
-            lattice, dt, t_end, T, algo::metropolis_smallStep);
-        data::store_data<4>(metro_smst,
+        Array2D<flt> metro_smst = algo::dt::test_algorithm(
+                lattice, dt, t_end, T, J, 
+                algo::dt::metropolis_smallStep_omp);
+        data::store_data(metro_smst,
                             "data/metro_smst_" + to_str(T) + ".dat");
 
         //              --- random step metropolis
         cout << "running random step metropolis" << endl;
         rng::set_seed(seed);
         lattice.randomize();
-        algo::AlgoData metro_rndm = algo::test_function_delta_t(
-            lattice, dt, t_end, T, algo::metropolis_random);
-        data::store_data<4>(metro_rndm,
+        Array2D<flt> metro_rndm = algo::dt::test_algorithm(
+            lattice, dt, t_end, T, J,algo::dt::metropolis_random_omp);
+        data::store_data(metro_rndm,
                             "data/metro_rndm_" + to_str(T) + ".dat");
 
         //              --- wolff
         cout << "running random step metropolis" << endl;
         rng::set_seed(seed);
         lattice.randomize();
-        algo::AlgoData wolff_data = algo::test_function_delta_t(
-            lattice, dt, t_end, T, algo::wolff_singleCore);
-        data::store_data<4>(wolff_data,
+        Array2D<flt> wolff_data = algo::dt::test_algorithm(
+            lattice, dt, t_end, T, J, algo::dt::wolff_omp_);
+        data::store_data(wolff_data,
                             "data/wolff_" + to_str(T) + ".dat");
 
         //              --- plot data

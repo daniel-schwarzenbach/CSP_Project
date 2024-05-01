@@ -5,6 +5,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 23)
 
 enable_testing()
+set(DOWNLOAD_EXTRACT_TIMESTAMP true)
 
 
 project(Heisenberg3d)
@@ -28,8 +29,17 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/tests/daniel.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_energy_and_magnetization.c++)
+
 # google-tests
+add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
+set_target_properties(Test_Lattice PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
+)
+add_executable(Test_Algorithm ${SRC_FILES} ./programs/gtests/test-algorithm.c++)
+set_target_properties(Test_Lattice PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
+)
 
 
 find_package(OpenMP)
@@ -40,7 +50,7 @@ if (OPENMP_FOUND)
 endif()
 
 
-# IPPL STUFF
+# IPPL if it is aked for
 option(IPPL "Use IPPL" OFF)
 if(IPPL)
     message(STATUS "IPPL option is set to ${IPPL}")
@@ -116,6 +126,7 @@ endif()
 
 add_definitions(-DDEBUG)
 
+
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -130,5 +141,14 @@ FetchContent_MakeAvailable(googletest)
 # link libraries
 target_link_libraries(Heisenberg ${LIBRARIES})
 
-# export compile commands for intellisense
+# link libraries for test
+target_link_libraries(Test_Lattice ${LIBRARIES} gtest_main)
+target_link_libraries(Test_Algorithm ${LIBRARIES} gtest_main)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(GoogleTest)
+gtest_discover_tests(Test_Lattice)
+gtest_discover_tests(Test_Algorithm)
+
+# export compile commands for intellisense

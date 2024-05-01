@@ -61,14 +61,14 @@ int main(int mainArgCount, char** mainArgs){
     temperature (T), boundary coundtions (BC: o for open, p for periodic)
     */
     flt J = 1;
-    vector<flt> h_vector = {2.0, 1.0, 0.0};
+    Vector3 h_vector = {2.0, 1.0, 0.0};
 
     int Lx = 2;
     int Ly = 2;
     int Lz = 2;
     flt T = 1;
     flt beta = Beta(T);
-    BC boundaries = o;
+    BC boundaries = BC::_0;
 
     Lattice lattice(Lx,Ly,Lz,boundaries);
 
@@ -104,6 +104,7 @@ int main(int mainArgCount, char** mainArgs){
         // set lattice with spins in random orientation at every site
     } else {
         // set lattice with every spin in (0,0,1)
+        lattice = Lattice::cons
     }
 
 
@@ -288,4 +289,3 @@ int main(int mainArgCount, char** mainArgs){
     cout << "hello world";
     return 0;
 }
-

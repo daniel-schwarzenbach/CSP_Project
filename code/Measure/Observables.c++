@@ -12,7 +12,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    uint N = Lx * Ly * Lz;
+    flt N = Lx * Ly * Lz;
 
     flt sx = 0; flt sy = 0; flt sz = 0;
     #pragma omp parallel for reduction(+:sx, sy, sz)
@@ -28,10 +28,11 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
             }
         }
     }
-    return {sx/N, sy/N, sz/N};
+    return {f32(sx/N), f32(sy/N), f32(sz/N)};
 }
 
-flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J, Vector3 k_vec)
+flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec, 
+        flt const& J, Vector3 const& k_vec)
 {
 
     /*
@@ -51,12 +52,16 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J, Vector3 k_
     flt anisotropy_energy = 0;
 
     /*
-    If we have periodic (p) bondary conditions, then bond_factor = 0 and we sum over all possible bonds,
-    including the interaction of the spin at (Lx, 1, 1) along the bond parallel to the x-direction
+    If we have periodic (p) bondary conditions, then bond_factor = 0 
+    and we sum over all possible bonds, including the interaction of 
+    the spin at (Lx, 1, 1) along the bond 
+    parallel to the x-direction
     with the spin at (Lx+1 = 1, 1, 1).
-    If we have open (o) boundary conditions, then bond_factor = 1 and we only sum over all internal bonds.
+    If we have open (o) boundary conditions, then bond_factor = 1 and 
+    we only sum over all internal bonds.
 
-    The magnetic interaction energy is not affected by the boundary conditions.
+    The magnetic interaction energy is not affected by the boundary 
+    conditions.
     */
 
     uint Lx = lattice.Lx();
@@ -157,7 +162,8 @@ flt measure::get_scalar_average(Lattice const &lattice,
     return scalarAverage / (Lx*Ly*Lx);
 }
 
-flt measure::get_auto_correlation(Lattice const &start, Lattice const &next)
+flt measure::get_correlation(Lattice const &start, 
+                                  Lattice const &next)
 {
     uint Lx = start.Lx();
     uint Ly = start.Ly();
