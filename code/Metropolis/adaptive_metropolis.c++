@@ -1,5 +1,6 @@
-#include <Metropolis/adaptive_metropolis.h++>
+#include <Metropolis/metropolis.h++>
 #include <Metropolis/energy_diff.h++>
+#include <Measure/Timer.h++>
 
 // Adaptive Metropolis algorithm //
 
@@ -33,11 +34,14 @@
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
-                         uint maxSteps,
-                         Spin h,
-                         Spin k,
-                         flt maxFactor){
+bool adaptive_metropolis(   Lattice &lattice,
+                            flt const& T /*temperature*/,
+                            flt const& J /*interaction Strength*/,
+                            flt const& maxTimeSeconds,
+                            uint const& maxSteps,
+                            Spin const& h,
+                            Spin const& k,
+                            flt const& maxFactor){
     // Initialize sigma with the max value, start timer, calculate 
     // Boltzmann factor and initialize counter of accepted steps
     flt sigma = maxFactor;
@@ -85,7 +89,7 @@ bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
             sigma = std::min(maxFactor, sigma * f );
         }
         // Check if maximum time has been reached
-        if (watch.time() >= maxTime)
+        if (watch.time() >= maxTimeSeconds)
         {
             break; // Stop simulation if maximum time reached
         }

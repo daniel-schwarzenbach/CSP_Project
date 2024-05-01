@@ -58,7 +58,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
     Vector3 mag = measure::get_magnetization(lattice);
-    mag *= 1./(Lx*Ly*Ly);
+    mag.normalize();
     uint sizeL = Lx * Ly * Lz + 2;
     // initialize Arrays
     Array<double> x(sizeL, 0), y(sizeL, 0), z(sizeL, 0),
@@ -75,8 +75,9 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
                 x[i] = ix;
                 y[i] = iy;
                 z[i] = iz;
+                Spin s;
     #pragma omp critical
-                Spin s = lattice(ix, iy, iz);
+                s = lattice(ix, iy, iz);
                 u[i] = s.x();
                 v[i] = s.y();
                 w[i] = s.z();

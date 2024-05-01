@@ -9,34 +9,35 @@ mathematical correct modulo
 */
 uint modulo(int const &i, uint u)
 {
-    return (i % static_cast<int>(u) + static_cast<int>(u)) 
-            % static_cast<int>(u);
+    return (i % static_cast<int>(u) + static_cast<int>(u)) % static_cast<int>(u);
 }
-
+// row access
+#define access(ix, iy, iz) ix *Ly_ *Lz_ + iy *Lz_ + iz
 
 // size of the lattice in x-direction
 template <typename T>
 uint Lattice3d<T>::Lx() const { return Lx_; }
-    // size of the lattice in y-direction
-template<typename T>
+// size of the lattice in y-direction
+template <typename T>
 uint Lattice3d<T>::Ly() const { return Ly_; }
-    
-template<typename T>
+
+template <typename T>
 uint Lattice3d<T>::Lz() const { return Lz_; }
 
-    // get boundary condition
+// get boundary condition
 template <typename T>
-BC Lattice3d<T>::get_boundary_conditions() const {return bc;}
+BC Lattice3d<T>::get_boundary_conditions() const { return bc; }
 
 // set value of the BC::_0
 template <typename T>
-void Lattice3d<T>::set_zero_element(T const& zero){
+void Lattice3d<T>::set_zero_element(T const &zero)
+{
     zero_element = zero;
 }
 
 template <typename T>
 void Lattice3d<T>::set_boundary_conditions(BC bc_) { bc = bc_; }
-    // acess operator const
+// acess operator const
 
 template <typename T>
 T Lattice3d<T>::operator()(int x, int y, int z) const
@@ -48,7 +49,7 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
             y >= 0 && y < Ly_ &&
             z >= 0 && z < Lz_)
         {
-            return data.at(x * Ly_ * Lz_ + y * Lz_ + z);
+            return data.at(access(x, y, z));
         }
         else
         {
@@ -60,15 +61,19 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(x, Lz_);
-        return data.at(x_*Ly_*Lz_  +  y_*Lz_  +  z_);
+        return data.at(access(x_, y_, z_));
         break;
     }
 }
 
-
+template <typename T>
+T &Lattice3d<T>::operator()(Index const &id)
+{
+    return this->operator()(id[0], id[1], id[2]);
+}
 
 template <typename T>
-T& Lattice3d<T>::operator()(int x, int y, int z)
+T &Lattice3d<T>::operator()(int x, int y, int z)
 {
     switch (bc)
     {
@@ -77,7 +82,7 @@ T& Lattice3d<T>::operator()(int x, int y, int z)
             y >= 0 && y < Ly_ &&
             z >= 0 && z < Lz_)
         {
-            return data.at(x*Ly_*Lz_  +  y*Lz_  +  z);
+            return data.at(access(x, y, z));
         }
         else
         {
@@ -88,29 +93,27 @@ T& Lattice3d<T>::operator()(int x, int y, int z)
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(z, Lz_);
-        return data.at(x_*Ly_*Lz_  +  y_*Lz_  +  z_);
+        return data.at(access(x_, y_, z_));
     }
 }
 
-template<>
-bool& Lattice3d<bool>::operator()(int x, int y, int z){
+template <>
+bool &Lattice3d<bool>::operator()(int x, int y, int z)
+{
     dummy_element = zero_element;
     return dummy_element;
 }
 
 template <typename T>
-T& Lattice3d<T>::operator()(Index const& id){
+T Lattice3d<T>::operator()(Index const &id) const
+{
     return this->operator()(id[0], id[1], id[2]);
 }
 
 template <typename T>
-T Lattice3d<T>::operator()(Index const& id) const{
-    return this->operator()(id[0], id[1], id[2]);
-}
-
-template <typename T>
-void Lattice3d<T>::set( int const& x, int  const& y, int const& z, 
-                        T const& v){
+void Lattice3d<T>::set(int const &x, int const &y, int const &z,
+                       T const &v)
+{
     switch (bc)
     {
     case BC::_0:
@@ -118,7 +121,7 @@ void Lattice3d<T>::set( int const& x, int  const& y, int const& z,
             y >= 0 && y < Ly_ &&
             z >= 0 && z < Lz_)
         {
-            data[x * Ly_ * Lz_ + y * Lz_ + z] = v;
+            data.at(access(x, y, z)) = v;
         }
         break;
     // BC = periodic
@@ -126,41 +129,43 @@ void Lattice3d<T>::set( int const& x, int  const& y, int const& z,
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(z, Lz_);
-        data[x_ * Ly_ *Lz_ + y_ * Lz_ + z_] = v;
-        ;
+        data.at(access(x_, y_, z_)) = v;
         break;
     }
 }
 
 template <typename T>
-void Lattice3d<T>::set(Index const& id, T const& v){
-    set(id[0],id[1],id[2],v);
+void Lattice3d<T>::set(Index const &id, T const &v)
+{
+    set(id[0], id[1], id[2], v);
 }
 
 template <typename T>
-T Lattice3d<T>::get(int const& x, int  const& y, int const& z) const{
-    return this->operator()(x,y,z);
+T Lattice3d<T>::get(int const &x, int const &y, int const &z) const
+{
+    return this->operator()(x, y, z);
 }
 
 template <typename T>
-T Lattice3d<T>::get(Index const& id) const{
+T Lattice3d<T>::get(Index const &id) const
+{
     return this->operator()(id);
 }
 
 template <typename T>
 Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
-        :   zero_element(0), Lx_(Lx), Ly_(Ly), Lz_(Lz), 
-            data(Lx * Ly * Lz)
+    : zero_element(0), Lx_(Lx), Ly_(Ly), Lz_(Lz),
+      data(Lx * Ly * Lz)
 {
     dummy_element = zero_element;
     data.resize(Lx * Ly * Lz);
     data.shrink_to_fit();
 }
 
-template<>
+template <>
 Lattice3d<bool>::Lattice3d(uint Lx, uint Ly, uint Lz)
-        :   zero_element(true), Lx_(Lx), Ly_(Ly), Lz_(Lz), 
-            data(Lx_ * Ly_ * Lz_)
+    : zero_element(true), Lx_(Lx), Ly_(Ly), Lz_(Lz),
+      data(Lx_ * Ly_ * Lz_)
 {
     dummy_element = zero_element;
     data.resize(Lx_ * Ly_ * Lz_);
@@ -176,7 +181,7 @@ bool Lattice3d<T>::randomize()
         {
             for (uint z = 0; z < Lz_; ++z)
             {
-                (*this)(x, y, z) = rng::get_random<T>();
+                this->set(x, y, z, rng::get_random<T>());
             }
         }
     }
@@ -185,7 +190,7 @@ bool Lattice3d<T>::randomize()
 
 template <typename T>
 Lattice3d<T> Lattice3d<T>::constant_lattice(
-        uint Lx, uint Ly, uint Lz,T const &value)
+    uint Lx, uint Ly, uint Lz, T const &value)
 {
     Lattice3d lattice(Lx, Ly, Lz);
     for (uint x = 0; x < Lx; ++x)
@@ -194,7 +199,7 @@ Lattice3d<T> Lattice3d<T>::constant_lattice(
         {
             for (uint z = 0; z < Lz; ++z)
             {
-                lattice(x, y, z) = value;
+                lattice.set(x, y, z, value);
             }
         }
     }
@@ -202,7 +207,7 @@ Lattice3d<T> Lattice3d<T>::constant_lattice(
 }
 
 template <typename T>
-Lattice3d<T> Lattice3d<T>::random_lattice(uint Lx,uint Ly,uint Lz)
+Lattice3d<T> Lattice3d<T>::random_lattice(uint Lx, uint Ly, uint Lz)
 {
     Lattice3d lattice(Lx, Ly, Lz);
     for (uint x = 0; x < Lx; ++x)
@@ -211,7 +216,7 @@ Lattice3d<T> Lattice3d<T>::random_lattice(uint Lx,uint Ly,uint Lz)
         {
             for (uint z = 0; z < Lz; ++z)
             {
-                lattice(x, y, z) = rng::get_random<T>();
+                lattice.set(x, y, z, rng::get_random<T>());
             }
         }
     }

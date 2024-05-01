@@ -69,8 +69,8 @@ TEST(LatticeTests, Acess){
 EXPECT_TRUE(lattice(neighbor) == lattice(nx,ny,nz));
 EXPECT_TRUE(abs(nx - x) <= 1);
 EXPECT_TRUE(abs(ny - y) <= 1);
-EXPECT_TRUE(abs(nz - y) <= 1);
-        Spin s = {5,8,3+nx};
+EXPECT_TRUE(abs(nz - z) <= 1);
+        Spin s = {f32(5), f32(8),f32(3+nx)};
         s.normalize();
         lattice(neighbor) = s;
 EXPECT_TRUE(lattice(nx,ny,nz) == s);
@@ -79,4 +79,39 @@ EXPECT_TRUE(lattice(nx,ny,nz) == s);
     s.normalize();
     lattice(x,y,z) = s;
 EXPECT_TRUE(lattice(x,y,z) == s);
+}
+
+TEST(LatticeTests, Lattice3d_bool_periodic){
+    uint L = 8;
+    rng::set_seed(89);
+    Lattice3d<bool> lattice 
+            = Lattice3d<bool>::constant_lattice(L, L, L, false);
+    int x = -3, y = 500, z = 302;
+    Array<Index> neighbors = {
+        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, 
+        {x, y, z + 1}, {x, y, z - 1}};
+    for (Index neighbor : neighbors)
+    {
+        int nx = neighbor[0];
+        int ny = neighbor[1];
+        int nz = neighbor[2];
+EXPECT_TRUE(lattice(neighbor) == lattice(nx,ny,nz));
+EXPECT_TRUE(abs(nx - x) <= 1);
+EXPECT_TRUE(abs(ny - y) <= 1);
+EXPECT_TRUE(abs(nz - z) <= 1);
+        bool flag = true;
+        lattice.set(neighbor, flag);
+EXPECT_TRUE(lattice(nx,ny,nz) == flag);
+    }
+}
+
+TEST(LatticeTests, Lattice3d_bool_dirichlet){
+    uint L = 4;
+    rng::set_seed(89);
+    Lattice3d<bool> lattice 
+            = Lattice3d<bool>::constant_lattice(L, L, L, false);
+    lattice.set_boundary_conditions(BC::_0);
+EXPECT_TRUE(lattice.get(0,0,-1) == true);
+EXPECT_TRUE(lattice.get(0,0,4) == true);
+EXPECT_TRUE(lattice.get(1,1,1) == false);
 }

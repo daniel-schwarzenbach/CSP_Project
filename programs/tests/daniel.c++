@@ -5,6 +5,7 @@
 #include <Measure/Observables.h++>
 #include <Data/DataHandler.h++>
 #include <Algorithm/Algorithm.h++>
+#include <Metropolis/adaptive_metropolis.h++>
 
 namespace plt = matplot;
 
@@ -21,13 +22,14 @@ int main(int mainArgCount, char **mainArgs)
 
     Lattice lattice(L,L,L);
     uint i = 0;
-    flt T = 0.001;
+    flt T = 0.0001;
     //for(flt T = 0.01; T <= 0.1; T+=0.01){
     cout << "running for T = " << T << endl << endl;
     omp_set_num_threads(1);
     rng::set_seed(seed);
     lattice.randomize();
-    metropolis(lattice, T, 1.0, Spin{0,0,0}, Spin{0,0,0}, _inf_, 100'000,MoveType::Addaptive);
+    adaptive_metropolis(lattice, T, 1.0, _inf_, 10'000'000, Spin{0,0,0}, Spin{0,0,0});
+    //metropolis(lattice, T, 1.0, Spin{0,0,0}, Spin{0,0,0}, _inf_, 100'000,MoveType::Addaptive);
     //wolff(lattice,T, 1.0, _inf_, 10000);
     data::plot_lattice(lattice);
 }

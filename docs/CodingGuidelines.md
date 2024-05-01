@@ -113,7 +113,7 @@ write symbols and types that are often into Base.h++. do never write:
 `using namespace std;` or any other auto inclusion of a namespace.
 only use `using std::something` for the things you regulary need to use.
 
-`using flt = float` - our generic floatingpoint: Allows for an easy change in precition\
+`using flt = double` - our generic floatingpoint: Allows for an easy change in precition\
 if you now you need a certain precition dont hesitate to use another type.
 
 `Spin` : Our Spin class that works with all representations

@@ -1,3 +1,9 @@
+/*
+Test program for Ippl
+
+runs an
+*/
+
 #include <Ippl.h>
 #include <Base.h++> // for randflt, using std::cout, using std::endl
 #include <mpi.h>
@@ -8,7 +14,7 @@
 #include "/usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h"
 
 // set the lattice size
-constexpr uint Lx = 32, Ly = 16;
+constexpr uint Lx = 32, Ly = 32;
 
 // set the dimension of the problem
 constexpr uint dim = 2;
@@ -83,7 +89,7 @@ int main(int numMainArgs, char *mainArgs[])
             "Assign lattice",
             field.getFieldRangePolicy(0),
             KOKKOS_LAMBDA(const int x, const int y) {
-                view(x, y) = randflt();
+                view(x, y) = rng::rand_uniform();
                 const size_t x₀ = x + localIds[0].first() - numGhosts;
                 const size_t y₀ = y + localIds[1].first() - numGhosts;
                 cout << "{ " << x₀ << ", " << y₀ << " } = " 

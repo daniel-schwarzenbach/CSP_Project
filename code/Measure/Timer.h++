@@ -28,7 +28,11 @@ namespace measure
         void start();
         // stop the timer
         void stop();
-        // return time on the timer in seconds
+        /*
+        return time on the timer in seconds since: 
+        start
+        or between strat and stop, only if stoped
+        */
         flt time();
     };
 
