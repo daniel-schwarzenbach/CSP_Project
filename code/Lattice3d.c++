@@ -9,10 +9,8 @@ mathematical correct modulo
 */
 uint modulo(int const &i, uint u)
 {
-    constexpr uint max_u = 1 << 31;
-    // u = min(max_u, u); to expensive
-    return (i % static_cast<int>(u) 
-             + static_cast<int>(u)) % static_cast<int>(u);
+    return (i % static_cast<int>(u) + static_cast<int>(u)) 
+            % static_cast<int>(u);
 }
 
 
@@ -50,7 +48,7 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
             y >= 0 && y < Ly_ &&
             z >= 0 && z < Lz_)
         {
-            return data[x * Ly_ * Lz_ + y * Lz_ + z];
+            return data.at(x * Ly_ * Lz_ + y * Lz_ + z);
         }
         else
         {
@@ -62,7 +60,7 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(x, Lz_);
-        return data.at(x_ * Ly_ * Lz_ + y_ * Lz_ + z_);
+        return data.at(x_*Ly_*Lz_  +  y_*Lz_  +  z_);
         break;
     }
 }
@@ -79,22 +77,18 @@ T& Lattice3d<T>::operator()(int x, int y, int z)
             y >= 0 && y < Ly_ &&
             z >= 0 && z < Lz_)
         {
-            return data[x * Ly_ * Lz_ + y * Lz_ + z];
+            return data.at(x*Ly_*Lz_  +  y*Lz_  +  z);
         }
         else
         {
             dummy_element = zero_element;
             return dummy_element;
         }
-        break;
-
     default:
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(z, Lz_);
-        return data[x_ * Ly_ * Lz_ + y_ * Lz_ + z_];
-        ;
-        break;
+        return data.at(x_*Ly_*Lz_  +  y_*Lz_  +  z_);
     }
 }
 
@@ -132,7 +126,7 @@ void Lattice3d<T>::set( int const& x, int  const& y, int const& z,
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
         uint z_ = modulo(z, Lz_);
-        data[x_ * Ly_ * Lz_ + y_ * Lz_ + z_] = v;
+        data[x_ * Ly_ *Lz_ + y_ * Lz_ + z_] = v;
         ;
         break;
     }
@@ -158,6 +152,7 @@ Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
         :   zero_element(0), Lx_(Lx), Ly_(Ly), Lz_(Lz), 
             data(Lx * Ly * Lz)
 {
+    dummy_element = zero_element;
     data.resize(Lx * Ly * Lz);
     data.shrink_to_fit();
 }
@@ -165,9 +160,10 @@ Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
 template<>
 Lattice3d<bool>::Lattice3d(uint Lx, uint Ly, uint Lz)
         :   zero_element(true), Lx_(Lx), Ly_(Ly), Lz_(Lz), 
-            data(Lx_ * Ly_ * Lz_ + 1)
+            data(Lx_ * Ly_ * Lz_)
 {
-    data.resize(Lx_ * Ly_ * Lz_ + 1);
+    dummy_element = zero_element;
+    data.resize(Lx_ * Ly_ * Lz_);
     data.shrink_to_fit();
 }
 

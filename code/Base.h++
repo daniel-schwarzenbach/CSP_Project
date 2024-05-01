@@ -21,12 +21,22 @@ static const string ERROR = "\033[31m [Error]: \033[0m";
 static const string WARNING = "\033[35m [Warning]: \033[0m";
 static const string INFO = "\033[32m [INFO]: \033[0m";
 
+
+
 // output
 using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
 using std::setw;
+
+#ifdef DEBUG
+#define what_is(expr)\
+    std::cout << #expr << " = " << (expr) << std::endl
+#else
+#define what_is(expr)
+#endif
+
 
 //          --- Math
 #include <cmath>

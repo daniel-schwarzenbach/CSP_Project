@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt dt = 0.01;
+const flt dt = 0.001;
 // end Time
-const flt t_end = 30.0;
+const flt t_end = 10.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -26,21 +26,23 @@ int main(int mainArgCount, char **mainArgs)
     //     seed = dat::read_f64(mainArgs[1]);
     // }
     //              --- make folders
+    
+
     data::make_folder("plots");
     data::make_folder("data");
-    uint i = 0;
-    for(flt T = 0.1; T <= 20.0; T+=0.1){
-    cout << "running for T = " << T << endl << endl;
+    Lattice lattice(L,L,L);
+    for(flt T = 0.01; T <= 0.1; T+=0.01){
 
-    rng::set_seed(seed);
-    Lattice lattice = Lattice::random_lattice(L, L, L);
 
     //              --- adaptive step metropolis
     cout << "running adaptive step metropolis" << endl;
+    rng::set_seed(seed);
+    lattice.randomize();
     algo::AlgoData metro_adapt = algo::test_function_delta_t(
             lattice,dt, t_end, T, algo::metropolis_adaptive);
     data::store_data<4>(metro_adapt, 
                         "data/metro_adapt_"+to_str(T)+".dat");
+    data::plot_lattice(lattice);
 
     //              --- small step metropolis
     cout << "running small step metropolis" << endl;

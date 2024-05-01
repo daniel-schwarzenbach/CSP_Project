@@ -13,25 +13,33 @@ namespace algo{
 static constexpr uint J = 0;
 
 using AlgoData = StaticArray<Array<flt>, 4>;
+
+/*
+Function to measure after a certain time step
+
+/ @param lattice: lattice to work with
+/ @param dt: timestep
+/ @param T: temperature
+*/
 using FunctionDeltaT=function<void(Lattice&, flt const&, flt const&)>;
 
 static FunctionDeltaT wolff_singleCore
-        = [](Lattice& lattice, flt const& T, flt const& dt){
+        = [](Lattice& lattice, flt const& dt, flt const& T){
     wolff(lattice, T, J, dt, maxUint);
 };
 
 static FunctionDeltaT metropolis_smallStep
-        = [](Lattice& lattice, flt const& T, flt const& dt){
+        = [](Lattice& lattice, flt const& dt, flt const& T){
     metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
 };
 
 static FunctionDeltaT metropolis_adaptive
-        = [](Lattice& lattice, flt const& T, flt const& dt){
+        = [](Lattice& lattice, flt const& dt, flt const& T){
     metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
 };
 
 static FunctionDeltaT metropolis_random
-        = [](Lattice& lattice, flt const& T, flt const& dt){
+        = [](Lattice& lattice, flt const& dt, flt const& T){
     metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
 };
 

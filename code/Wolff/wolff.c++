@@ -95,12 +95,13 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
             visited.set(current, true);
 
             Array<Index> neighbors = {
-                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
+                {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
             for (int i = 0; i < 6; ++i)
             {
                 bool wasVisited;
 #pragma omp critical
-                bool wasVisited = visited.get(neighbors[i]);
+                wasVisited = visited.get(neighbors[i]);
                 if (!wasVisited)
                 {
                     Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y

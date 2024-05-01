@@ -44,9 +44,8 @@ using Lattice = Lattice3d<Spin>;
 
 #else // NOT_WITH_OPENMP
 
-uint omp_get_num_threads()
-    return 1;
-}
+uint omp_get_num_threads();
+void omp_set_num_threads(int);
 #define PARALLEL_FOR  // theoretical parallel
 #define REDUCTION_SUM // theretical reduction
 #define ATOMIC        // theoretical atomic
