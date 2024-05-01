@@ -30,17 +30,18 @@ static FunctionDeltaT wolff_singleCore
 
 static FunctionDeltaT metropolis_smallStep
         = [](Lattice& lattice, flt const& dt, flt const& T){
-    metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
+    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, 
+                maxUint, MoveType::SmallStep);
 };
 
 static FunctionDeltaT metropolis_adaptive
         = [](Lattice& lattice, flt const& dt, flt const& T){
-    metropolis(lattice, T, J, dt, maxUint, MoveType::SmallStep);
+    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, maxUint, MoveType::SmallStep);
 };
 
 static FunctionDeltaT metropolis_random
         = [](Lattice& lattice, flt const& dt, flt const& T){
-    metropolis(lattice, T, J, dt, maxUint, MoveType::Random);
+    metropolis(lattice, T, J, Spin{0,0,0}, Spin{0,0,0}, dt, maxUint, MoveType::Random);
 };
 
 /*

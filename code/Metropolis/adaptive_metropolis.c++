@@ -33,14 +33,16 @@
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
-                         uint maxSteps, Spin h, Spin k,
-                         F64 maxFactor) {
+bool adaptive_metropolis(Lattice &lattice, flt T, flt J, flt maxTime,
+                         uint maxSteps,
+                         Spin h,
+                         Spin k,
+                         flt maxFactor){
     // Initialize sigma with the max value, start timer, calculate 
     // Boltzmann factor and initialize counter of accepted steps
-    F64 sigma = maxFactor;
-    TimeKeeper watch;
-    F64 beta = Beta(T);
+    flt sigma = maxFactor;
+    measure::Timer watch;
+    flt beta = Beta(T);
     int accepted_count = 0;
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
@@ -58,12 +60,12 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Propose spin change based on the adaptive move
         newSpin.adaptive_step(sigma);
         // Calculate energy difference
-        F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
+        flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
                                         newSpin, J, h, k);
         // Boltzmann constant k is normalized with interaction strength
         // J in this implementation
         // Acceptance condition
-        if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta)) {
+        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
@@ -76,9 +78,9 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
             // Increase counter of accepted steps
             ++accepted_count;
             // Update acceptance rate
-            F64 R = accepted_count/(step+1.0);
+            flt R = accepted_count/(step+1.0);
             // Calculate update factor
-            F64 f = 0.5 / (1.0 - R + 1e-18);
+            flt f = 0.5 / (1.0 - R + 1e-18);
             // Update sigma
             sigma = std::min(maxFactor, sigma * f );
         }

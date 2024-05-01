@@ -26,8 +26,8 @@
 bool metropolis(Lattice &lattice,
                 flt const& T /*temperature*/,
                 flt const& J /*interaction Strength*/,
-                Spin h,
-                Spin k,
+                Spin const& h,
+                Spin const& k,
                 flt const& maxTimeSeconds,
                 uint const& maxSteps,
                 MoveType const& moveType)

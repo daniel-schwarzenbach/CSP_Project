@@ -23,9 +23,10 @@ using Index = StaticArray<int, 3>;
 
 // Output:
 //      Returns the energy difference of the two spin configurations.
-F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
-                          Spin& oldSpin, Spin& newSpin, 
-                          F64 J, Spin h, Spin k){
+flt calculateEnergyDiff(Lattice const& lattice, int  const& x, 
+                        int const& y,int const& z, 
+                        Spin const& oldSpin, Spin const& newSpin, 
+                        flt const& J, Spin const& h, Spin const& k){
 
     // Get dimensions of the lattice
     int Lx = lattice.Lx();

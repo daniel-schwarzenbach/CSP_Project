@@ -8,10 +8,10 @@
 
 // temperature
 // F64 T = 0.001;
-F64 J = 1.0;
-F64 Time = 5;
+flt J = 1.0;
+flt Time = 5;
 
-float totalAbsolute(const Eigen::Matrix<float, 3, 1>& vec) {
+flt totalAbsolute(const Vector3& vec) {
     // Compute the sum of squares of each element
     float sum_of_squares = vec(0) * vec(0) + vec(1) * vec(1) + vec(2) * vec(2);
 
