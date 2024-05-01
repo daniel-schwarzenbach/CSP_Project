@@ -5,6 +5,6 @@
 
 F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z, 
                           Spin& oldSpin, Spin& newSpin, 
-                          F64 J /*interactionStrength*/);
+                          F64 J, Spin h, Spin k);
 
 #endif // ENERGY_DIFF_H
