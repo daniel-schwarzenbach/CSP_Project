@@ -75,7 +75,7 @@ int main()
             flt mag = magnetisations[j].norm();
             energies[j] = energy;
 
-            adaptive_metropolis(lattice, temperature, J, Time, Ns);
+            adaptive_metropolis(lattice, temperature, J, Time, Ns, h);
 
             outFile << Ns*j << " " << mag << " " << energy << std::endl; //Write current total step number, mag and E into file
         }
