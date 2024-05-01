@@ -96,9 +96,9 @@ void SpinVector::small_step_move(F64 openingAngle)
 
 void SpinVector::adaptive_step(F64 sigma)
 {
-    F64 dx = rng::rand_f64();
-    F64 dy = rng::rand_f64();
-    F64 dz = rng::rand_f64();
+    F64 dx = rng::rand_gaussian();
+    F64 dy = rng::rand_gaussian();
+    F64 dz = rng::rand_gaussian();
     *this += sigma * SpinVector(dx, dy, dz);
     this->normalize();
 }

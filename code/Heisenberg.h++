@@ -49,17 +49,11 @@ Lattice class
 - Lx(), Ly(), Lz() // size of the lattice
 - comunicate_ghost_cells() // does nothing in Serial
 */
-using Lattice = Lattice3d<Spin>;
-
-#define PARALLEL_FOR  // theoretical parallel
-#define REDUCTION_SUM // theretical reduction
-#define ATOMIC        // theoretical atomic
-#define CRITICAL      // theoretical critical
+using Lattice = Lattice3d<SpinVector>;
 
 
-/*Define the Boltzmann constant*/
-//static constexpr double kB = 1.38064852e-23;
-static constexpr double kB = 1;
+// boltzmann constant
+static constexpr F64 _kB_ = 1.38064852e-23;
 
 /*
 Definition of thermodynamic beta
@@ -79,7 +73,7 @@ calculate the mean value of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-static F64 mean(Array<Float> array)
+static Float mean(Array<Float> array)
 {
     Float sum = 0;
     uint n = array.size();
@@ -97,7 +91,7 @@ calculate the variance of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-F64 variance(Array<Float> array)
+Float variance(Array<Float> array)
 {
     Float mean = mean(array);
     uint n = array.size();
