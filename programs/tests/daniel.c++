@@ -27,7 +27,7 @@ int main(int mainArgCount, char **mainArgs)
     omp_set_num_threads(1);
     rng::set_seed(seed);
     lattice.randomize();
-    metropolis(lattice, T, 1.0, _inf_, 100'000,MoveType::Addaptive);
+    metropolis(lattice, T, 1.0, Spin{0,0,0}, Spin{0,0,0}, _inf_, 100'000,MoveType::Addaptive);
     //wolff(lattice,T, 1.0, _inf_, 10000);
     data::plot_lattice(lattice);
 }
