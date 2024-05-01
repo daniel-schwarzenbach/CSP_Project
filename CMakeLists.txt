@@ -37,7 +37,7 @@ set_target_properties(Test_Lattice PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
 )
 add_executable(Test_Algorithm ${SRC_FILES} ./programs/gtests/test-algorithm.c++)
-set_target_properties(Test_Lattice PROPERTIES
+set_target_properties(Test_Algorithm PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
 )
 

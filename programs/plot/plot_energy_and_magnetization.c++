@@ -8,14 +8,14 @@
 
 namespace plt = matplot;
 
-const flt dt = 0.1;
+const flt dt = 1.0;
 // end Time
-const flt t_end = 10.0;
+const flt t_end = 100.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
-const uint L = 8;
-
+const uint L = 16;
+// interaction strenth
 const flt J = 1.0;
 
 int main(int mainArgCount, char **mainArgs)
@@ -84,27 +84,6 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Magnitisation");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/mag_" + to_str(T) + ".png");
-            plt::hold(false);
-        }
-
-        // plot aut
-        cout << "plot autocorrelation" << endl;
-        {
-            auto p1 = plt::plot(metro_rndm[0], metro_rndm[3], "--gs");
-            plt::hold(true);
-            auto p4 = plt::plot(metro_smst[0], metro_smst[3], "--ys");
-            auto p2 = plt::plot(metro_adapt[0], metro_adapt[3], "--rs");
-            auto p3 = plt::plot(wolff_data[0], wolff_data[3], "--bs");
-
-            auto l = plt::legend({"Metropolis Random",
-                                  "Metropolis Small Step",
-                                  "Adaptive Metropolis",
-                                  "Wolff"});
-            l->location(plt::legend::general_alignment::topright);
-            plt::xlabel("Time in s");
-            plt::ylabel("AutoCorrelation");
-            plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/aut_" + to_str(T) + ".png");
             plt::hold(false);
         }
 
