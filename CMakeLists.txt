@@ -12,6 +12,8 @@ add_subdirectory(libraries/matplotplusplus)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_BUILD_TYPE Debug)
 
+add_definitions(-DDEBUG)
+
 
 
 # include files
@@ -24,7 +26,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_energy_and_magnetization.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/tests/daniel.c++)
 
 
 find_package(OpenMP)

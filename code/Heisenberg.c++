@@ -9,6 +9,16 @@ flt Beta(flt T)
     return 1. / (_kB_ * T);
 };
 
+#ifndef WITH_OPENMP
+
+uint omp_get_num_threads(){
+    return 1;
+}
+
+void omp_set_num_threads(int){}
+
+#endif
+
 /*
 calculate the mean value of a vector
 

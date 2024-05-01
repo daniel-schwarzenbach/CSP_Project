@@ -6,7 +6,7 @@ algo::AlgoData algo::test_function_delta_t(
         flt const &dt, flt const &t_end, flt const& T,
         function<void(Lattice&, flt const&, flt const&)> const &algo)
 {
-    uint maxSize = ceil(t_end);
+    uint maxSize = ceil(t_end/dt);
     Array<flt> time(0);
     time.reserve(maxSize);
     Array<flt> magn(0);
@@ -28,10 +28,12 @@ algo::AlgoData algo::test_function_delta_t(
         Vector3 magnVec = measure::get_magnetization(lattice);
         magn.push_back(magnVec.norm());
         enrg.push_back(abs(measure::get_energy(lattice)));
+
         measure::Timer timer;
         timer.start();
-        algo(lattice, T, dt);
+        algo(lattice, dt, T);
         timer.stop();
+        
         t_elapsed += timer.time();
         flt autcorr = measure::get_auto_correlation(lcopy, lattice);
         auco.push_back(autcorr);

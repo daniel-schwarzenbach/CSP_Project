@@ -20,7 +20,8 @@ bool is_the_same(Lattice const &l1, Lattice const &l2)
         {
             for (uint z = 0; z < Lz; ++z)
             {
-                if (l1(x, y, z) != l2(x, y, z)){
+                if (l1(x, y, z) != l2(x, y, z))
+                {
                     cout << l1(x, y, z) << " != " << l2(x, y, z) << endl;
                     return false;
                 }
@@ -30,24 +31,27 @@ bool is_the_same(Lattice const &l1, Lattice const &l2)
     return true;
 }
 
-constexpr uint L = 2;
+constexpr uint L = 4;
 
 int main()
 {
     rng::set_seed(89);
     Lattice l1 = Lattice::random_lattice(L, L, L);
     Lattice l2 = Lattice::random_lattice(L, L, L);
-    cout << "should be false = " << is_the_same(l1, l2) << endl << endl;
+    cout << "should be false = " << is_the_same(l1, l2) << endl
+         << endl;
 
     rng::set_seed(89);
     l2 = Lattice::random_lattice(L, L, L);
-    cout << "should be true = " << is_the_same(l1, l2) << endl << endl;
+    what_is(is_the_same(l1, l2));
 
-    rng::set_seed(89);
-    l1.randomize();
-    rng::set_seed(89);
-    l2.randomize();
-    cout << endl << endl << "should be true = " << is_the_same(l1, l2) << endl << endl;
+    uint Lx = l1.Lx(); uint Ly = l1.Ly(); uint Lz = l1.Lz();
+    l1(3,3,3) = Vector3{5,0,2};
+    l1(3,3,1) = Vector3{1,0,2};
+    l1(3,3,2) = Vector3{1,0,9};
+    what_is(l1(3,3,3));
+    what_is(l1(3,3,1));
+    what_is(l1(3,3,2));
 
     return 0;
 }

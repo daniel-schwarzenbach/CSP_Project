@@ -1,6 +1,7 @@
 #ifndef LATTICE3D_HPP
 #define LATTICE3D_HPP
 #include <Base.h++>
+#include <Spin.h++>
 
 using Index = StaticArray<int, 3>;
 
@@ -78,12 +79,12 @@ public:
                                       T const &value);
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
-    static Lattice3d random_lattice(uint Lx_, uint Ly_, uint Lz_);
+    static Lattice3d random_lattice(uint Lx, uint Ly, uint Lz);
 
     // size of the entire lattice
     uint get_total_size() const;
 };
 
-#include <Spin.h++>
+
 
 #endif

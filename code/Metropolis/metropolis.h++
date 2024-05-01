@@ -6,7 +6,7 @@
 #include <random>
 #include <Heisenberg.h++>
 
-enum class MoveType
+enum MoveType
 {
     SpinFlip,
     Random,
@@ -23,10 +23,10 @@ metropolis algorithm for the Heisenberg 3D model
 / @exception may fail
 */
 bool metropolis(Lattice &lattice,
-                flt T /*temperature*/,
-                flt J /*interaction Strength*/,
-                flt maxTimeSeconds,
-                uint maxSteps,
-                MoveType moveType = MoveType::SmallStep);
+                flt const& T /*temperature*/,
+                flt const& J /*interaction Strength*/,
+                flt const& maxTimeSeconds,
+                uint const& maxSteps,
+                MoveType const& moveType = MoveType::SmallStep);
 
 #endif

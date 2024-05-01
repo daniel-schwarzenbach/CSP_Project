@@ -22,11 +22,11 @@
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
 bool metropolis(Lattice &lattice,
-                flt T /*temperature*/,
-                flt J /*interaction Strength*/,
-                flt maxTimeSeconds,
-                uint maxSteps,
-                MoveType moveType)
+                flt const& T /*temperature*/,
+                flt const& J /*interaction Strength*/,
+                flt const& maxTimeSeconds,
+                uint const& maxSteps,
+                MoveType const& moveType)
 {
     // max factor
 
@@ -35,16 +35,18 @@ bool metropolis(Lattice &lattice,
 
 #pragma omp parallel
     {
-        maxSteps /= omp_get_num_threads();
-        flt maxFactor = 5;
+
+        uint numSteps = ceil(flt(maxSteps) / flt(omp_get_num_threads()));
+
+        flt maxFactor = 20;
         measure::Timer watch;
         uint proposed_count = 0;
         flt sigma = maxFactor;
         uint Lx = lattice.Lx();
         uint Ly = lattice.Ly();
         uint Lz = lattice.Lz();
-
-        for (uint step = 0; step < maxSteps; ++step)
+        watch.start();
+        for (uint step = 0; step < numSteps; ++step)
         {
             // Choose a random lattice site
             int x = rng::rand_int_range(0, Lx);
@@ -90,7 +92,7 @@ bool metropolis(Lattice &lattice,
                     lattice(x, y, z) = newSpin;
                 }
                 sigma = std::min(maxFactor, sigma * 0.5 /
-                                                (1.0 - (1.0 / proposed_count) + 1e-2));
+                        (1.0 - (1.0 / proposed_count) + 1e-2));
 
                 proposed_count = 0;
             }

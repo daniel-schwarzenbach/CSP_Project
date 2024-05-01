@@ -32,7 +32,8 @@ flt calculateEnergyDiff(Lattice const &lattice, int x, int y, int z,
     int Lz = lattice.Lz();
 
     Array<Index> neighbors = {
-        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, {x, y, z + 1}, {x, y, z - 1}};
+        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, 
+        {x, y, z + 1}, {x, y, z - 1}};
     // Energies of old and new configuration
     flt energyOld = 0.0;
     flt energyNew = 0.0;
