@@ -82,6 +82,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
                 {
                 mag = measure::get_magnetization(lattice);
                 }
+                mag.normalize();
                 // color the spins according to the magnetization
                 color[i] = (s | mag);
 #pragma omp critical
