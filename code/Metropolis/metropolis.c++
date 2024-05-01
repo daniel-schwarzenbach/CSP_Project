@@ -15,6 +15,8 @@
 //      - maximal running time of the algorithm
 //      - maximal number of steps
 //      - interaction strength of the Heisenberg model
+//      - external magnetic field
+//      - spatial anisotropy of the system
 //      - trial move which we want to use to generate new spins: SpinFlip,
 //        Random or SmallStep; default: small step move
 //
@@ -24,6 +26,8 @@
 bool metropolis(Lattice &lattice,
                 flt const& T /*temperature*/,
                 flt const& J /*interaction Strength*/,
+                Spin h,
+                Spin k,
                 flt const& maxTimeSeconds,
                 uint const& maxSteps,
                 MoveType const& moveType)
@@ -77,7 +81,7 @@ bool metropolis(Lattice &lattice,
             }
             // Calculate energy difference
             flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
-                                             newSpin, J);
+                                             newSpin, J, h, k);
             // increase count of proposed changes
             ++proposed_count;
             // Acceptance condition

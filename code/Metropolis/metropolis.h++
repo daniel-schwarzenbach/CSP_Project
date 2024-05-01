@@ -22,11 +22,12 @@ metropolis algorithm for the Heisenberg 3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-bool metropolis(Lattice &lattice,
-                flt const& T /*temperature*/,
-                flt const& J /*interaction Strength*/,
-                flt const& maxTimeSeconds,
-                uint const& maxSteps,
-                MoveType const& moveType = MoveType::SmallStep);
+bool metropolis(Lattice &lattice, 
+                F64 T/*temperature*/, 
+                F64 J/*interaction Strength*/,
+                F64 maxTimeSeconds, 
+                uint maxSteps, Spin h = Spin(0.0, 0.0, 0.0), 
+                Spin k = Spin(0.0, 0.0, 0.0),
+                MoveType moveType=MoveType::SmallStep);
 
 #endif
