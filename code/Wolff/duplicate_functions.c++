@@ -46,3 +46,4 @@ void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin
         visited[nx][ny][nz] = true; //Mark as visited
     }
 }
+
