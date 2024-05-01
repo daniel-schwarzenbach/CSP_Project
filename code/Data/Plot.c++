@@ -57,6 +57,8 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
+    Vector3 mag = measure::get_magnetization(lattice);
+    mag *= 1./(Lx*Ly*Ly);
     uint sizeL = Lx * Ly * Lz + 2;
     // initialize Arrays
     Array<double> x(sizeL, 0), y(sizeL, 0), z(sizeL, 0),
@@ -73,16 +75,13 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
                 x[i] = ix;
                 y[i] = iy;
                 z[i] = iz;
+    #pragma omp critical
                 Spin s = lattice(ix, iy, iz);
                 u[i] = s.x();
                 v[i] = s.y();
                 w[i] = s.z();
-                Vector3 mag;
-#pragma omp critical
-                {
-                mag = measure::get_magnetization(lattice);
-                }
-                mag.normalize();
+
+                
                 // color the spins according to the magnetization
                 color[i] = (s | mag);
 #pragma omp critical
@@ -135,11 +134,14 @@ bool data::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
 bool data::plot_lattice(Lattice &lattice, std::string filename)
 {
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
-    f64 mag = mean(arrays[6]);
+    // calculates average
+    Vector3 mag =measure::get_magnetization(lattice);
 
     auto fig = plt::figure(true);
     fig->size(1000, 1000);
-    fig->title("Magnetization: " + to_string(mag));
+    string title = "Magnetization: {"+ to_str(mag(0)) + ", " 
+                + to_str(mag(1)) + ", " + to_str(mag(2)) + " }";
+    fig->title(title);
     plt::colormap(heat);
     plt::colorbar(true);
     plt::gca()->cblabel("Magnetization");
@@ -178,67 +180,3 @@ bool data::convert_pngs_to_gif(string gifname, string pngfilePrefix)
     return i;
 }
 
-bool data::test_all_colors()
-{
-    plt::palette::rdbu();
-    plt::palette::pastel2();
-    plt::palette::pastel1();
-    Array<Array<double>> map(6, Array<double>(6, 0));
-    for (int i = 0; i < 6; ++i)
-    {
-        for (int j = 0; j < 6; ++j)
-        {
-            map[i][j] = (i * 6 + j) / 36.0;
-        }
-    }
-    plt::imagesc(map);
-    plt::colormap(plt::palette::summer());
-    plt::save("test_summer.png");
-    plt::colormap(plt::palette::hot());
-    plt::save("test_hot.png");
-    plt::colormap(plt::palette::hsv());
-    plt::save("test_hsv.png");
-    plt::colormap(plt::palette::parula());
-    plt::save("test_parula.png");
-    plt::colormap(plt::palette::jet());
-    plt::save("test_jet.png");
-    plt::colormap(plt::palette::lines());
-    plt::save("test_lines.png");
-    plt::colormap(plt::palette::colorcube());
-    plt::save("test_colorcube.png");
-    plt::colormap(plt::palette::prism());
-    plt::save("test_prism.png");
-    plt::colormap(plt::palette::cool());
-    plt::save("test_cool.png");
-    plt::colormap(plt::palette::spring());
-    plt::save("test_spring.png");
-    plt::colormap(plt::palette::autumn());
-    plt::save("test_autumn.png");
-    plt::colormap(plt::palette::winter());
-    plt::save("test_winter.png");
-    plt::colormap(plt::palette::bone());
-    plt::save("test_bone.png");
-    plt::colormap(plt::palette::copper());
-    plt::save("test_copper.png");
-    plt::colormap(plt::palette::pink());
-    plt::save("test_pink.png");
-    plt::colormap(plt::palette::gray());
-    plt::save("test_gray.png");
-    plt::colormap(plt::palette::rdpu());
-    plt::save("test_yarg.png");
-    plt::colormap(plt::palette::flag());
-    plt::save("test_flag.png");
-    plt::colormap(plt::palette::prism());
-    plt::save("test_prism.png");
-    plt::colormap(plt::palette::jet());
-    plt::save("test_jet.png");
-    plt::colormap(plt::palette::lines());
-    plt::save("test_lines.png");
-    return true;
-}
-
-string data::get_filename(string Prefix, uint L, f64 J, f64 T, f64 Time)
-{
-    string filename = Prefix + "L=" + to_string(L) + "_J=" + to_string(J) + "_T=" + to_string(T) + "K_Time=" + to_string(Time) + "s.png";
-    return filename;
-}

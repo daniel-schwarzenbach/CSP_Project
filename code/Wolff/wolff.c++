@@ -9,7 +9,8 @@ template <class T>
 using Array3D = Array<Array<Array<T>>>;
 
 // Function to activate bond depending on given probability
-bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta, Spin &spin_y)
+bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta, 
+                  Spin &spin_y)
 {
 
     flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);

@@ -1,5 +1,8 @@
 #ifndef __BASE_HPP__
 #define __BASE_HPP__
+/*
+    sets and includes basic variables
+*/
 
 //          --- System
 // #define WITH_IPPL

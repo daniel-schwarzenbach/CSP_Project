@@ -3,8 +3,8 @@
 
 algo::AlgoData algo::test_function_delta_t(
         Lattice& lattice,
-        flt const &dt, flt const &t_end, flt const& T,
-        function<void(Lattice&, flt const&, flt const&)> const &algo)
+        flt const &dt, flt const &t_end, flt const& T, flt const& J,
+        function<void(Lattice&, flt const&, flt const&, flt const&)> const &algo)
 {
     uint maxSize = ceil(t_end/dt);
     Array<flt> time(0);
@@ -31,7 +31,7 @@ algo::AlgoData algo::test_function_delta_t(
 
         measure::Timer timer;
         timer.start();
-        algo(lattice, dt, T);
+        algo(lattice, dt, T, J);
         timer.stop();
         
         t_elapsed += timer.time();

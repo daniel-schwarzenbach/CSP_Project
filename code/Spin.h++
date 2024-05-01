@@ -1,5 +1,8 @@
 #ifndef __SPIN_H__
 #define __SPIN_H__
+/*
+    implements Heisenberg Spin
+*/
 
 #include <Base.h++>
 #include <Eigen.h++>

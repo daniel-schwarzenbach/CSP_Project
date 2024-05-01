@@ -14,7 +14,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     uint Lz = lattice.Lz();
     uint N = Lx * Ly * Lz;
 
-    f32 sx = 0; f32 sy = 0; f32 sz = 0;
+    flt sx = 0; flt sy = 0; flt sz = 0;
     #pragma omp parallel for reduction(+:sx, sy, sz)
     for (int x = 0; x < Lx; x++)
     {
@@ -31,7 +31,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     return {sx/N, sy/N, sz/N};
 }
 
-flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
+flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J, Vector3 k_vec)
 {
 
     /*
@@ -48,7 +48,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
 
     flt spin_interaction_energy = 0;
     flt mag_interaction_energy = 0;
-    flt bond_factor = 0;
+    flt anisotropy_energy = 0;
 
     /*
     If we have periodic (p) bondary conditions, then bond_factor = 0 and we sum over all possible bonds,
@@ -58,25 +58,13 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
 
     The magnetic interaction energy is not affected by the boundary conditions.
     */
-    switch (lattice.get_boundary_conditions())
-    {
-    case BC::_0:
-        bond_factor = 1;
-        break;
-    case BC::Periodic:
-        bond_factor = 0;
-        break;
-    default:
-        bond_factor = 0;
-        break;
-    }
 
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    uint sizeX = Lx - bond_factor;
-    uint sizeY = Ly - bond_factor;
-    uint sizeZ = Lz - bond_factor;
+    uint sizeX = Lx;
+    uint sizeY = Ly;
+    uint sizeZ = Lz;
 // sum over all bonds parallel to x-direction
 #pragma omp parallel for reduction(+ : spin_interaction_energy)
     for (int x = 0; x < sizeX; x++)
@@ -86,7 +74,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
             for (int z = 0; z < Lz; z++)
             {
                 spin_interaction_energy +=
-                    lattice(x, y, z) | lattice(x + 1, y, z);
+                        lattice(x, y, z) | lattice(x + 1, y, z);
             }
         }
     }
@@ -100,7 +88,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
             for (int z = 0; z < Lz; z++)
             {
                 spin_interaction_energy +=
-                    lattice(x, y, z) | lattice(x, y + 1, z);
+                        lattice(x, y, z) | lattice(x, y + 1, z);
             }
         }
     }
@@ -132,11 +120,24 @@ flt measure::get_energy(const Lattice &lattice, Vector3 h_vec, flt J)
         }
     }
 
-    return -J * spin_interaction_energy - mag_interaction_energy
-            / (Lx*Ly*Lz);
+#pragma omp parallel for reduction(+ : mag_interaction_energy)
+    for (int x = 0; x < Lx; x++)
+    {
+        for (int y = 0; y < Ly; y++)
+        {
+            for (int z = 0; z < Lz; z++)
+            {
+                anisotropy_energy +=pow (k_vec | lattice(x, y, z),2);
+            }
+        }
+    }
+
+    return (-J * spin_interaction_energy - mag_interaction_energy - 
+            anisotropy_energy);
 }
 
-flt measure::get_scalar_average(Lattice const &lattice, Vector3 const &vec)
+flt measure::get_scalar_average(Lattice const &lattice, 
+                                Vector3 const &vec)
 {
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
@@ -153,14 +154,14 @@ flt measure::get_scalar_average(Lattice const &lattice, Vector3 const &vec)
             }
         }
     }
-    return scalarAverage;
+    return scalarAverage / (Lx*Ly*Lx);
 }
 
-flt measure::get_auto_correlation(Lattice const &prev, Lattice const &next)
+flt measure::get_auto_correlation(Lattice const &start, Lattice const &next)
 {
-    uint Lx = prev.Lx();
-    uint Ly = prev.Ly();
-    uint Lz = prev.Lz();
+    uint Lx = start.Lx();
+    uint Ly = start.Ly();
+    uint Lz = start.Lz();
     flt correlation = 0;
 #pragma omp parallel for reduction(+ : correlation)
     for (int x = 0; x < Lx; x++)
@@ -169,15 +170,14 @@ flt measure::get_auto_correlation(Lattice const &prev, Lattice const &next)
         {
             for (int z = 0; z < Lz; z++)
             {
-                correlation += prev(x, y, z) | next(x, y, z);
+                correlation += start(x, y, z) | next(x, y, z);
             }
         }
     }
     return correlation / (Lx * Ly * Lz);
 }
 
-// exp(t-t₀ / τ): autocorecaltion time
-flt calculate_auto_correlation_time(Array<flt> const &y,
+flt measure::calculate_auto_correlation_time(Array<flt> const &y,
                                     Array<flt> const &t)
 {
     flt t0 = t[0];

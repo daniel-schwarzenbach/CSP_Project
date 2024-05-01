@@ -41,13 +41,10 @@ public:
     uint Ly() const;
     // size of the lattice in z-direction
     uint Lz() const;
-
     // get boundary condition
     BC get_boundary_conditions() const;
-
     // set value of the BC::_0
     void set_zero_element(T const& zero);
-
     // set the desired boundary condition
     void set_boundary_conditions(BC bc);
     // acess operator const, doesn't work for bools!

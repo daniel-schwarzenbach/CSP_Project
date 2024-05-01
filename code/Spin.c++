@@ -72,13 +72,13 @@ void SpinVector::spin_flip_step()
 }
 void SpinVector::random_step()
 {
-    *this += get_random()*rng::rand_gaussion();
+    *this += get_random() * rng::rand_gaussian();
     this->normalize();
 }
 
 void SpinVector::small_step(flt openingAngle)
 {
-    flt theta = rng::rand_gaussion() * openingAngle;
+    flt theta = rng::rand_gaussian() * openingAngle;
     flt phi = rng::rand_uniform() * _2pi_;
     Vector3 randomPole;
     randomPole << std::sin(theta) * std::cos(phi),
@@ -93,9 +93,9 @@ void SpinVector::small_step(flt openingAngle)
 
 void SpinVector::adaptive_step(flt sigma)
 {
-    flt dx = rng::rand_gaussion();
-    flt dy = rng::rand_gaussion();
-    flt dz = rng::rand_gaussion();
+    flt dx = rng::rand_gaussian();
+    flt dy = rng::rand_gaussian();
+    flt dz = rng::rand_gaussian();
     *this += sigma * SpinVector(dx, dy, dz);
     this->normalize();
 }
