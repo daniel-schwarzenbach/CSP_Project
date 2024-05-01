@@ -9,13 +9,13 @@ using Array3D = Array<Array<Array<T>>>;
 
 
 //Function to activate bond depending on given probability 
-bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
-    flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
-    flt activate_prob;
-    F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
-    flt p = rng::rand_f64();
-    return (p <= active);
-}
+// bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
+//     flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
+//     flt activate_prob;
+//     F64 active = 1.0 - std::exp(min(F64(cdot), 0.0));
+//     flt p = rng::rand_f64();
+//     return (p <= active);
+// }
 
 // bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 //     flt cdot = 2*beta*(spin_r | spin_x)*(spin_r | spin_y);
@@ -37,18 +37,6 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 //     flt p = rng::randflt();
 //     return (p <= active);
 // }
-
-void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta){
-    Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
-
-    //If Bond is activated...
-    if (activate_bond(spin_x, spin_r, beta, spin_y)){
-        flip_spin(spin_r, spin_y); //...flip spin
-        stack.push_back({nx,ny,nz}); // ...add to stack 
-        cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
-        visited[nx][ny][nz] = true; //Mark as visited
-    }
-}
 
 int wolf_algorithm(Lattice& lattice, flt beta){
 

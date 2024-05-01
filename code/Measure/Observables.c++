@@ -9,6 +9,8 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
+    uint N = Lx * Ly * Lz;
+
     F32 sx = 0; F32 sy = 0; F32 sz = 0;
     #pragma omp parallel for reduction(+:sx, sy, sz)
     for (int x = 0; x < Lx; x++)
@@ -23,7 +25,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
             }
         }
     }
-    return {sx, sy, sz};
+    return {sx/N, sy/N, sz/N};
 }
 
 F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
