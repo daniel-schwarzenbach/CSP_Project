@@ -80,8 +80,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
                 Vector3 mag;
 #pragma omp critical
                 {
-                    mag = measure::get_magnetization(lattice)
-                              .normalized();
+                mag = measure::get_magnetization(lattice);
                 }
                 // color the spins according to the magnetization
                 color[i] = (s | mag);
@@ -107,6 +106,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     color[i] = 1;
     ++i;
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
+    
 }
 
 bool data::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
