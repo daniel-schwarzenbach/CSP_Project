@@ -63,6 +63,10 @@ using U8 = unsigned char;
 using U16 = unsigned short;
 // 8 bit signed integer
 using I8 = signed char;
+
+using i64 = signed long;
+using u64 = unsigned long;
+
 // Memory Adress
 using Adress = size_t;
 
