@@ -1,8 +1,8 @@
 # set c++ 23
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16.6)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 
 enable_testing()
 set(DOWNLOAD_EXTRACT_TIMESTAMP true)
