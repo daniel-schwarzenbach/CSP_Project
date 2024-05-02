@@ -116,7 +116,7 @@ target_link_libraries_system(matplot PRIVATE cimg nodesoup)
 
 # Required compiler features required
 # https://cmake.org/cmake/help/v3.14/manual/cmake-compile-features.7.html#requiring-language-standards
-target_compile_features(matplot PUBLIC cxx_std_17)
+
 
 #######################################################
 ### Compiler options                                ###
