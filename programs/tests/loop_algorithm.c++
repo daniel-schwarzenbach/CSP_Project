@@ -12,8 +12,8 @@
 
 // temperature
 //F64 T = 2.0;
-F64 J = 1.0;
-F64 Time = 3600.0;
+flt J = 1.0;
+flt Time = 3600.0;
 Spin h = Spin(0.0,0.0,0.0);
 
 //Compute means and std to determine the moments of magnetisation and Energy (e.g. specific heat, binder cumulant)
