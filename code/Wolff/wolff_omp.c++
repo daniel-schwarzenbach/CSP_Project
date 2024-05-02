@@ -75,7 +75,7 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
             {
                 // wait
                 std::this_thread::sleep_for(
-                    std::chrono::microseconds(1));
+                    std::chrono::microseconds(10));
 // update local stack
 #pragma omp critical
                 stack_local = stack;
@@ -93,24 +93,26 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
             Array<Index> neighbors = {
                 {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
                 {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
-            for (int i = 0; i < 6; ++i)
+            for (Index neighbor : neighbors)
             {
                 bool wasVisited;
 #pragma omp critical
-                wasVisited = visited.get(neighbors[i]);
+                wasVisited = visited.get(neighbor);
                 if (!wasVisited)
                 {
-                    Spin &spin_y = lattice(neighbors[i]); // Define spin sigma_y
+                    Spin spin_y;
+#pragma omp critical
+                    spin_y = lattice(neighbor); // Define spin sigma_y
 
                     // If Bond is activated...
                     if (activate_bond(J, spin_x, spin_r, beta, spin_y))
                     {
 #pragma omp critical
                         {
-                            flip_spin(spin_r, spin_y);       //...flip spin
-                            stack.push_back(neighbors[i]);   // ...add to stack
-                            cluster.push_back(neighbors[i]); // ...add to cluster (mark y)
-                            visited.set(neighbors[i], true); // Mark as visited
+                            flip_spin(spin_r, lattice(neighbor));       //...flip spin
+                            stack.push_back(neighbor);   // ...add to stack
+                            cluster.push_back(neighbor); // ...add to cluster (mark y)
+                            visited.set(neighbor, true); // Mark as visited
                             stack_local = stack;
                         }
                     }
