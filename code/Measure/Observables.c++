@@ -28,7 +28,7 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     return {sx/N, sy/N, sz/N};
 }
 
-F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
+F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, Vector3 k_vec, F64 J)
 {
 
     /*
@@ -45,7 +45,7 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
 
     F64 spin_interaction_energy = 0;
     F64 mag_interaction_energy = 0;
-    F64 bond_factor = 0;
+    F64 anisotropy_energy = 0;
 
     /*
     If we have periodic (p) bondary conditions, then bond_factor = 0 and we sum over all possible bonds,
@@ -55,25 +55,13 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
 
     The magnetic interaction energy is not affected by the boundary conditions.
     */
-    switch (lattice.get_boundary_conditions())
-    {
-    case BC::_0:
-        bond_factor = 1;
-        break;
-    case BC::Periodic:
-        bond_factor = 0;
-        break;
-    default:
-        bond_factor = 0;
-        break;
-    }
 
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    uint sizeX = Lx - bond_factor;
-    uint sizeY = Ly - bond_factor;
-    uint sizeZ = Lz - bond_factor;
+    uint sizeX = Lx;
+    uint sizeY = Ly;
+    uint sizeZ = Lz;
     // sum over all bonds parallel to x-direction
     #pragma omp parallel for reduction(+: spin_interaction_energy)
     for (int x = 0; x < sizeX; x++)
@@ -117,6 +105,20 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
         }
     }
 
+    // sum over spins to calculate the energy contribution from the 
+    // anisotropy
+    #pragma omp parallel for reduction(+: anisotropy_energy)
+    for (int x = 0; x < Lx; x++)
+    {
+        for (int y = 0; y < Ly; y++)
+        {
+            for (int z = 0; z < Lz; z++)
+            {
+                anisotropy_energy += pow(k_vec | lattice(x, y, z), 2);
+            }
+        }
+    }
+
     // sum over spins to calculate the interaction with the magnetic field
     #pragma omp parallel for reduction(+: mag_interaction_energy)
     for (int x = 0; x < Lx; x++)
@@ -130,7 +132,8 @@ F64 measure::get_energy(const Lattice &lattice, Vector3 h_vec, F64 J)
         }
     }
 
-    return -J * spin_interaction_energy - mag_interaction_energy;
+
+    return -J * spin_interaction_energy - mag_interaction_energy - anisotropy_energy;
 }
 
 

@@ -74,7 +74,7 @@ int main()
         //Run algorithm "number_of_steps" times and save energy and magnetisation for each step
         for (int j = 0; j < number_of_steps + 1; ++j){
             Vector3 magnetisation = measure::get_magnetization(lattice);
-            flt energy = measure::get_energy(lattice, h, J);
+            flt energy = measure::get_energy(lattice, h, k, J);
             magnetisations[j] = magnetisation;
             flt mag = magnetisation.norm();
             flt mag_x = magnetisation[0];
