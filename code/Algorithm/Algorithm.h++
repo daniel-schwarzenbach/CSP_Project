@@ -64,6 +64,22 @@ namespace algo
                                 60);
         };
 
+        static Algorithm metropolis_smallStep =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            metropolis(lattice, T, J, dt,
+                           _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::SmallStep);
+        };
+
+        static Algorithm metropolis_random =
+        [](Lattice &lattice, flt const &dt, flt const &T,flt const &J)
+        {
+            metropolis(lattice, T, J, dt,
+                           _maxUint_, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::Random);
+        };
+
         static Algorithm wolff_ =
         [](Lattice &lattice, flt const &dt, flt const &T, flt const &J)
         {
@@ -79,12 +95,103 @@ namespace algo
         @param T: temperature
         @param J: interaction Strenth
         @return Array2D<flt>:
-        {time, magnetization, energy} with same size
+        {time, magnetization, M_z, energy} with same size
 
         */
         Array2D<flt> test_algorithm(
             Lattice &lattice,
             flt const &dt, flt const &t_end,flt const &T,flt const &J,
+            Algorithm const &algorithmus);
+
+    }
+
+    namespace ds
+    {
+
+        /*
+        Function to measure after a certain time step
+
+        / @param lattice: lattice to work with
+        / @param ds: timestep
+        / @param T: temperature
+        */
+        using Algorithm = function<
+            void(Lattice &, uint const &, flt const &, flt const &)>;
+
+        static Algorithm wolff_omp_ =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            wolff_omp(lattice, T, J, _inf_, ds);
+        };
+
+        static Algorithm metropolis_smallStep_omp =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, _inf_, ds, Spin{0, 0, 0}, Spin{0, 0, 0},
+                           MoveType::SmallStep);
+        };
+
+        static Algorithm metropolis_adaptive_omp =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, _inf_, ds, 
+                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            MoveType::Addaptive);
+        };
+
+        static Algorithm metropolis_random_omp =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            metropolis_omp(lattice, T, J, _inf_, ds, 
+                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            MoveType::Random);
+        };
+
+        static Algorithm metropolis_adaptive =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            adaptive_metropolis(lattice, T, J, _inf_,
+                                ds, Spin{0, 0, 0}, Spin{0, 0, 0},
+                                60);
+        };
+
+        static Algorithm metropolis_smallStep =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            metropolis(lattice, T, J, _inf_, ds, Spin{0, 0, 0}, 
+                        Spin{0, 0, 0},
+                        MoveType::SmallStep);
+        };
+
+        static Algorithm metropolis_random =
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        {
+            metropolis(lattice, T, J, _inf_, ds, 
+                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            MoveType::Random);
+        };
+
+        static Algorithm wolff_ =
+        [](Lattice &lattice, flt const &ds, flt const &T, flt const &J)
+        {
+            wolff(lattice, T, J, _inf_, ds);
+        };
+
+        /*
+        function that runs the algorithm and collects the datat after
+        every time step dt
+
+        @param dt: time step size
+        @param numSteps: simulation Steps total
+        @param T: temperature
+        @param J: interaction Strenth
+        @return Array2D<flt>:
+        {time, magnetization, M_z, energy} with same size
+
+        */
+        Array2D<flt> test_algorithm(
+            Lattice &lattice,
+            uint const &ds, uint const &numSteps,flt const &T,flt const &J,
             Algorithm const &algorithmus);
 
     }
