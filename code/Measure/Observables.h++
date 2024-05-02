@@ -26,7 +26,7 @@ namespace measure
     / @return the energy of the lattice
     */
     F64 get_energy(const Lattice &lattice, Vector3 h_vec = {0, 0, 0}, 
-                   F64 J = 1);
+                   Vector3 k_vec = {0, 0, 0}, F64 J = 1);
 
 }
 
