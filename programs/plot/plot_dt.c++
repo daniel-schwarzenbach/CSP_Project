@@ -108,7 +108,7 @@ int main(int mainArgCount, char **mainArgs)
             plt::xlabel("Time in s");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/energy_" + to_str(T) + ".png");
+            plt::save("plots/magnet_" + to_str(T) + ".png");
             plt::hold(false);
         }
 

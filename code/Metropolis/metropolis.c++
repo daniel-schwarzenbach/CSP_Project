@@ -40,9 +40,9 @@ bool metropolis(Lattice &lattice,
     // Check if max number of steps is reached
     for(uint step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
-        int x = rand() % lattice.Lx();
-        int y = rand() % lattice.Ly();
-        int z = rand() % lattice.Lz();
+        int x = rng::rand_int_range(0, lattice.Lx());
+        int y = rng::rand_int_range(0, lattice.Ly());
+        int z = rng::rand_int_range(0, lattice.Lz());
 
         // Get the spin at the chosen site (cartesian)
         Spin &spin = lattice(x, y, z);
@@ -70,10 +70,8 @@ bool metropolis(Lattice &lattice,
         flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
                                         newSpin, J, h, k);
  
-        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
-        {                   // Boltzmann constant k is
-                            // normalized with interaction strength J in this implementation
-            spin = newSpin; // Accept the new configuration
+        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)){
+            spin = newSpin;
         }
 
         // Check if maximum time has been reached

@@ -1,6 +1,5 @@
 #include <Metropolis/energy_diff.h++>
 
-using Index = StaticArray<int, 3>;
 // Calculate Energy Difference //
 
 // This function calculates and returns the energy difference of two spin
