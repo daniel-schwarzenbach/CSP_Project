@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt dt = 1.0;
+const flt dt = 0.1;
 // end Time
-const flt t_end = 100.0;
+const flt t_end = 20.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -60,7 +60,7 @@ int main(int mainArgCount, char **mainArgs)
         rng::set_seed(seed);
         lattice.randomize();
         Array2D<flt> wolff_data = algo::dt::test_algorithm(
-            lattice, dt, t_end, T, J, algo::dt::wolff_omp_);
+            lattice, dt, t_end, T, J, algo::dt::wolff_);
         data::store_data(wolff_data,
                             "data/wolff_" + to_str(T) + ".dat");
 
@@ -93,7 +93,7 @@ int main(int mainArgCount, char **mainArgs)
             auto p1 = plt::plot(metro_rndm[0], metro_rndm[2], "--gs");
             plt::hold(true);
             auto p4 = plt::plot(metro_smst[0], metro_smst[2], "--ys");
-            auto p2 = plt::plot(metro_adapt[0], metro_adapt[2], "--rs");
+            auto p2 = plt::plot(metro_adapt[0],metro_adapt[2],"--rs");
             auto p3 = plt::plot(wolff_data[0], wolff_data[2], "--bs");
 
             auto l = plt::legend({"Metropolis Random",

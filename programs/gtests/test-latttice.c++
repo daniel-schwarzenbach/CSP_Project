@@ -53,7 +53,7 @@ EXPECT_FALSE(is_the_same(l1,l2));
 EXPECT_TRUE(is_the_same(l1, l2));
 }
 
-TEST(LatticeTests, Acess){
+TEST(LatticeTests, Lattice_Periodic){
     uint L = 8;
     rng::set_seed(89);
     Lattice lattice = Lattice::random_lattice(L, L, L);
@@ -79,6 +79,29 @@ EXPECT_TRUE(lattice(nx,ny,nz) == s);
     s.normalize();
     lattice(x,y,z) = s;
 EXPECT_TRUE(lattice(x,y,z) == s);
+    EXPECT_TRUE(lattice(0,0,L) == lattice(0,0,0));
+    EXPECT_TRUE(lattice(0,L,0) == lattice(0,0,0));
+    EXPECT_TRUE(lattice(L,0,0) == lattice(0,0,0));
+    EXPECT_TRUE(lattice(0,0,L-1) == lattice(0,0,-1));
+    EXPECT_TRUE(lattice(0,L-1,0) == lattice(0,-1,0));
+    EXPECT_TRUE(lattice(L-1,0,0) == lattice(-1,0,0));
+}
+
+TEST(LatticeTests, Lattice_Dirichlet_){
+    uint L = 8;
+    rng::set_seed(89);
+    Lattice lattice = Lattice::random_lattice(L, L, L);
+    lattice.set_boundary_conditions(BC::_0);
+    Spin zero{0,0,0};
+    EXPECT_TRUE(zero == lattice(0,0,-1));
+    EXPECT_TRUE(zero == lattice(0,-1,0));
+    EXPECT_TRUE(zero == lattice(-1,0,0));
+    EXPECT_TRUE(zero == lattice(0,0,L));
+    EXPECT_TRUE(zero == lattice(0,L,0));
+    EXPECT_TRUE(zero == lattice(L,0,0));
+
+    EXPECT_FALSE(zero == lattice(0,0,0));
+    
 }
 
 TEST(LatticeTests, Lattice3d_bool_periodic){
