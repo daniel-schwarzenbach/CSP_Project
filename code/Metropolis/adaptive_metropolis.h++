@@ -15,7 +15,7 @@ ado algorithm for the Heisenber3D model
 / @exception may fail
 */
 bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
-                         uint maxSteps,
+                         u64 maxSteps,
                          Spin h = Spin(0.0, 0.0, 0.0),
                          Spin k = Spin(0.0, 0.0, 0.0),
                          F64 maxFactor = 60.0);
