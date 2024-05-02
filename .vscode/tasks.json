@@ -52,6 +52,30 @@
             },
         },
         {
+            "type": "shell",
+            "label": "build-euler",
+
+            "linux" :{
+                "command": "${workspaceFolder}/build-euler.sh"
+            },
+            "osx" :{
+                "command": "${workspaceFolder}/build-euler.sh"
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "options" :{
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
             "label": "run mpiexec",
             "type": "shell",
             "command": "mpiexec -n 2 ${workspaceFolder}/build/HeisenbergIppl",

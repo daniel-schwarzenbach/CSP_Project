@@ -14,6 +14,15 @@
             "cwd": "${workspaceFolder}/build",
         },
         {
+            "preLaunchTask": "build-euler",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "name": "Euler",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/HeisenbergIppl",
+            "cwd": "${workspaceFolder}/build",
+        },
+        {
             "preLaunchTask": "build",
             "miDebuggerPath": "/usr/bin/gdb",
             "name": "Linux",
