@@ -1,5 +1,8 @@
-
+#include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
+#include <assert.h>
 #include <Data/DataHandler.h++>
 
 flt data::read_flt(char *in)
@@ -19,6 +22,75 @@ flt data::read_flt(char *in)
         std::cerr << "Input out of range: " << valueStr << std::endl;
     }
     return valueF64;
+}
+
+bool data::store_alo_data(const std::string& filename, 
+                        const Array2D<flt>& data, 
+                        flt const& T){
+    std::ofstream outfile(filename);
+    assert(data.size);
+
+    if (!outfile)
+    {
+        cerr << ERROR << " couldnt open file:" << filename << endl;
+        return false;
+    }
+    outfile << "header1"; outfile << '\n';
+    outfile << "header2"; outfile << '\n';
+    outfile << T << " M " << " Mz " << " E "; outfile << '\n';
+    // Write data to the header
+    uint size = data[0].size();
+    for(uint i = 0; i< size; ++i){
+        for (const auto& col : data) {
+            outfile << ' ' << col[i];
+            
+        }
+        outfile << '\n';
+    }
+    return true;
+}
+
+    bool data::append_alo_data(const std::string& filename, 
+                        const Array2D<flt>& newColumns, 
+                        flt const& T) {
+    static constexpr uint headerSize = 2;
+    assert(newColumns.size() == 4);
+    std::ifstream fileIn(filename);
+    std::ofstream fileOut(filename + "tmp");
+
+    if (!fileIn.is_open() || !fileOut.is_open()) {
+        std::cerr << "Failed to open the files." << std::endl;
+        return false;
+    }
+
+    std::string line;
+    size_t rowIndex = 0;
+
+    while (getline(fileIn, line)) {
+        fileOut << line;
+        if (rowIndex == headerSize){
+            fileOut << T << " M " << " Mz " << " E ";
+        }
+        if(rowIndex > headerSize) // skip header
+            for (const auto& col : newColumns) {
+                if (rowIndex-headerSize-1 < col.size()) {
+                    fileOut << ' ' << col[rowIndex-headerSize-1];
+                } else {
+                    // Handle the case where the new column is shorter than the existing data
+                    fileOut << ' ';
+                }
+            }
+        fileOut << '\n';
+        ++rowIndex;
+    }
+
+    fileIn.close();
+    fileOut.close();
+
+    // Replace the original file with the temporary file
+    std::remove(filename.c_str());
+    std::rename((filename + "tmp").c_str(), filename.c_str());
+    return true;
 }
 
 int data::read_int(char *in)

@@ -34,6 +34,15 @@ namespace data
     template <uint I>
     bool store_data(const StaticArray<Array<flt>, I> &data,
                     const string &filename);
+                    
+    bool store_alo_data(const std::string& filename, 
+                        const Array2D<flt>& data, 
+                        flt const& T);
+
+
+    bool append_alo_data(const std::string& filename, 
+                        const Array2D<flt>& newColumns, 
+                        flt const& T);
 
     /*
     loads Array form a specified file:<filename
