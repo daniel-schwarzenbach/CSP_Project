@@ -17,8 +17,6 @@ set(CMAKE_BUILD_TYPE Release)
 
 
 
-
-
 # include files
 include_directories(${CMAKE_SOURCE_DIR}/libraries/matplotplusplus/source)
 include_directories(${CMAKE_SOURCE_DIR}/code)

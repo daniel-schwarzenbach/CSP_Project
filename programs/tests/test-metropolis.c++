@@ -25,7 +25,7 @@ int main()
     const int seed = 42;
     rng::set_seed(seed);
 
-    for (double T = 1; T <= 1.5; T += 0.1) {
+    for (double T = 0.01; T <= 1.5; T += 0.1) {
         cout << "Temperature: " << T << endl;
 
         // Create a lattice
@@ -33,28 +33,28 @@ int main()
 
         // Run adaptive metropolis
         cout << "Running adaptive metropolis..." << endl;
-        adaptive_metropolis(lattice, T, J, T, maxUint);
+        adaptive_metropolis(lattice, T, J, T, _maxUint_);
 
         // Plot lattice
         //dat::plot_lattice(lattice);
         Vector3 mag = measure::get_magnetization(lattice);
         //std::cout << mag;
-        std::cout << "\n";
-        std::cout << totalAbsolute(mag)/512;
+        std::cout << "\n" << endl;
+        std::cout << totalAbsolute(mag) << endl;
 
         // Create another lattice
         Lattice lattice1 = Lattice::random_lattice(8, 8, 8);
 
         // Run metropolis
         cout << "Running metropolis..." << endl;
-        metropolis(lattice1, T, J, Time, maxUint);
+        metropolis(lattice1, T, J, Time, _maxUint_);
 
         // Plot lattice
         //dat::plot_lattice(lattice1);
         Vector3 mag1 = measure::get_magnetization(lattice1);
         //std::cout <<  mag1;
-        std::cout << "\n";
-        std::cout << totalAbsolute(mag1)/512;
+        std::cout << "\n" << endl;
+        std::cout << totalAbsolute(mag1) << endl;
     }
 
     return 0;
