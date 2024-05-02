@@ -14,27 +14,42 @@
 //F64 T = 2.0;
 F64 J = 1.0;
 F64 Time = 3600.0;
-Spin h = Spin(0.0, 0.0, 1.0);
+Spin h = Spin(0.0,0.0,0.0);
 
+//Compute means and std to determine the moments of magnetisation and Energy (e.g. specific heat, binder cumulant)
+
+//Determine N_eq for different temperatures and take linear ramp Eq. 42, 43
+// for i in Temperature...
+
+
+// void loop_algorithm(algorithm, quantity, T){
+
+//     return 0;
+// }
+
+
+void loop_magnetisation(Lattice& lattice){
+    Vector3 magnetisation = measure::get_magnetization(lattice);
+    flt energy = measure::get_energy(lattice, h, J);
+    magnetisations[j] = magnetisation;
+    flt mag = magnetisation.norm();
+    energies[j] = energy;
+
+}
+
+
+void loop_algorithm(algorithm, quantity, std::vector<double> temperatures, const uint seed, int Nmax, int Ns){
+    
+    //              --- random seed
+    rng::set_seed(seed);
+    
+    int number_of_steps = round(Nmax/Ns);
+    
+    return 0;
+}
 
 int main()
 {
-    //              --- random seed
-    const uint seed = 42;
-    rng::set_seed(seed);
-
-    //              --- Lattice
-    
-    //dat::plot_lattice(lattice, "Wolff_start.png");
-
-    //Define maximal number of steps, step width and number of iterations 
-    int Nmax = 100000000;
-    int Ns = 1000000;
-    int number_of_steps = round(Nmax/Ns);
-
-    //Define temperature array which we loop over
-
-    std::vector<double> temperatures = {0.01, 0.03, 0.1, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.0, 10.0};
 
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(8, 8, 8);
@@ -72,41 +87,17 @@ int main()
             flt energy = measure::get_energy(lattice, h, J);
             magnetisations[j] = magnetisation;
             flt mag = magnetisation.norm();
-            flt mag_x = magnetisation[0];
-            flt mag_y = magnetisation[1];
-            flt mag_z = magnetisation[2];
             energies[j] = energy;
-            metropolis(lattice, temperature, J, Time, Ns, h);
 
-            outFile << Ns*j << " " << mag << " " << mag_x << " " << mag_y << " " << mag_z << " " << energy << std::endl; //Write current total step number, mag and E into file
+            metropolis(lattice, temperature, J, Time, Ns);
+
+            outFile << Ns*j << " " << mag << " " << energy << std::endl; //Write current total step number, mag and E into file
         }
         
         outFile.close();
     
     }
 
-    
-    //Compute means and std to determine the moments of magnetisation and Energy (e.g. specific heat, binder cumulant)
-
-    //Determine N_eq for different temperatures and take linear ramp Eq. 42, 43
-    // for i in Temperature...
-
-
-    //ASSUMING 
-
-    //             --- wolff-ghost
-    // cout << "running wolff ghost ..." << endl;
-    // wolff_ghost(lattice, T, J, Time, maxUint);
-
-    // dat::plot_lattice(lattice, "Wolff_ghost_end.png");
-
-    // rng::set_seed(seed);
-    // lattice.randomize();
-
-    // dat::plot_lattice(lattice, "Wolff_start_compare.png");
-
-    // wolff(lattice, T, J, Time, maxUint);
-
-    // dat::plot_lattice(lattice, "Wolff_end.png")
     return 0;
 }
+
