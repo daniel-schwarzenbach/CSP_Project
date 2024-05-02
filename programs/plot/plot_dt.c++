@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt dt = 0.1;
+const flt dt = 0.001;
 // end Time
-const flt t_end = 20.0;
+const flt t_end = 2.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -23,8 +23,19 @@ int main(int mainArgCount, char **mainArgs)
     data::make_folder("plots");
     data::make_folder("data");
     Lattice lattice(L, L, L);
-    for (flt T = 0.1; T <= 10; T += 0.1)
+    for (flt T = 0.1; T <= 2; T += 0.1)
     {
+        cout << "running for T = " << T << endl;
+
+        //              --- adaptive step metropolis omp
+        cout << "running adaptive step metropolis omp" << endl;
+        rng::set_seed(seed);
+        lattice.randomize();
+        Array2D<flt> metro_omp_adapt = 
+                algo::dt::test_algorithm(lattice, dt, t_end, T,
+                J, algo::dt::metropolis_adaptive_omp);
+        data::store_data(metro_omp_adapt,
+                            "data/metro_adapt_" + to_str(T) + ".dat");
 
         //              --- adaptive step metropolis
         cout << "running adaptive step metropolis" << endl;
@@ -32,7 +43,7 @@ int main(int mainArgCount, char **mainArgs)
         lattice.randomize();
         Array2D<flt> metro_adapt = 
                 algo::dt::test_algorithm(lattice, dt, t_end, T,
-                J, algo::dt::metropolis_adaptive_omp);
+                J, algo::dt::metropolis_adaptive);
         data::store_data(metro_adapt,
                             "data/metro_adapt_" + to_str(T) + ".dat");
 
@@ -42,7 +53,7 @@ int main(int mainArgCount, char **mainArgs)
         lattice.randomize();
         Array2D<flt> metro_smst = algo::dt::test_algorithm(
                 lattice, dt, t_end, T, J, 
-                algo::dt::metropolis_smallStep_omp);
+                algo::dt::metropolis_smallStep);
         data::store_data(metro_smst,
                             "data/metro_smst_" + to_str(T) + ".dat");
 
@@ -51,12 +62,12 @@ int main(int mainArgCount, char **mainArgs)
         rng::set_seed(seed);
         lattice.randomize();
         Array2D<flt> metro_rndm = algo::dt::test_algorithm(
-            lattice, dt, t_end, T, J,algo::dt::metropolis_random_omp);
+            lattice, dt, t_end, T, J,algo::dt::metropolis_random);
         data::store_data(metro_rndm,
                             "data/metro_rndm_" + to_str(T) + ".dat");
 
         //              --- wolff
-        cout << "running random step metropolis" << endl;
+        cout << "running wolff" << endl;
         rng::set_seed(seed);
         lattice.randomize();
         Array2D<flt> wolff_data = algo::dt::test_algorithm(
@@ -64,42 +75,61 @@ int main(int mainArgCount, char **mainArgs)
         data::store_data(wolff_data,
                             "data/wolff_" + to_str(T) + ".dat");
 
+        //              --- wolff omp
+        cout << "running wolff omp" << endl;
+        rng::set_seed(seed);
+        lattice.randomize();
+        Array2D<flt> wolff_omp_data = algo::dt::test_algorithm(
+            lattice, dt, t_end, T, J, algo::dt::wolff_omp_);
+        data::store_data(wolff_data,
+                            "data/wolff_" + to_str(T) + ".dat");
+
         //              --- plot data
 
         // plot magnitisation
-        cout << "plot magnitisation" << endl;
+        cout << "plot magnitistion" << endl;
         {
-            auto p1 = plt::plot(metro_rndm[0], metro_rndm[1], "--gs");
+            auto p1 = plt::plot(metro_rndm[0], metro_rndm[1], "--s");
             plt::hold(true);
-            auto p4 = plt::plot(metro_smst[0], metro_smst[1], "--ys");
-            auto p2 = plt::plot(metro_adapt[0], metro_adapt[1], "--rs");
-            auto p3 = plt::plot(wolff_data[0], wolff_data[1], "--bs");
+            auto p4 = plt::plot(metro_smst[0], metro_smst[1], "--s");
+            auto p2 = plt::plot(metro_adapt[0],metro_adapt[1],"--s");
+            auto p3 = plt::plot(wolff_data[0], wolff_data[1], "--s");
+            auto p5 = plt::plot(metro_omp_adapt[0],metro_omp_adapt[1],"--s");
+            auto p6 = plt::plot(wolff_omp_data[0], wolff_omp_data[1], "--s");
 
             auto l = plt::legend({"Metropolis Random",
                                   "Metropolis Small Step",
                                   "Adaptive Metropolis",
-                                  "Wolff"});
+                                  "Wolff",
+                                  "Adaptive Metropolis Omp",
+                                  "Wolff Omp"});
+            
             l->location(plt::legend::general_alignment::bottomright);
             plt::xlabel("Time in s");
-            plt::ylabel("Magnitisation");
+            plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/mag_" + to_str(T) + ".png");
+            plt::save("plots/energy_" + to_str(T) + ".png");
             plt::hold(false);
         }
 
         // plot energy
         cout << "plot energy" << endl;
         {
-            auto p1 = plt::plot(metro_rndm[0], metro_rndm[2], "--gs");
+            auto p1 = plt::plot(metro_rndm[0], metro_rndm[3], "--s");
             plt::hold(true);
-            auto p4 = plt::plot(metro_smst[0], metro_smst[2], "--ys");
-            auto p2 = plt::plot(metro_adapt[0],metro_adapt[2],"--rs");
-            auto p3 = plt::plot(wolff_data[0], wolff_data[2], "--bs");
+            auto p4 = plt::plot(metro_smst[0], metro_smst[3], "--s");
+            auto p2 = plt::plot(metro_adapt[0],metro_adapt[3],"--s");
+            auto p3 = plt::plot(wolff_data[0], wolff_data[3], "--s");
+            auto p5 = plt::plot(metro_omp_adapt[0],metro_omp_adapt[3],"--s");
+            auto p6 = plt::plot(wolff_omp_data[0], wolff_omp_data[3], "--s");
 
             auto l = plt::legend({"Metropolis Random",
                                   "Metropolis Small Step",
                                   "Adaptive Metropolis",
-                                  "Wolff"});
+                                  "Wolff",
+                                  "Adaptive Metropolis Omp",
+                                  "Wolff Omp"});
+            
             l->location(plt::legend::general_alignment::bottomright);
             plt::xlabel("Time in s");
             plt::ylabel("Energy");

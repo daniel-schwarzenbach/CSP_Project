@@ -27,7 +27,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_energy_and_magnetization.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_dt.c++)
 
 # google-tests
 add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
