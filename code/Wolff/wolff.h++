@@ -27,7 +27,7 @@ on
 / @exception may fail
 */
 flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J, 
-                flt const& MaxTime, uint const& MaxSteps);
+                flt const& MaxTime, uint const& MaxSteps, Spin const& h);
 
 
 /*

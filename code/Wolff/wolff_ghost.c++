@@ -70,6 +70,7 @@ bool activate_ghost_spin(Spin& spin_x, Spin& spin_r, flt beta, Matrix3x3& ghost,
     return (p <= active);
 }
 
+
 //Function to activate bond between current spin and its ghost cell
 //Work with matrices everywhere s.t. we can use Eigen operations
 bool activate_spin_ghost(Spin& spin_x, Spin& spin_r, flt beta, Matrix3x3& ghost, Spin& H){
@@ -111,7 +112,7 @@ void check_ghost(Lattice& lattice, int Lx, int Ly,int Lz, Matrix3x3& ghost, Spin
 
 
 
-int wolff_ghost_algorithm(Lattice& lattice, flt beta){
+int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H){
 
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
@@ -132,7 +133,6 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta){
     // Choose random reflection
     Spin spin_r = Spin::get_random();
     //Spin H = Spin::get_random(); //Initialize random external magnetic field
-    Spin H = Spin(0.0,0.0,10000000.0);
 
     // Choose random lattice site as first point of cluster
     int x = rng::rand_int_range(0,Lx);
@@ -200,7 +200,7 @@ performs the wolff algoritm on the lattice
 */
 
 flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J, 
-                flt const& MaxTime, uint const& MaxSteps){
+                flt const& MaxTime, uint const& MaxSteps, Spin const& h){
 
     flt beta = Beta(T);
 
@@ -210,7 +210,7 @@ flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J,
     uint nRuns = 0;
 
     for (uint i = 0; i <= MaxSteps; ++i){
-        uint clusterSize = wolff_ghost_algorithm(lattice, beta);
+        uint clusterSize = wolff_ghost_algorithm(lattice, beta, h);
 
         clusters.push_back(clusterSize);
 
