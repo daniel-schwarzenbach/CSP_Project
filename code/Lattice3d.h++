@@ -28,10 +28,13 @@ class Lattice3d
 private:
     // datavector
     Array<T> data;
-    // dimentions
+    // dimentions of the lattic
     uint Lx_, Ly_, Lz_;
+    // boundary condition
     BC bc = BC::Periodic;
+    // value on the zero boundary
     T zero_element;
+    // is return for refrence on 0 boundary
     T dummy_element;
 
 public:

@@ -1,15 +1,11 @@
 #include <Heisenberg.h++>
-using Index = StaticArray<int, 3>;
-
-template <class T>
-using Array3D = Array<Array<Array<T>>>;
 
 
 // Function to build the cluster for checking if neighbors have been 
 // visited or not, initialize with false for all (x,y,z)
-Array<Array<Array<bool>>> checked(const int Lx, const int Ly, const int Lz) {
+Array3D<bool> checked(const int Lx, const int Ly, const int Lz) {
     // Initialize the 3D vector representing the lattice
-    Array<Array<Array<bool>>> visited(Lx,Array<Array<bool>>(Ly, Array<bool>(Lz)));
+    Array3D<bool> visited(Lx,Array<Array<bool>>(Ly, Array<bool>(Lz)));
 
     // Assign false to all points in the checking_cluster
     for (int i = 0; i < Lx; ++i) {
@@ -35,7 +31,11 @@ bool activate_spin_spin( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     return (p <= active);
 }
 
-void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta){
+void check_neighbor(Lattice& lattice, int nx, int ny, int nz, 
+                    Spin& spin_x, Spin& spin_r, 
+                    Array3D<bool>& visited, 
+                    Array<Index>& stack, Array<Index>& cluster, 
+                    flt beta){
     Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
 
     //If Bond is activated...
