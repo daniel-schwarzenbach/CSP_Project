@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-using Index = StaticArray<int, 3>;
+using Index = StaticArray<int, 3>; 
 
 template <class T>
 using Array3D = Array<Array<Array<T>>>;
@@ -22,3 +22,4 @@ bool activate_spin_spin(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y);
 void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta);
 
 #endif
+
