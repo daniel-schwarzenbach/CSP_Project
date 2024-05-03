@@ -17,11 +17,11 @@ constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 
 
-constexpr u64 Ns = 1e+2;
+constexpr u64 Ns = 1e+4;
 
 
-constexpr u64 N_wolff = 1e+4;
-constexpr u64 N_met = 1e+5;
+constexpr u64 Nmax_wolff = 1e+6;
+constexpr u64 Nmax_met = 1e+8;
 // constexpr u64 N_wolff = 1e+9;
 // constexpr u64 N_met = 1e+11;
 
@@ -93,11 +93,11 @@ int main(int argc, char** argv)
         const flt T = local_temperatures[i];
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns, N_met, T,
+                algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
                         J, h, k, algo::ds::metropolis_smallStep);
         if(i == 1){
             data::store_alo_data(metropolisSmallFile, "metropolis",
-                                data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, Nmax_met, Ls);
         } else{
             data::append_algo_data(metropolisSmallFile, data, T);
         }
@@ -113,11 +113,11 @@ int main(int argc, char** argv)
         const flt T = local_temperatures[i];
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns, N_met, T,
+                algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
                         J, h, k, algo::ds::metropolis_adaptive);
         if(i == 1){
             data::store_alo_data(metropolisAdaptFile, "adaptive metropolis",
-                                data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, Nmax_met, Ls);
         } else{
             data::append_algo_data(metropolisAdaptFile, data, T);
         }
@@ -133,15 +133,16 @@ int main(int argc, char** argv)
         const flt T = local_temperatures[i];
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns, N_met, T,
+                algo::ds::test_algorithm(lattice, Ns, Nmax_wolff, T,
                         J, h, k, algo::ds::wolff_);
         if(i == 1){
             data::store_alo_data(wolffFile, "wolff",
-                                data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, Nmax_wolff, Ls);
         } else{
             data::append_algo_data(wolffFile, data, T);
         }
     }
 
+    MPI_Finalize();
     return 0;
 }
