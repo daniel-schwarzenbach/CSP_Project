@@ -17,9 +17,10 @@ Array3D<bool> checked(const int Lx, const int Ly, const int Lz);
 //Function to flip the spin
 void flip_spin(Spin& spin_r, Spin& spin_x);
 
-bool activate_spin_spin(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y);
+bool activate_bond(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y);
 
 void check_neighbor(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta);
 
+void check_neighbor_ghost(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta);
 #endif
 

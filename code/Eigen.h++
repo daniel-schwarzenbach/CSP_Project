@@ -9,8 +9,7 @@ using Matrix = Eigen::Matrix<flt, Eigen::Dynamic,
                                 Eigen::Dynamic>;
 
 // represents an ℝ³ˣ³ matrix
-using Matrix3x3 = Eigen::Matrix<flt, Eigen::Dynamic,
-                                Eigen::Dynamic>;
+using Matrix3x3 = Eigen::Matrix<flt, 3, 3>;
 // represents an Nx1 real vector
 using Vector = Eigen::Matrix<flt, Eigen::Dynamic, 1>;
 

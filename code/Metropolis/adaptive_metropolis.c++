@@ -45,7 +45,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
     int accepted_count = 0;
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    for(uint step = 0; step < maxSteps; ++step){
+    for(u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -76,7 +76,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
             // Increase counter of accepted steps
             ++accepted_count;
             // Update acceptance rate
-            F64 R = accepted_count/(step+1.0);
+            F64 R = F64(accepted_count)/(step+1.0);
             // Calculate update factor
             F64 f = 0.5 / (1.0 - R + 1e-18);
             // Update sigma
