@@ -42,7 +42,7 @@ endif()
 
 ###################################### MPI 
 option(MPI "Use MPI" OFF)
-if(MPI AND NOT IPPL)
+if(MPI)
     message(STATUS "MPI option is set to ${MPI}")
     set(CMAKE_CXX_COMPILER mpic++)
 
@@ -175,7 +175,7 @@ endif()
 
 # endif()
 
-if(Not MPI  AND Not IPPL)# without MPI
+if(NOT MPI)# without MPI and IPPL
 
     # google-tests
     add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
