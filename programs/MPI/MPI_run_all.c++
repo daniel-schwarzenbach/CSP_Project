@@ -9,11 +9,12 @@
 #include <Metropolis/metropolis.h++>
 #include <mpi/mpi.h>
 
-void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int64_t Nmax, int Ns, float Time){
+void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int64_t Nwolff, int64_t Nmet, int Ns, float Time){
     //      METROPOLIS
     const uint seed = 42;
     rng::set_seed(seed);
-    int number_of_steps = round(Nmax/Ns);
+    int number_of_steps_met = round(Nmet/Ns);
+    int number_of_steps_wolff = round(Nwolff/Ns);
 
     std::string filename_metro = "Metropolis, Lattice Size " + to_string(Lx) + "x" + to_string(Ly) + "x" + to_string(Lz) + ", h_z " + to_string(h(2)) + ", k_z " + to_string(k(2)) + ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
 
@@ -22,7 +23,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     if (outFile.is_open()) {
         // Write output data to file
         outFile << filename_metro << endl << "Metropolis" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
-        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
+        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmet << endl << "No_of_datapoints = " << number_of_steps_met << endl;
         // Loop over the vector with a counter
         for (size_t i = 0; i < temperatures.size(); ++i) {
             outFile << temperatures[i];
@@ -41,8 +42,8 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
-        Array<Vector3> magnetisations(number_of_steps + 1); 
-        Array<f64> energies(number_of_steps + 1); 
+        Array<Vector3> magnetisations(number_of_steps_met + 1); 
+        Array<f64> energies(number_of_steps_met + 1); 
 
         double temperature = temperatures[i]; //Get temperature
 
@@ -52,7 +53,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
         outFile << to_string(temperature) << " M " << "Mz " << "E " << endl;
 
         //Run algorithm "number_of_steps" times and save energy and magnetisation for each step
-        for (int j = 0; j < number_of_steps + 1; ++j){
+        for (int j = 0; j < number_of_steps_met + 1; ++j){
             Vector3 magnetisation = measure::get_magnetization(lattice);
             flt energy = measure::get_energy(lattice, h, J, k);
             magnetisations[j] = magnetisation;
@@ -62,7 +63,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
             metropolis(lattice, temperature, J, Time, Ns, h, k, MoveType::SmallStep);
             outFile << Ns*j << " " << mag << " " << mag_z << " "<< energy;
-            if(j != number_of_steps) {outFile << std::endl;}
+            if(j != number_of_steps_met) {outFile << std::endl;}
         }
         if(i + 1 != temperatures.size()){outFile << endl << "====" << endl;}
     }
@@ -79,7 +80,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     if (outFile1.is_open()) {
         // Write output data to file
         outFile1 << filename_wolff << endl << "Wolff" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
-        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
+        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nwolff << endl << "No_of_datapoints = " << number_of_steps_wolff << endl;
         for (size_t i = 0; i < temperatures.size(); ++i) {
             outFile1 << temperatures[i];
             if (i+1 != temperatures.size()){
@@ -97,18 +98,18 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
-        Array<Vector3> magnetisations(number_of_steps + 1); 
-        Array<f64> energies(number_of_steps + 1); 
+        Array<Vector3> magnetisations(number_of_steps_wolff + 1); 
+        Array<f64> energies(number_of_steps_wolff + 1); 
 
         double temperature = temperatures[i]; //Get temperature
 
         cout << "Simulating at temperature: " << temperature << endl;
 
         outFile1 << to_string(temperature) << " M " << "Mz " << "E " << endl;
-        std::vector<std::string> data(number_of_steps);
+        std::vector<std::string> data(number_of_steps_wolff);
 
         //Run algorithm "number_of_steps" times and save energy and magnetisation for each step
-        for (int j = 0; j < number_of_steps + 1; ++j){
+        for (int j = 0; j < number_of_steps_wolff + 1; ++j){
             Vector3 magnetisation = measure::get_magnetization(lattice);
             flt energy = measure::get_energy(lattice, h, J, k);
             magnetisations[j] = magnetisation;
@@ -118,7 +119,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
             wolff(lattice, temperature, J, Time, Ns);
             outFile1 << Ns*j << " " << mag << " " << mag_z << " "<< energy;
-            if(j != number_of_steps) {outFile1 << std::endl;}
+            if(j != number_of_steps_wolff) {outFile1 << std::endl;}
         }
         if(i + 1 != temperatures.size()){outFile1 << endl << "====" << endl;}
     }
@@ -135,7 +136,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     if (outFile2.is_open()) {
         // Write output data to file
         outFile2 << filename_adametro<< endl << "Adaptive Metropolis" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
-        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
+        << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmet << endl << "No_of_datapoints = " << number_of_steps_met << endl;
         for (size_t i = 0; i < temperatures.size(); ++i) {
             outFile2 << temperatures[i];
             if (i+1 != temperatures.size()){
@@ -153,18 +154,18 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
-        Array<Vector3> magnetisations(number_of_steps + 1); 
-        Array<flt> energies(number_of_steps + 1); 
+        Array<Vector3> magnetisations(number_of_steps_met + 1); 
+        Array<flt> energies(number_of_steps_met + 1); 
 
         double temperature = temperatures[i]; //Get temperature
 
         cout << "Simulating at temperature: " << temperature << endl;
 
         outFile2 << to_string(temperature) << " M " << "Mz " << "E " << endl;
-        std::vector<std::string> data(number_of_steps);
+        std::vector<std::string> data(number_of_steps_met);
 
         //Run algorithm "number_of_steps" times and save energy and magnetisation for each step
-        for (int j = 0; j < number_of_steps + 1; ++j){
+        for (int j = 0; j < number_of_steps_met + 1; ++j){
             Vector3 magnetisation = measure::get_magnetization(lattice);
             flt energy = measure::get_energy(lattice, h, J, k);
             magnetisations[j] = magnetisation;
@@ -174,7 +175,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
             adaptive_metropolis(lattice, temperature, J, Time, Ns, h, k);
             outFile2 << Ns*j << " " << mag << " " << mag_z << " "<< energy;
-            if(j != number_of_steps) {outFile2 << std::endl;}
+            if(j != number_of_steps_met) {outFile2 << std::endl;}
         }
         if(i + 1 != temperatures.size()){outFile2 << endl << "====" << endl;}
     }
@@ -216,19 +217,24 @@ Array<flt> split_array(const Array<flt>& vec, int rank, int size) {
 // temperature
 //f64 T = 2.0;
 flt constexpr J = 1.0;
-flt constexpr Time = 3600.0;
+flt constexpr Time = 10000000.0;
 uint constexpr Seed = 42;
 
 const Spin h = Spin{0.0,0.0,0.0};
 const Spin k = Spin{0.0,0.0,0.0};
 
-constexpr uint L = 32;
+constexpr uint L = 8;
 constexpr uint Lx = L;
 constexpr uint Ly = L; 
 constexpr uint Lz = L;
 
-constexpr int64_t Nmax = 1e4;
-constexpr int Ns = 1e2;
+constexpr u64 Ns = 1e3;
+
+
+constexpr u64 N_wolff = 1e+6;
+constexpr u64 N_met = 1e+9;
+// constexpr u64 N_wolff = 1e+9;
+// constexpr u64 N_met = 1e+11;
 
 Array<double> temperatures = 
 {1.00000000e-05, 3.75958333e-03, 7.50916667e-03, 1.12587500e-02
@@ -267,7 +273,7 @@ int main(int argc, char** argv)
     MPI_Comm_size(comm, &size);
     Array<flt> local_temperatures = split_array(temperatures, rank, size);
 
-    simulation(local_temperatures, h, k, Lx, Ly, Lz, J, Nmax, Ns, Time);
+    simulation(local_temperatures, h, k, Lx, Ly, Lz, J, N_wolff, N_met, Ns, Time);
     MPI_Finalize();
     return 0;
 
