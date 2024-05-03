@@ -23,21 +23,26 @@ int main()
     const uint seed = 42;
     rng::set_seed(seed);
 
+    int Lx = 8;
+    int Ly = Lx; 
+    int Lz = Ly; 
+
     //              --- Lattice
     
     //dat::plot_lattice(lattice, "Wolff_start.png");
 
-    //Define maximal number of steps, step width and number of iterations 
-    int Nmax = 100000000;
-    int Ns = 1000000;
-    int number_of_steps = round(Nmax/Ns);
+    //Define maximal number of steps, step width and number of iterations
+    u64 Nmax = 100000;
+    u64 Ns = 1000;
+    u64 number_of_steps = round(Nmax/Ns); 
 
     //Define temperature array which we loop over
 
     std::vector<double> temperatures = {0.01, 0.03, 0.1, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.0, 10.0};
+    //std::vector <double> temperatures = {0.01, };
 
     for (size_t i = 0; i < temperatures.size(); ++i) {
-        Lattice lattice = Lattice::random_lattice(8, 8, 8);
+        Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
         Array<Vector3> magnetisations(number_of_steps + 1); 
         Array<F64> energies(number_of_steps + 1); 
@@ -46,7 +51,7 @@ int main()
 
         cout << "Simulating at temperature: " << temperature << endl;
 
-        std::string filename = "mag_and_energy_" + to_string(temperature) + ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
+        std::string filename = "mag_and_energy_" + to_string(temperature) + "_8_wolff.txt"; //Create .txt file with name "mag_and_energy_T.txt"
 
         // Open the output file for writing with the given filename.
         // If the file is successfully opened:
@@ -76,7 +81,7 @@ int main()
             flt mag_y = magnetisation[1];
             flt mag_z = magnetisation[2];
             energies[j] = energy;
-            metropolis(lattice, temperature, J, Time, Ns, h);
+            wolff_ghost(lattice, temperature, J, Time, Ns, h);
 
             outFile << Ns*j << " " << mag << " " << mag_x << " " << mag_y << " " << mag_z << " " << energy << std::endl; //Write current total step number, mag and E into file
         }

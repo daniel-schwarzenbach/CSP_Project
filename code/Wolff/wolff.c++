@@ -117,7 +117,7 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
+F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, u64 MaxSteps){
 
     F64 beta = Beta(T);
 
@@ -153,3 +153,4 @@ F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, uint MaxSteps){
 
     return susceptibility;
 }
+

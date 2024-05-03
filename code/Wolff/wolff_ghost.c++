@@ -1,6 +1,7 @@
 #include <Wolff/wolff_ghost.h++>
 #include <Measure/Timekeeper.h++>
 #include <Wolff/duplicate_functions.h++>
+#include <Heisenberg.h++>
 
 using Index = StaticArray<int, 3>;
 
@@ -9,10 +10,19 @@ using Array3D = Array<Array<Array<T>>>;
 
 
 //Generate ghost cell i.e. a random matrix in O(3)
-Matrix3x3 generate_ghost() {
-    Eigen::Quaternionf randomQuaternion = Eigen::Quaternionf::UnitRandom();
-    Matrix3x3 randomOrthogonalMatrix = randomQuaternion.normalized().toRotationMatrix();
-    return randomOrthogonalMatrix;
+// Matrix3x3 generate_ghost() {
+//     Eigen::Quaternionf randomQuaternion = Eigen::Quaternionf::UnitRandom();
+//     Matrix3x3 randomOrthogonalMatrix = randomQuaternion.toRotationMatrix();
+//     flt determinant = randomOrthogonalMatrix.determinant();
+//     Eigen::Matrix<float, 3, 3, 0, 3, 3> matrix = randomOrthogonalMatrix;
+//     flt a = (matrix * matrix.transpose() - Matrix3x3::Identity(3,3)).norm();
+//     bool test2 = std::abs(matrix.determinant() - 1.0f) < 0.01f;
+
+//     return randomOrthogonalMatrix;
+// }
+
+Matrix3x3 generate_ghost(){
+
 }
 
 //Returns the flipped spin given a random spin r, w.r.t the hyperplane orthogonal to r
@@ -41,14 +51,14 @@ Matrix3x3 get_flipped_ghost(Matrix3x3& ghost, Spin& spin_r){
 }
     
 //Function to activate bonds between spins
-// bool activate_spin_spin(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
-//     Spin spin_x_r = get_flipped_spin(spin_r,spin_x);
-//     flt Z1 = spin_x_r | spin_y;
-//     flt Z2 = spin_x | spin_y;
-//     F64 active = min(0.0, 1 - std::exp(beta *( F64(Z1) - F64(Z2)) ));
-//     flt p = rng::rand_f64();
-//     return (p <= active);
-// }
+bool activate_spin_spin(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
+    Spin spin_x_r = get_flipped_spin(spin_r,spin_x);
+    flt Z1 = spin_x_r | spin_y;
+    flt Z2 = spin_x | spin_y;
+    F64 active = std::max(0.0, 1 - std::exp(beta *( F64(Z1) - F64(Z2)) ));
+    flt p = rng::rand_f64();
+    return (p <= active);
+}
 
 //Function to activate bond depending on given probability 
 
@@ -65,7 +75,7 @@ bool activate_ghost_spin(Spin& spin_x, Spin& spin_r, flt beta, Matrix3x3& ghost,
     flt B1 = mag_field.dot(ghost_reflected_inverse * spin); //B(s) = H^T * s = H^T * (SRS)^-1 * sigma_y
     flt B2 = mag_field.dot(ghost_inverse * spin);
     
-    F64 active = min(0.0, 1 - std::exp(beta *( F64(B1) - F64(B2))));
+    F64 active = std::max(0.0, 1 - std::exp(- beta *( F64(B1) - F64(B2))));
     flt p = rng::rand_f64();
     return (p <= active);
 }
@@ -81,7 +91,7 @@ bool activate_spin_ghost(Spin& spin_x, Spin& spin_r, flt beta, Matrix3x3& ghost,
     F64 B1 = mag_field.dot(ghost_inverse * spin_x_r); //B(s) = H^T * s = H^T * (R)^-1 * (r*sigma_x)
     F64 B2 = mag_field.dot(ghost_inverse * spin_x); //B(s) = H^T * s = H^T * (R)^-1 * (sigma_x)
     
-    F64 active = min(0.0, 1 - std::exp(beta *( B1 - B2) ));
+    F64 active = std::max(0.0, 1 - std::exp( - beta *( B1 - B2) ));
     flt p = rng::rand_f64();
     return (p <= active);
 }
@@ -89,9 +99,9 @@ bool activate_spin_ghost(Spin& spin_x, Spin& spin_r, flt beta, Matrix3x3& ghost,
 
 //If ghost cell is activated, check all lattice sites
 void check_ghost(Lattice& lattice, int Lx, int Ly,int Lz, Matrix3x3& ghost, Spin& H, Spin& spin_r, flt beta, Array<Index> stack, Array<Index> cluster, Array<Array<Array<bool>>> visited){
-    for(int i = 0; i <= Lx; ++i){
-        for(int j = 1; j <= Ly; ++j){
-            for(int k = 1; k <= Lz; ++k){
+    for(int i = 0; i < Lx; ++i){
+        for(int j = 0; j < Ly; ++j){
+            for(int k = 0; k < Lz; ++k){
                 if(visited[i][j][k] == true) continue; 
                 //If this is true it means that the site has been added already and 
                 //so the bond to the ghost cell was checked at that point
@@ -99,10 +109,10 @@ void check_ghost(Lattice& lattice, int Lx, int Ly,int Lz, Matrix3x3& ghost, Spin
                 Spin& spin_y = lattice(i,j,k); //get spin
 
                 if(activate_ghost_spin(spin_y, spin_r, beta, ghost, H)){
-                    flip_spin(spin_r, spin_y); // ...flip spin
+                    //flip_spin(spin_r, spin_y); // ...flip spin
                     stack.push_back({i,j,k}); // ...add to stack 
                     cluster.push_back({i,j,k}); // ...add to cluster (mark y)
-                    visited[i][j][k] = true; // Mark as visited
+                    //visited[i][j][k] = true; // Mark as visited
                 }
 
             }
@@ -110,6 +120,17 @@ void check_ghost(Lattice& lattice, int Lx, int Ly,int Lz, Matrix3x3& ghost, Spin
     }
 }
 
+void check_neighbor_ghost(Lattice& lattice, int nx, int ny, int nz, Spin& spin_x, Spin& spin_r, Array<Array<Array<bool>>>& visited, Array<Index>& stack, Array<Index>& cluster, flt beta){
+    Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y (i.e. j)
+
+    //If Bond is activated...
+    if (activate_spin_spin(spin_x, spin_r, beta, spin_y)){
+        //flip_spin(spin_r, spin_y); //...flip spin
+        stack.push_back({nx,ny,nz}); // ...add to stack 
+        cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
+        //visited[nx][ny][nz] = true; //Mark as visited
+    }
+}
 
 
 int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H){
@@ -132,6 +153,7 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H){
 
     // Choose random reflection
     Spin spin_r = Spin::get_random();
+    //Spin spin_r = Spin(0.0,0.0,1.0);
     //Spin H = Spin::get_random(); //Initialize random external magnetic field
 
     // Choose random lattice site as first point of cluster
@@ -139,17 +161,17 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H){
     int y = rng::rand_f64()*Ly;
     int z = rng::rand_f64()*Lz;
     
-    //Define spin_x to be flipped, first point of the cluster
+    //Define spin_x to be flipped, first point of the cluster (random site m_0)
     Spin& spin_x = lattice(x,y,z);
-
-    //Flip sigma_x and mark x
-    flip_spin(spin_r, spin_x);
 
     //Add spin_x to stack & cluster, mark site as checked
     //stack.push_back({x,y,z});
     stack.push_back({x,y,z});
     cluster.push_back({x,y,z});
-    visited[x][y][z] = true;
+    //visited[x][y][z] = true;
+
+    //Flip sigma_x and mark x
+    //flip_spin(spin_r, spin_x);
 
     //Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
     while(!stack.empty()){
@@ -162,24 +184,35 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H){
         int cy = current[1];
         int cz = current[2];
 
-        //Mark as visited
-        visited[cx][cy][cz] = true;
+        if(!visited[cx][cy][cz]){
+            //Mark as visited
+            visited[cx][cy][cz] = true;
+        
+            Spin& spin_x = lattice(cx,cy,cz); //spin_x = m
 
-        Spin& spin_x = lattice(cx,cy,cz);
+            // if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor_ghost(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+            // if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor_ghost(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+            // if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor_ghost(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+            // if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor_ghost(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+            // if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor_ghost(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+            // if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor_ghost(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
-        if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
-        Spin& spin_current = lattice(cx,cy,cz);
+            check_neighbor_ghost(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta);
+            check_neighbor_ghost(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta);
+            check_neighbor_ghost(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta);
+            check_neighbor_ghost(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta);
+            check_neighbor_ghost(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta);
+            check_neighbor_ghost(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta);
 
-        //Check if bond to ghost cell is activated...
-        if(activate_spin_ghost(spin_current, spin_r, beta, ghost, H)){
-            check_ghost(lattice, Lx, Ly, Lz, ghost, H, spin_r, beta, stack, cluster, visited); //immediately check all lattice sites s.t. we do not need to store ghost cell in stack
-            flip_ghost(ghost, spin_r); // flip trafo
+            //Check if bond to ghost cell is activated...
+            if(activate_spin_ghost(spin_x, spin_r, beta, ghost, H)){
+                check_ghost(lattice, Lx, Ly, Lz, ghost, H, spin_r, beta, stack, cluster, visited); //immediately check all lattice sites s.t. we do not need to store ghost cell in stack
+                flip_ghost(ghost, spin_r); // flip trafo
+            }
+
+            flip_spin(spin_r, spin_x);
+        
         }
 
     }
