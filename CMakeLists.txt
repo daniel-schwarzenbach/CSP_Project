@@ -45,7 +45,7 @@ if(MPI AND NOT IPPL)
     message(STATUS "MPI option is set to ${MPI}")
     set(CMAKE_CXX_COMPILER mpic++)
 
-    add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
+    ##add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
 
     # add open mp
     find_package(OpenMP REQUIRED)
@@ -56,10 +56,11 @@ if(MPI AND NOT IPPL)
 
     # add MPI
     find_package(MPI REQUIRED)
-    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+    include_directories(${MPI_INCLUDE_PATH})
+    #include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
     # programs
-    add_executable(HeisenbergMPI ${SRC_FILES} ${IPPL_SRC_FILES} 
+    add_executable(HeisenbergMPI ${SRC_FILES}
         ./programs/MPI/MPI_run_all.c++)
     # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
@@ -67,7 +68,7 @@ if(MPI AND NOT IPPL)
     set(LIBRARIES
     matplot
     Eigen3::Eigen
-    ${MPI_CXX_LIBRARIES}
+    MPI::MPI_CXX
     dl
     )
 
