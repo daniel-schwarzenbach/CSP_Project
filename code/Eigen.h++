@@ -11,8 +11,7 @@ using Matrix = Eigen::Matrix<f32, Eigen::Dynamic,
                              Eigen::Dynamic>;
 
 // represents an ℝ³ˣ³ matrix
-using Matrix3x3 = Eigen::Matrix<f32, Eigen::Dynamic,
-                                Eigen::Dynamic>;
+using Matrix3x3 = Eigen::Matrix<f32, 3, 3>;
 // represents an Nx1 real vector
 using Vector = Eigen::Matrix<f32, Eigen::Dynamic, 1>;
 

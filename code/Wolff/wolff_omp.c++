@@ -142,7 +142,7 @@ performs the wolff algoritm on the lattice
 */
 
 flt wolff_omp(Lattice &lattice, flt const& T, flt const& J, 
-              flt const& MaxTime, uint const& MaxSteps)
+              flt const& MaxTime, u64 const& MaxSteps)
 {
     // to implement
 
@@ -150,9 +150,9 @@ flt wolff_omp(Lattice &lattice, flt const& T, flt const& J,
     measure::Timer watch;
 
     Array<int> clusters;
-    uint nRuns = 0;
+    u64 nRuns = 0;
 
-    for (uint i = 0; i <= MaxSteps; ++i)
+    for (u64 i = 0; i <= MaxSteps; ++i)
     {
         uint clusterSize = wolf_algorithm(lattice, beta, J);
         if (clusterSize == -1)

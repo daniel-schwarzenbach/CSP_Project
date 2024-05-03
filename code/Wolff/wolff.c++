@@ -91,10 +91,10 @@ int wolf_algorithm(Lattice& lattice, flt beta){
 
         if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy+1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy-1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy-1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz+1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz-1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
     }
 
@@ -117,16 +117,16 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps){
+flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, u64 MaxSteps){
 
     flt beta = Beta(T);
     measure::Timer watch;
 
     Array<int> clusters;
-    uint nRuns = 0;
+    u64 nRuns = 0;
 
     //Run MaxSteps wolff steps or until the maximal time has been reached
-    for (uint i = 0; i <= MaxSteps; ++i){
+    for (u64 i = 0; i <= MaxSteps; ++i){
         uint clusterSize = wolf_algorithm(lattice, beta);
 
         clusters.push_back(clusterSize);
@@ -152,3 +152,4 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps){
 
     return susceptibility;
 }
+
