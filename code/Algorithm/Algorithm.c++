@@ -64,7 +64,7 @@ Array2D<flt> algo::ds::test_algorithm(
     flt t_elapsed = 0;
     while (step < numSteps)
     {
-        lbar.update(step / numSteps * 100.0);
+        lbar.update(flt(step) / flt(numSteps) * 100.0);
         
         Vector3 magnVec = measure::get_magnetization(lattice);
         Step.push_back(step);

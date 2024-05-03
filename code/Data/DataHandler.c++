@@ -27,6 +27,7 @@ flt data::read_flt(char *in)
 
 bool data::store_alo_data(const string& filename, 
                         string const& algoname,
+                        Array<flt>& temperatures,
                         const Array2D<flt>& data, 
                         flt const& T, flt const& J, 
                         Spin const& h, Spin const& k,
@@ -45,7 +46,7 @@ bool data::store_alo_data(const string& filename,
         }
     }
     // openfile
-    std::ofstream outfile(filename + to_str(T));
+    std::ofstream outfile(filename);
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file:" << filename << endl;
@@ -59,15 +60,22 @@ bool data::store_alo_data(const string& filename,
                 << "Ns = " << Ns << endl 
                 << "Nmax = " << Nmax << endl 
                 << "No_of_datapoints = " << n_data<< endl;
+    for (flt t : temperatures) {
+            outfile << t << ",";
+            
+    }
+    outfile << endl << "====" << endl;
     outfile << T << " M " << " Mz " << " E " << endl;
     // Write data to the header
     for(uint i = 0; i< n_data; ++i){
         for (const auto& col : data) {
-            outfile << ' ' << col[i];
+            outfile << col[i] << " ";
             
         }
-        outfile << '\n';
+        outfile << endl;
     }
+    
+    outfile.close();
     return true;
 }
 
@@ -95,12 +103,14 @@ bool data::append_algo_data(const std::string& filename,
         cerr << ERROR << " opening file for appending." << std::endl;
         return false;
     }
+    file << "====" << endl;
     file << to_str(T) << " M " << " Mz " << " E " << endl;
     // Append data
-    for (uint i = 0; i < n_data; i++)
+    for (uint i = 0; i < n_data; i++){
         for (uint j = 0; j < 4; j++) {
-            file << data[j][i];
-            file << '\n';
+            file << data[j][i] << " ";
+        }
+        file << endl;
     }
     // Close the file
     file.close();

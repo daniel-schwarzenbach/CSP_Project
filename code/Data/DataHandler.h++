@@ -37,6 +37,7 @@ namespace data
                     
     bool store_alo_data(const string& filename, 
                         string const& algoname,
+                        Array<flt>& temperatures, 
                         const Array2D<flt>& data, 
                         flt const& T, flt const& J, 
                         Spin const& h, Spin const& k,
