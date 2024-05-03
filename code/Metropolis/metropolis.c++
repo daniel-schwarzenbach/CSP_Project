@@ -27,7 +27,7 @@ bool metropolis(Lattice &lattice,
                 F64 T/*temperature*/, 
                 F64 J/*interaction Strength*/,
                 F64 maxTimeSeconds, 
-                uint maxSteps, Spin h,
+                int64_t maxSteps, Spin h,
                 Spin k,
                 MoveType moveType) {
     // Initialize random number generator
