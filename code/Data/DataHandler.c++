@@ -153,7 +153,7 @@ bool data::store_alo_data(const string& filename,
                 << "Ns = " << Ns << endl 
                 << "Nmax = " << Nmax << endl 
                 << "No_of_datapoints = " << n_data<< endl
-                << "T = " << T << endl  
+                << T << endl  
                 << "====" << endl
                 << T << " M " << " Mz " << " E " << endl;
     // Write data to the header
@@ -166,6 +166,52 @@ bool data::store_alo_data(const string& filename,
     }
     
     outfile.close();
+    return true;
+}
+
+bool appent_algo_lines(string const& filename, 
+                        u64 const& dataSize, flt const& T){
+    std::ifstream fileIn(filename);
+    Array<string> lines(0);
+    string line;
+    int currentLine = 0;
+
+    if (!fileIn.is_open()) {
+        std::cerr << "Error opening file to read" << std::endl;
+        return false;
+    }
+
+    // Read all lines into a vector
+    while (std::getline(fileIn, line)) {
+        lines.push_back(line);
+        currentLine++;
+    }
+    fileIn.close();
+    
+    // Check if the specified line number is within the file size
+    if (8 >= currentLine) {
+        std::cerr << ERROR << "line number out of range." << std::endl;
+        return false;
+    }
+    // Append the data to the specified line
+    size_t pos = lines[7].find_last_of("= ");
+    int old_size = std::stoi(lines[7].substr(pos + 1));
+    lines[7] = "No_of_datapoints = " + to_string(old_size + dataSize);
+    lines[8] += ", " + to_str(T);
+    
+    std::this_thread::sleep_for(
+                    std::chrono::microseconds(1));
+    // Write everything back to the file
+    std::ofstream fileOut(filename);
+    if (!fileOut.is_open()) {
+        std::cerr << "Error opening file to write" << std::endl;
+        return false;
+    }
+    for (const auto& outputLine : lines) {
+        fileOut << outputLine << "\n";
+    }
+
+    fileOut.close();
     return true;
 }
 
