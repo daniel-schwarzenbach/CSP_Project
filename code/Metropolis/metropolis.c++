@@ -38,7 +38,7 @@ bool metropolis(Lattice &lattice,
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    for(uint step = 0; step < maxSteps; ++step){
+    for(u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rng::rand_int_range(0, lattice.Lx());
         int y = rng::rand_int_range(0, lattice.Ly());

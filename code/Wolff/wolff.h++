@@ -14,7 +14,7 @@ wolff algorithm for the Heisenberg3D model
 / @return if the procedure succeds
 / @exception may fail
 */
-flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps);
+flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, u64 MaxSteps);
 
 /*
 wolff algorithm for the Heisenberg3D model
@@ -27,7 +27,7 @@ on
 / @exception may fail
 */
 flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J, 
-                flt const& MaxTime, uint const& MaxSteps, Spin const& h);
+                flt const& MaxTime, u64 const& MaxSteps, Spin const& h);
 
 
 /*
@@ -38,7 +38,7 @@ wolff algorithm for the Heisenberg3D model that is naivly parallel
 / @exception may fail
 */
 flt wolff_omp(Lattice &lattice, flt const& T, flt const& J, 
-              flt const& MaxTime, uint const& MaxSteps);
+              flt const& MaxTime, u64 const& MaxSteps);
 
 
 #endif
