@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 #include <Data/DataHandler.h++>
+#include <thread>
 
 
 flt data::read_flt(char *in)
@@ -33,7 +34,7 @@ bool data::append_line_in_file(string const& filename,
     int currentLine = 0;
 
     if (!fileIn.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
+        std::cerr << "Error opening file to read." << std::endl;
         return false;
     }
 
@@ -53,15 +54,17 @@ bool data::append_line_in_file(string const& filename,
     lines[lineNum] += data;
 
     // Write everything back to the file
+    std::this_thread::sleep_for(
+                    std::chrono::microseconds(1));
     std::ofstream fileOut(filename);
     if (!fileOut.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
+        std::cerr << "Error opening file to write." << std::endl;
         return false;
     }
     for (const auto& outputLine : lines) {
         fileOut << outputLine << "\n";
     }
-
+    
     fileOut.close();
     return true;
 }
@@ -74,7 +77,7 @@ bool data::append_lines_in_file(string const& filename,
     int currentLine = 0;
 
     if (!fileIn.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
+        std::cerr << "Error opening file to read" << std::endl;
         return false;
     }
 
@@ -100,11 +103,12 @@ bool data::append_lines_in_file(string const& filename,
         // Append the data to the specified line
         lines[lineNums[i]] += datas[i];
     }
-    
+    std::this_thread::sleep_for(
+                    std::chrono::microseconds(1));
     // Write everything back to the file
     std::ofstream fileOut(filename);
     if (!fileOut.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
+        std::cerr << "Error opening file to write" << std::endl;
         return false;
     }
     for (const auto& outputLine : lines) {
