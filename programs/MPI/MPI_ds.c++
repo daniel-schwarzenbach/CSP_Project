@@ -68,10 +68,10 @@ int main(int argc, char** argv)
     cout << rank <<" is running "<< local_temperatures.size() 
          << " out of " << temperatures.size() <<endl;
     // make sure it runs in parallel
-    if (size == 1){
-        cerr << ERROR << "no parallel execution" << endl;
-        return 0;
-    }
+    // if (size == 1){
+    //     cerr << ERROR << "no parallel execution" << endl;
+    //     return 0;
+    // }
 
 
     //      --- set Filenames
@@ -89,12 +89,13 @@ int main(int argc, char** argv)
         rng::set_seed(Seed);
         lattice.randomize();
         const flt T = local_temperatures[i];
+        cout << "T = " << T << endl;
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, N_met, T,
                         J, h, k, algo::ds::metropolis_smallStep);
-        if(i = 1){
+        if(i == 1){
             data::store_alo_data(metropolisSmallFile, "metropolis",
-                                    data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(metropolisSmallFile, data, T);
         }
@@ -108,12 +109,13 @@ int main(int argc, char** argv)
         rng::set_seed(Seed);
         lattice.randomize();
         const flt T = local_temperatures[i];
+        cout << "T = " << T << endl;
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, N_met, T,
                         J, h, k, algo::ds::metropolis_adaptive);
-        if(i = 1){
+        if(i == 1){
             data::store_alo_data(metropolisAdaptFile, "adaptive metropolis",
-                                    data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(metropolisAdaptFile, data, T);
         }
@@ -121,18 +123,19 @@ int main(int argc, char** argv)
 
 
 
-        //      --- Metropolis
+        //      --- Wolff
     // run through all teperatures
     for(uint i = 0; i < local_size; ++i){
         rng::set_seed(Seed);
         lattice.randomize();
         const flt T = local_temperatures[i];
+        cout << "T = " << T << endl;
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, N_met, T,
                         J, h, k, algo::ds::wolff_);
-        if(i = 1){
+        if(i == 1){
             data::store_alo_data(wolffFile, "wolff",
-                                    data, T, J, h, k, Ns, N_met, Ls);
+                                data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(wolffFile, data, T);
         }

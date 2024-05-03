@@ -25,6 +25,96 @@ flt data::read_flt(char *in)
     return valueF64;
 }
 
+bool data::append_line_in_file(string const& filename, 
+            string const& data, u64 const& lineNum){
+    std::ifstream fileIn(filename);
+    Array<string> lines(0);
+    string line;
+    int currentLine = 0;
+
+    if (!fileIn.is_open()) {
+        std::cerr << "Error opening file." << std::endl;
+        return false;
+    }
+
+    // Read all lines into a vector
+    while (std::getline(fileIn, line)) {
+        lines.push_back(line);
+        currentLine++;
+    }
+    fileIn.close();
+    // Check if the specified line number is within the file size
+    if (lineNum >= currentLine) {
+        std::cerr << ERROR << "line number out of range." << std::endl;
+        return false;
+    }
+
+    // Append the data to the specified line
+    lines[lineNum] += data;
+
+    // Write everything back to the file
+    std::ofstream fileOut(filename);
+    if (!fileOut.is_open()) {
+        std::cerr << "Error opening file." << std::endl;
+        return false;
+    }
+    for (const auto& outputLine : lines) {
+        fileOut << outputLine << "\n";
+    }
+
+    fileOut.close();
+    return true;
+}
+
+bool data::append_lines_in_file(string const& filename, 
+            Array<string> const& datas, Array<u64> const& lineNums){
+    std::ifstream fileIn(filename);
+    Array<string> lines(0);
+    string line;
+    int currentLine = 0;
+
+    if (!fileIn.is_open()) {
+        std::cerr << "Error opening file." << std::endl;
+        return false;
+    }
+
+    // Read all lines into a vector
+    while (std::getline(fileIn, line)) {
+        lines.push_back(line);
+        currentLine++;
+    }
+    fileIn.close();
+    u64 dataSize = datas.size();
+    if (dataSize != lineNums.size()){
+        cerr << ERROR << "can not append files! size missmatch"<<endl;
+        cerr << "datas.size() =" << dataSize << endl;
+        cerr << "lines.size() =" << lineNums.size() << endl;
+        return false;
+    }
+    for (u64 i = 0; i < dataSize; ++i){
+        // Check if the specified line number is within the file size
+        if (lineNums[i] >= currentLine) {
+            std::cerr << ERROR << "line number out of range." << std::endl;
+            return false;
+        }
+        // Append the data to the specified line
+        lines[lineNums[i]] += datas[i];
+    }
+    
+    // Write everything back to the file
+    std::ofstream fileOut(filename);
+    if (!fileOut.is_open()) {
+        std::cerr << "Error opening file." << std::endl;
+        return false;
+    }
+    for (const auto& outputLine : lines) {
+        fileOut << outputLine << "\n";
+    }
+
+    fileOut.close();
+    return true;
+}
+
 bool data::store_alo_data(const string& filename, 
                         string const& algoname,
                         const Array2D<flt>& data, 
@@ -45,7 +135,7 @@ bool data::store_alo_data(const string& filename,
         }
     }
     // openfile
-    std::ofstream outfile(filename + to_str(T));
+    std::ofstream outfile(filename);
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file:" << filename << endl;
@@ -58,16 +148,20 @@ bool data::store_alo_data(const string& filename,
                 << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl 
                 << "Ns = " << Ns << endl 
                 << "Nmax = " << Nmax << endl 
-                << "No_of_datapoints = " << n_data<< endl;
-    outfile << T << " M " << " Mz " << " E " << endl;
+                << "No_of_datapoints = " << n_data<< endl
+                << "T = " << T << endl  
+                << "====" << endl
+                << T << " M " << " Mz " << " E " << endl;
     // Write data to the header
     for(uint i = 0; i< n_data; ++i){
         for (const auto& col : data) {
-            outfile << ' ' << col[i];
+            outfile << col[i] << " ";
             
         }
-        outfile << '\n';
+        outfile << endl;
     }
+    
+    outfile.close();
     return true;
 }
 
@@ -87,6 +181,8 @@ bool data::append_algo_data(const std::string& filename,
             return false;
         }
     }
+    data::append_lines_in_file(filename, 
+            {(","+to_string(n_data)), (","+to_str(T))}, {7,8});
     // Open the file in append mode
     std::ofstream file(filename, std::ios_base::app);
 
@@ -95,12 +191,14 @@ bool data::append_algo_data(const std::string& filename,
         cerr << ERROR << " opening file for appending." << std::endl;
         return false;
     }
+    file << "====" << endl;
     file << to_str(T) << " M " << " Mz " << " E " << endl;
     // Append data
-    for (uint i = 0; i < n_data; i++)
+    for (uint i = 0; i < n_data; i++){
         for (uint j = 0; j < 4; j++) {
-            file << data[j][i];
-            file << '\n';
+            file << data[j][i] << " ";
+        }
+        file << endl;
     }
     // Close the file
     file.close();
