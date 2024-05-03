@@ -1,10 +1,10 @@
-#!/bin/bash 
+#!/bin/bash
 
-#SBATCH -n 25 
-#SBATCH --time=00:10:00 
-#SBATCH --job-name=test 
-#SBATCH --mem-per-cpu=512 
-#SBATCH --output=output.out 
-#SBATCH --error=file.err
+#SBATCH --nodes=25                   
+#SBATCH --ntasks=25                  
+#SBATCH --ntasks-per-node=1         
+#SBATCH --output=output.txt
+#SBATCH --error=error.txt
+#SBATCH --time=01:00:00
 
-srun ../../build/HeisenbergMPI
+mpirun -bind-to core -map-by core -n 25 ../../build/HeisenbergMPI

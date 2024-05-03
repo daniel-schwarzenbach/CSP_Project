@@ -18,10 +18,8 @@ constexpr Index Ls = {Lx,Ly,Lz};
 
 
 constexpr u64 Ns = 1e3;
-
-
-constexpr u64 N_wolff = 1e+5;
-constexpr u64 N_met = 1e+8;
+constexpr u64 N_wolff = 1e+6;
+constexpr u64 N_met = 1e+9;
 // constexpr u64 N_wolff = 1e+9;
 // constexpr u64 N_met = 1e+11;
 
