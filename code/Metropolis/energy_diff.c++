@@ -33,7 +33,7 @@ F64 calculateEnergyDiff(Lattice& lattice, int x, int y, int z,
     int Ly = lattice.Ly();
     int Lz = lattice.Lz();
 
-    // Indices of nearest neighbors (periodic boundary conditions assumed)
+    // Indices of nearest neighbors
     int neighbors[6][3] = {
          {(x + 1) % Lx, y, z}, {(x - 1 + Lx) % Lx, y, z}, // +x, -x neighbors
          {x, (y + 1) % Ly, z}, {x, (y - 1 + Ly) % Ly},    // +y, -y neighbors

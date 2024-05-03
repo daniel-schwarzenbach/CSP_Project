@@ -16,9 +16,9 @@
 // element of the algorithm is the factor sigma that multiplies the 
 // Gaussian distributed vector, which takes over the role of the opening
 // angle in the small step move. This factor is changed after each step,
-// depending on the acceptance rate in the previous step, to reach an 
-// optimal acceptance rate of 50%. A more detailed description of
-// the algorithm can be found in the report.
+// depending on the acceptance rate, to reach an optimal acceptance rate 
+// of 50%. A more detailed description of the algorithm can be found 
+// in the report.
 
 
 // Input: 
@@ -60,18 +60,17 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
         // Calculate energy difference
         F64 deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
                                         newSpin, J, h, k);
-        // Boltzmann constant k is normalized with interaction strength
-        // J in this implementation
         // Acceptance condition
         if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
-            // The acceptance rate is given by: 1 / # proposed_count
+            // The acceptance rate is given by the ratio of the accepted
+            // steps and the proposed steps.
             // The new sigma is then calculated by multiplying the
             // initial value with f = 0.5 / (1 - R).
-            // To avoid division by zero we add a small number to the
-            // denominator.
+            // To avoid division by zero in the first steps we add a
+            //small number to the denominator.
 
             // Increase counter of accepted steps
             ++accepted_count;
