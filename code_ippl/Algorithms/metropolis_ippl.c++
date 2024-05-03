@@ -1,16 +1,49 @@
-#include <Metropolis/metropolis.h++>
-#include <Metropolis/energy_diff.h++>
+#include <Algorithms/Ippl_Algorithms.h++>
+#include <LatticeIppl.h++>
+#include <Measure/Timer.h++>
 
+flt calculateEnergyDiff(LatticeIppl const& latticeIppl, int  const& x, 
+                        int const& y,int const& z, 
+                        Spin const& oldSpin, Spin const& newSpin, 
+                        flt const& J, Spin const& h, Spin const& k){
+
+    // Get dimensions of the latticeIppl
+    Array<Index> neighbors = {
+        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, 
+        {x, y, z + 1}, {x, y, z - 1}};
+    // Energies of old and new configuration
+    flt energyOld = 0.0;
+    flt energyNew = 0.0;
+    for (Index neighbor : neighbors)
+    {
+        // Get indices of neighbors
+        // Get neighboring spin
+        Spin neighborSpin;
+#pragma omp critical
+        neighborSpin = latticeIppl(neighbor);
+
+        // Calcualte and add energies
+        energyOld += -J * (oldSpin | neighborSpin) 
+                     - (oldSpin | h) 
+                     - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | neighborSpin) 
+                     - (newSpin | h) 
+                     - pow((newSpin | k), 2);
+    }   
+    // Calculate energy difference (deltaE)
+    flt deltaE = energyNew - energyOld;
+    return deltaE;
+}
 // Metropolis algorithm //
 
-// This function takes a reference to an initial lattice and performs
-// the Metropolis algorithm on this lattice at the specified temperature.
+// This function takes a reference to an initial latticeIppl and performs
+// the Metropolis algorithm on this latticeIppl at the specified temperature.
 // We can specify the trial move which we want to use. The algorithm
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
 
 // Input:
-//      - refrence to the lattice
+//      - refrence to the latticeIppl
 //      - temperature T
 //      - maximal running time of the algorithm
 //      - maximal number of steps
@@ -21,9 +54,9 @@
 //        Random or SmallStep; default: small step move
 //
 // Output:
-//      Returns true when the algorithm has finished running. The lattice
+//      Returns true when the algorithm has finished running. The latticeIppl
 //      is modified throughout the runtime of the algorithm.
-bool metropolis_omp(Lattice &lattice,
+bool metropolis_ippl(Lattice &latticeIppl,
                     flt const& T /*temperature*/,
                     flt const& J /*interaction Strength*/,
                     flt const& maxTimeSeconds,
@@ -35,22 +68,21 @@ bool metropolis_omp(Lattice &lattice,
 
 #pragma omp parallel
     {
-
         uint numSteps = ceil(flt(maxSteps) / 
                         flt(omp_get_num_threads()));
 
-        flt maxFactor = 100;
+        flt maxFactor = 60;
         measure::Timer watch;
         uint accepted_count = 0;
         flt sigma = maxFactor;
-        uint Lx = lattice.Lx();
-        uint Ly = lattice.Ly();
-        uint Lz = lattice.Lz();
+        uint Lx = latticeIppl.Lx();
+        uint Ly = latticeIppl.Ly();
+        uint Lz = latticeIppl.Lz();
         flt beta = Beta(T);
         watch.start();
         for (uint step = 0; step < numSteps; ++step)
         {
-            // Choose a random lattice site
+            // Choose a random latticeIppl site
             int x = rng::rand_int_range(0, Lx);
             int y = rng::rand_int_range(0, Ly);
             int z = rng::rand_int_range(0, Lz);
@@ -58,7 +90,7 @@ bool metropolis_omp(Lattice &lattice,
             // Get the spin at the chosen site (cartesian)
             Spin spin;
 #pragma omp critical
-            spin = lattice(x, y, z);
+            spin = latticeIppl(x, y, z);
 
             // Propose spin change based on given trial move
             Spin newSpin = spin;
@@ -79,7 +111,7 @@ bool metropolis_omp(Lattice &lattice,
                     break;
                 }
             // Calculate energy difference
-            flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
+            flt deltaE = calculateEnergyDiff(latticeIppl, x, y, z, spin,
                                              newSpin, J, h, k);
             
             // Acceptance condition
@@ -88,7 +120,7 @@ bool metropolis_omp(Lattice &lattice,
               // normalized with interaction strength J in this implementation
               // Accept the new configuration
 #pragma omp critical
-                lattice(x, y, z) = newSpin;
+                latticeIppl(x, y, z) = newSpin;
                 if(moveType == MoveType::Addaptive){
                     ++accepted_count;
                     // Update acceptance rate
@@ -110,3 +142,4 @@ bool metropolis_omp(Lattice &lattice,
 
     return true;
 }
+

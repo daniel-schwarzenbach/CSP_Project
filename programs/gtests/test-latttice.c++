@@ -118,13 +118,13 @@ TEST(LatticeTests, Lattice3d_bool_periodic){
         int nx = neighbor[0];
         int ny = neighbor[1];
         int nz = neighbor[2];
-EXPECT_TRUE(lattice(neighbor) == lattice(nx,ny,nz));
+EXPECT_TRUE(lattice.get(neighbor) == lattice.get(nx,ny,nz));
 EXPECT_TRUE(abs(nx - x) <= 1);
 EXPECT_TRUE(abs(ny - y) <= 1);
 EXPECT_TRUE(abs(nz - z) <= 1);
         bool flag = true;
         lattice.set(neighbor, flag);
-EXPECT_TRUE(lattice(nx,ny,nz) == flag);
+EXPECT_TRUE(lattice.get(nx,ny,nz) == flag);
     }
 }
 

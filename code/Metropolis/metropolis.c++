@@ -73,7 +73,6 @@ bool metropolis(Lattice &lattice,
         if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)){
             spin = newSpin;
         }
-
         // Check if maximum time has been reached
         if (watch.time() >= maxTimeSeconds)
         {

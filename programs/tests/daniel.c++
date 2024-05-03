@@ -5,7 +5,6 @@
 #include <Measure/Observables.h++>
 #include <Data/DataHandler.h++>
 #include <Algorithm/Algorithm.h++>
-#include <Metropolis/adaptive_metropolis.h++>
 
 namespace plt = matplot;
 

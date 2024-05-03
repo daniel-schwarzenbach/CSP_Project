@@ -47,9 +47,9 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
     is similar to the magnetization.
     */
 
-    flt spin_interaction_energy = 0;
-    flt mag_interaction_energy = 0;
-    flt anisotropy_energy = 0;
+    flt spin_interaction_energy = 0.0;
+    flt mag_interaction_energy = 0.0;
+    flt anisotropy_energy = 0.0;
 
     /*
     If we have periodic (p) bondary conditions, then bond_factor = 0 

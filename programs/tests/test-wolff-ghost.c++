@@ -1,19 +1,17 @@
-#include <Wolff/wolff_ghost.h++>
 #include <Wolff/wolff.h++>
 #include <Data/Plot.h++>
 #include <Heisenberg.h++>
-#include <Measure/Timekeeper.h++>
+#include <Measure/Timer.h++>
 #include <Measure/Observables.h++>
 #include <fstream>
 #include <vector>
 #include <string>
-#include <Metropolis/adaptive_metropolis.h++>
 #include <Metropolis/metropolis.h++>
 
 // temperature
 //F64 T = 2.0;
-F64 J = 1.0;
-F64 Time = 3600.0;
+flt J = 1.0;
+flt Time = 3600.0;
 Spin h = Spin(0.0, 0.0, 1.0);
 
 
@@ -28,19 +26,19 @@ int main()
     //dat::plot_lattice(lattice, "Wolff_start.png");
 
     //Define maximal number of steps, step width and number of iterations 
-    int Nmax = 100000000;
-    int Ns = 1000000;
+    int Nmax = 10000;
+    int Ns = 1000;
     int number_of_steps = round(Nmax/Ns);
 
     //Define temperature array which we loop over
 
-    std::vector<double> temperatures = {0.01, 0.03, 0.1, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.0, 10.0};
+    std::vector<double> temperatures = {0.01};
 
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(8, 8, 8);
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
         Array<Vector3> magnetisations(number_of_steps + 1); 
-        Array<F64> energies(number_of_steps + 1); 
+        Array<flt> energies(number_of_steps + 1); 
 
         double temperature = temperatures[i]; //Get temperature
 

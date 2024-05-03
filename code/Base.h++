@@ -63,6 +63,8 @@ using flt = double;
 using u8 = unsigned char;
 // 16 bit unsigned integer
 using u16 = unsigned short;
+// 64 bit unsigned int
+using u64 = unsigned long;
 // 8 bit signed integer
 using i8 = signed char;
 // Memory Adress

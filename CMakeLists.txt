@@ -27,7 +27,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/tests/test-algo-data.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_dt.c++)
 
 # google-tests
 add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
@@ -54,9 +54,13 @@ if(IPPL)
     message(STATUS "IPPL option is set to ${IPPL}")
     set(CMAKE_CXX_COMPILER mpic++)
     # include/ippl
+    include_directories(${CMAKE_SOURCE_DIR}/code_ippl)
     include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/include/)
     include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_omp/include)
     include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_omp/include)
+
+    # source files
+    file(GLOB_RECURSE IPPL_SRC_FILES code_ippl/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
     add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
 
@@ -84,14 +88,14 @@ if(IPPL)
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
     # programs
-    add_executable(HeisenbergIppl ${SRC_FILES} 
-        ./programs/heisenbergIppl.c++)
+    add_executable(HeisenbergIppl ${SRC_FILES} ${IPPL_SRC_FILES} 
+        ./programs/Ippl/heisenbergIppl.c++)
     # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
     # precompile header
     target_precompile_headers(HeisenbergIppl
         PUBLIC
-        code/LatticeIppl.h++
+        code_ippl/LatticeIppl.h++
     )
 
     # lib/
@@ -120,21 +124,28 @@ else()# without IPPL
     Eigen3::Eigen
     )
 
+    # google test stuff
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    )
+
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(googletest)
+
+    include(GoogleTest)
+    gtest_discover_tests(Test_Lattice)
+    gtest_discover_tests(Test_Algorithm)
+
 endif()
 
 add_definitions(-DDEBUG)
 
 
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(googletest)
 
 # link libraries
 target_link_libraries(Heisenberg ${LIBRARIES})
@@ -145,8 +156,6 @@ target_link_libraries(Test_Algorithm ${LIBRARIES} gtest_main)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(GoogleTest)
-gtest_discover_tests(Test_Lattice)
-gtest_discover_tests(Test_Algorithm)
+
 
 # export compile commands for intellisense
