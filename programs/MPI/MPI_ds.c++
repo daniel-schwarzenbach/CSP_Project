@@ -97,7 +97,6 @@ int main(int argc, char** argv)
                         J, h, k, algo::ds::metropolis_smallStep);
         if(i == 1){
             data::store_alo_data(metropolisSmallFile, "metropolis",
-                                local_temperatures,
                                 data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(metropolisSmallFile, data, T);
@@ -118,7 +117,6 @@ int main(int argc, char** argv)
                         J, h, k, algo::ds::metropolis_adaptive);
         if(i == 1){
             data::store_alo_data(metropolisAdaptFile, "adaptive metropolis",
-                                local_temperatures,
                                 data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(metropolisAdaptFile, data, T);
@@ -139,7 +137,6 @@ int main(int argc, char** argv)
                         J, h, k, algo::ds::wolff_);
         if(i == 1){
             data::store_alo_data(wolffFile, "wolff",
-                                local_temperatures,
                                 data, T, J, h, k, Ns, N_met, Ls);
         } else{
             data::append_algo_data(wolffFile, data, T);

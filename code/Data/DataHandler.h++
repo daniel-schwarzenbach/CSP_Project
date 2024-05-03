@@ -34,10 +34,15 @@ namespace data
     template <uint I>
     bool store_data(const StaticArray<Array<flt>, I> &data,
                     const string &filename);
+
+    bool append_line_in_file(string const& filename, 
+            string const& data, u64 const& line);
+
+    bool append_lines_in_file(string const& filename, 
+            Array<string> const& datas, Array<u64> const& lines);
                     
     bool store_alo_data(const string& filename, 
-                        string const& algoname,
-                        Array<flt>& temperatures, 
+                        string const& algoname, 
                         const Array2D<flt>& data, 
                         flt const& T, flt const& J, 
                         Spin const& h, Spin const& k,
