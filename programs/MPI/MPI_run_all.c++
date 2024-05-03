@@ -9,6 +9,8 @@
 #include <Metropolis/metropolis.h++>
 #include <mpi.h>
 
+//string get_filename(Spin h, Spin k, int Lx, int Ly, int Lz, float J,)
+
 void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int64_t Nwolff, int64_t Nmet, int Ns, float Time){
     //      METROPOLIS
     const uint seed = 42;
@@ -16,7 +18,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     int number_of_steps_met = round(Nmet/Ns);
     int number_of_steps_wolff = round(Nwolff/Ns);
 
-    std::string filename_metro = "Metropolis, Lattice Size " + to_string(Lx) + "x" + to_string(Ly) + "x" + to_string(Lz) + ", h_z " + to_string(h(2)) + ", k_z " + to_string(k(2)) + ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
+    std::string filename_metro = "Metropolis__Lattice Size_" + to_string(Lx) + "x" + to_string(Ly) + "x" + to_str(Lz) + "__hz_" + to_str(h(2)) + "__kz_" + to_str(k(2)) + "_T_" ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
 
 
     std::ofstream outFile(filename_metro);
@@ -272,7 +274,12 @@ int main(int argc, char** argv)
     int size;
     MPI_Comm_size(comm, &size);
     Array<flt> local_temperatures = split_array(temperatures, rank, size);
-    cout << local_temperatures.size() << " out of " << temperatures.size() <<endl
+    cout << rank <<" is running "<< local_temperatures.size() 
+         << " out of " << temperatures.size() <<endl;
+    if (size == 1){
+        cerr << ERROR << "no parallel execution" << endl;
+        return 0;
+    }
 
     simulation(local_temperatures, h, k, Lx, Ly, Lz, J, N_wolff, N_met, Ns, Time);
     MPI_Finalize();

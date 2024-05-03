@@ -94,7 +94,8 @@
         "charconv": "cpp",
         "future": "cpp",
         "ios": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "span": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "cmake.configureOnOpen": true,
