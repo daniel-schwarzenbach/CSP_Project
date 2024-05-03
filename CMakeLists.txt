@@ -40,6 +40,7 @@ if (OPENMP_FOUND)
 endif()
 
 
+###################################### MPI 
 option(MPI "Use MPI" OFF)
 if(MPI AND NOT IPPL)
     message(STATUS "MPI option is set to ${MPI}")
@@ -75,47 +76,9 @@ if(MPI AND NOT IPPL)
     # link libraries
     target_link_libraries(HeisenbergMPI ${LIBRARIES})
     # target_link_libraries(IpplTest ${LIBRARIES})
-
-else()# without MPI
-
-    # google-tests
-    add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
-    set_target_properties(Test_Lattice PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
-    )
-    add_executable(Test_Algorithm ${SRC_FILES} ./programs/gtests/test-algorithm.c++)
-    set_target_properties(Test_Algorithm PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
-    )
-
-    # get all libraries
-    set(LIBRARIES
-    dl
-    matplot
-    Eigen3::Eigen
-    )
-
-    # google test stuff
-    include(FetchContent)
-    FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-    )
-
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-    FetchContent_MakeAvailable(googletest)
-
-    include(GoogleTest)
-    gtest_discover_tests(Test_Lattice)
-    gtest_discover_tests(Test_Algorithm)
-
-    # link libraries for test
-    target_link_libraries(Test_Lattice ${LIBRARIES} gtest_main)
-    target_link_libraries(Test_Algorithm ${LIBRARIES} gtest_main)
-
 endif()
+
+
 
 
 # # IPPL if it is aked for
@@ -211,6 +174,47 @@ endif()
 #     gtest_discover_tests(Test_Algorithm)
 
 # endif()
+
+if(Not MPI  AND Not IPPL)# without MPI
+
+    # google-tests
+    add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
+    set_target_properties(Test_Lattice PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
+    )
+    add_executable(Test_Algorithm ${SRC_FILES} ./programs/gtests/test-algorithm.c++)
+    set_target_properties(Test_Algorithm PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests"
+    )
+
+    # get all libraries
+    set(LIBRARIES
+    dl
+    matplot
+    Eigen3::Eigen
+    )
+
+    # google test stuff
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    )
+
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(googletest)
+
+    include(GoogleTest)
+    gtest_discover_tests(Test_Lattice)
+    gtest_discover_tests(Test_Algorithm)
+
+    # link libraries for test
+    target_link_libraries(Test_Lattice ${LIBRARIES} gtest_main)
+    target_link_libraries(Test_Algorithm ${LIBRARIES} gtest_main)
+
+endif()
 
 add_definitions(-DDEBUG)
 
