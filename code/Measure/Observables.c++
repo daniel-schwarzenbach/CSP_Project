@@ -60,7 +60,8 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
     If we have open (o) boundary conditions, then bond_factor = 1 and 
     we only sum over all internal bonds.
 
-    The magnetic interaction energy is not affected by the boundary conditions.
+    The magnetic interaction energy is not affected by the boundary 
+    conditions.
     */
 
     uint Lx = lattice.Lx();
@@ -69,8 +70,8 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
     uint sizeX = Lx;
     uint sizeY = Ly;
     uint sizeZ = Lz;
-    // sum over all bonds parallel to x-direction
-    #pragma omp parallel for reduction(+: spin_interaction_energy)
+// sum over all bonds parallel to x-direction
+#pragma omp parallel for reduction(+ : spin_interaction_energy)
     for (int x = 0; x < sizeX; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -111,34 +112,6 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
         }
     }
 
-    // sum over spins to calculate the energy contribution from the 
-    // anisotropy
-    #pragma omp parallel for reduction(+: anisotropy_energy)
-    for (int x = 0; x < Lx; x++)
-    {
-        for (int y = 0; y < Ly; y++)
-        {
-            for (int z = 0; z < Lz; z++)
-            {
-                anisotropy_energy += pow(k_vec | lattice(x, y, z), 2);
-            }
-        }
-    }
-
-    // sum over spins to calculate the energy contribution from the 
-    // anisotropy
-    #pragma omp parallel for reduction(+: anisotropy_energy)
-    for (int x = 0; x < Lx; x++)
-    {
-        for (int y = 0; y < Ly; y++)
-        {
-            for (int z = 0; z < Lz; z++)
-            {
-                anisotropy_energy += pow(k_vec | lattice(x, y, z), 2);
-            }
-        }
-    }
-
 // sum over spins to calculate the interaction with the magnetic field
 #pragma omp parallel for reduction(+ : mag_interaction_energy)
     for (int x = 0; x < Lx; x++)
@@ -152,8 +125,20 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
         }
     }
 
+#pragma omp parallel for reduction(+ : mag_interaction_energy)
+    for (int x = 0; x < Lx; x++)
+    {
+        for (int y = 0; y < Ly; y++)
+        {
+            for (int z = 0; z < Lz; z++)
+            {
+                anisotropy_energy +=pow (k_vec | lattice(x, y, z),2);
+            }
+        }
+    }
 
-    return -J * spin_interaction_energy - mag_interaction_energy - anisotropy_energy;
+    return (-J * spin_interaction_energy - mag_interaction_energy - 
+            anisotropy_energy);
 }
 
 flt measure::get_scalar_average(Lattice const &lattice, 

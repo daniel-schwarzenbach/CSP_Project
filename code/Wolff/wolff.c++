@@ -91,10 +91,10 @@ int wolf_algorithm(Lattice& lattice, flt beta){
 
         if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy+1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy-1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy-1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz+1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][cy][(cz-1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
     }
 
