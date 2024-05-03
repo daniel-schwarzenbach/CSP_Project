@@ -30,10 +30,6 @@ bool metropolis(Lattice &lattice,
                 int64_t maxSteps, Spin h,
                 Spin k,
                 MoveType moveType) {
-    // Initialize random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0.0, 1.0);
     // Start time and set step counter to 0
     uint step_count = 0;
     TimeKeeper watch;
@@ -69,8 +65,7 @@ bool metropolis(Lattice &lattice,
                                         newSpin, J, h, k);
  
         if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta))
-        {                   // Boltzmann constant k is
-                            // normalized with interaction strength J in this implementation
+        {                  
             spin = newSpin; // Accept the new configuration
         }
 
@@ -79,8 +74,6 @@ bool metropolis(Lattice &lattice,
         {
             break; // Stop simulation if maximum time reached
         }
-        // Increase step counter
-        ++step_count;
     }
     return true;
 }
