@@ -69,7 +69,7 @@ bool adaptive_metropolis(Lattice &lattice, F64 T, F64 J, F64 maxTime,
             // steps and the proposed steps.
             // The new sigma is then calculated by multiplying the
             // initial value with f = 0.5 / (1 - R).
-            // To avoid division by zero in the first steps we add a
+            // To avoid division by zero in the first steps, we add a
             //small number to the denominator.
 
             // Increase counter of accepted steps

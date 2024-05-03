@@ -70,15 +70,20 @@ SpinVector SpinVector::get_random()
         std::cos(theta);
     return s;
 }
+// Trial moves
 
+// Spin flip: reflects spin across origin
 void SpinVector::spin_flip()
 {
     *this *= -1;
 }
+// Random step: generate random trial vector
 void SpinVector::random_move()
 {
     *this = SpinVector::get_random();
 }
+// Small step: generate random vector on the sphere within a cone
+// specified by an opening angle
 void SpinVector::small_step_move(F64 openingAngle)
 {
     F64 theta = rng::rand_f64()*openingAngle;
@@ -93,7 +98,8 @@ void SpinVector::small_step_move(F64 openingAngle)
             northPole, *this);
     *this = rotationToOriginal * randomPole;
 }
-
+// Adaptive step: add random gaussian vector multiplied by the adaptive 
+//factor sigma to initial step and normalize
 void SpinVector::adaptive_step(F64 sigma)
 {
     F64 dx = rng::rand_gaussian();
