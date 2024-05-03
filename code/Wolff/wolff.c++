@@ -123,10 +123,10 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, u64 MaxSteps){
     measure::Timer watch;
 
     Array<int> clusters;
-    uint nRuns = 0;
+    u64 nRuns = 0;
 
     //Run MaxSteps wolff steps or until the maximal time has been reached
-    for (uint i = 0; i <= MaxSteps; ++i){
+    for (u64 i = 0; i <= MaxSteps; ++i){
         uint clusterSize = wolf_algorithm(lattice, beta);
 
         clusters.push_back(clusterSize);

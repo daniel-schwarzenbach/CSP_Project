@@ -27,7 +27,7 @@ bool metropolis_omp(Lattice &lattice,
                     flt const& T /*temperature*/,
                     flt const& J /*interaction Strength*/,
                     flt const& maxTimeSeconds,
-                    uint const& maxSteps,
+                    u64 const& maxSteps,
                     Spin const& h,
                     Spin const& k,
                     MoveType const& moveType)
@@ -36,7 +36,7 @@ bool metropolis_omp(Lattice &lattice,
 #pragma omp parallel
     {
 
-        uint numSteps = ceil(flt(maxSteps) / 
+        u64 numSteps = ceil(flt(maxSteps) / 
                         flt(omp_get_num_threads()));
 
         flt maxFactor = 100;
@@ -48,7 +48,7 @@ bool metropolis_omp(Lattice &lattice,
         uint Lz = lattice.Lz();
         flt beta = Beta(T);
         watch.start();
-        for (uint step = 0; step < numSteps; ++step)
+        for (u64 step = 0; step < numSteps; ++step)
         {
             // Choose a random lattice site
             int x = rng::rand_int_range(0, Lx);
