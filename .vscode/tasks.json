@@ -87,7 +87,55 @@
             "options" :{
                 "cwd": "${workspaceFolder}/build"
             },
-        }
+        },
+        {
+            "type": "shell",
+            "label": "build-mpi",
+
+            "linux" :{
+                "command": "${workspaceFolder}/build-unix-mpi.sh"
+            },
+            "osx" :{
+                "command": "${workspaceFolder}/build-unix-mpi.sh"
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "options" :{
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
+            "label": "build-mpi-euler",
+
+            "linux" :{
+                "command": "${workspaceFolder}/build-euler-mpi.sh"
+            },
+            "osx" :{
+                "command": "${workspaceFolder}/build-euler-mpi.sh"
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "options" :{
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher":[
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
     ],
     "version": "2.0.0"
 }

@@ -14,7 +14,7 @@ int main(int mainArgCount, char** mainArgs){
             << endl;
 
     const uint seed = 42;
-    Lattice lattice(32,16,16, seed);
+    Lattice lattice(32,16,16);
     cout << "lattice(1,1,1) = " << lattice(1,1,1) << endl;
     cout << "lattice(0,0,0) = " << lattice(0,0,0) << endl;
     cout << "lattice(-1,0,0) = " << lattice(-1,0,0) << endl;

@@ -25,7 +25,7 @@ Array2D<flt> algo::dt::test_algorithm(
         Time.push_back(t_elapsed);
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
-        E.push_back(abs(measure::get_energy(lattice)));
+        E.push_back(measure::get_energy(lattice));
         measure::Timer watch; watch.start();
         algo(lattice, dt, T, J);
         watch.stop();
@@ -47,6 +47,8 @@ Array2D<flt> algo::ds::test_algorithm(
 {
     Vector3 z = {0,0,1};
     uint maxSize = ceil(flt(numSteps) / flt(ds));
+    Array<flt> Time(0);
+    Time.reserve(0);
     Array<flt> Step(0);
     Step.reserve(maxSize);
     Array<flt> M(0);
@@ -58,6 +60,7 @@ Array2D<flt> algo::ds::test_algorithm(
     measure::LoadingBar lbar(60);
     // not zero
     flt step = 0;
+    flt t_elapsed = 0;
     while (step < numSteps)
     {
         lbar.update(step / numSteps * 100.0);
@@ -66,10 +69,11 @@ Array2D<flt> algo::ds::test_algorithm(
         Step.push_back(step);
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
-        E.push_back(abs(measure::get_energy(lattice)));
-
+        E.push_back(measure::get_energy(lattice));
+        measure::Timer timer; timer.start();
         algo(lattice, ds, T, J);
-
+        timer.stop();
+        t_elapsed += timer.time();
         step += ds;
     }
 
@@ -77,6 +81,6 @@ Array2D<flt> algo::ds::test_algorithm(
     Vector3 magnVec = measure::get_magnetization(lattice);
     M.push_back(magnVec.norm());
     M_z.push_back(magnVec | z);
-    E.push_back(abs(measure::get_energy(lattice)));
+    E.push_back(measure::get_energy(lattice));
     return {Step, M, M_z, E};
 }

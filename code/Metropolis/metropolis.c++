@@ -27,18 +27,18 @@ bool metropolis(Lattice &lattice,
                 flt const& T /*temperature*/,
                 flt const& J /*interaction Strength*/,
                 flt const& maxTimeSeconds,
-                uint const& maxSteps,
+                u64 const& maxSteps,
                 Spin const& h,
                 Spin const& k,
                 MoveType const& moveType) {
     // Start time and set step counter to 0
-    uint step_count = 0;
+    u64 step_count = 0;
     measure::Timer watch;
     flt beta = Beta(T); 
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    for(uint step = 0; step < maxSteps; ++step){
+    for(u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rng::rand_int_range(0, lattice.Lx());
         int y = rng::rand_int_range(0, lattice.Ly());
@@ -73,7 +73,6 @@ bool metropolis(Lattice &lattice,
         if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)){
             spin = newSpin;
         }
-
         // Check if maximum time has been reached
         if (watch.time() >= maxTimeSeconds)
         {

@@ -17,9 +17,10 @@
 // element of the algorithm is the factor sigma that multiplies the
 // Gaussian distributed vector, which takes over the role of the opening
 // angle in the small step move. This factor is changed after each step,
-// depending on the acceptance rate in the previous step, to reach an
-// optimal acceptance rate of 50%. A more detailed description of
-// the algorithm can be found in the report.
+// depending on the acceptance rate, to reach an optimal acceptance rate 
+// of 50%. A more detailed description of the algorithm can be found 
+// in the report.
+
 
 // Input:
 //      - reference to the lattice
@@ -38,7 +39,7 @@ bool adaptive_metropolis(   Lattice &lattice,
                             flt const& T /*temperature*/,
                             flt const& J /*interaction Strength*/,
                             flt const& maxTimeSeconds,
-                            uint const& maxSteps,
+                            u64 const& maxSteps,
                             Spin const& h,
                             Spin const& k,
                             flt const& maxFactor){
@@ -50,8 +51,7 @@ bool adaptive_metropolis(   Lattice &lattice,
     int accepted_count = 0;
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    for (uint step = 0; step < maxSteps; ++step)
-    {
+    for(u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -66,23 +66,22 @@ bool adaptive_metropolis(   Lattice &lattice,
         // Calculate energy difference
         flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin, 
                                         newSpin, J, h, k);
-        // Boltzmann constant k is normalized with interaction strength
-        // J in this implementation
         // Acceptance condition
         if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)) {
             // Accept the new configuration
             spin = newSpin;
             // Update the factor sigma based on the acceptance rate R:
-            // The acceptance rate is given by: 1 / # proposed_count
+            // The acceptance rate is given by the ratio of the accepted
+            // steps and the proposed steps.
             // The new sigma is then calculated by multiplying the
             // initial value with f = 0.5 / (1 - R).
-            // To avoid division by zero we add a small number to the
-            // denominator.
+            // To avoid division by zero in the first steps we add a
+            //small number to the denominator.
 
             // Increase counter of accepted steps
             ++accepted_count;
             // Update acceptance rate
-            flt R = accepted_count/(step+1.0);
+            flt R = flt(accepted_count)/flt(step+1.0);
             // Calculate update factor
             flt f = 0.5 / (1.0 - R + 1e-18);
             // Update sigma

@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt dt = 0.001;
+const flt dt = 1;
 // end Time
-const flt t_end = 2.0;
+const flt t_end = 120.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -23,7 +23,10 @@ int main(int mainArgCount, char **mainArgs)
     data::make_folder("plots");
     data::make_folder("data");
     Lattice lattice(L, L, L);
-    for (flt T = 0.1; T <= 2; T += 0.1)
+    Array<flt> Ts = 
+    {0.001, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
+    3.0, 4.0, 5.0, 10, 100};
+    for (flt T : Ts)
     {
         cout << "running for T = " << T << endl;
 
@@ -35,7 +38,7 @@ int main(int mainArgCount, char **mainArgs)
                 algo::dt::test_algorithm(lattice, dt, t_end, T,
                 J, algo::dt::metropolis_adaptive_omp);
         data::store_data(metro_omp_adapt,
-                            "data/metro_adapt_" + to_str(T) + ".dat");
+                        "data/metro_adapt/T_" + to_str(T) + ".dat");
 
         //              --- adaptive step metropolis
         cout << "running adaptive step metropolis" << endl;
@@ -45,7 +48,7 @@ int main(int mainArgCount, char **mainArgs)
                 algo::dt::test_algorithm(lattice, dt, t_end, T,
                 J, algo::dt::metropolis_adaptive);
         data::store_data(metro_adapt,
-                            "data/metro_adapt_" + to_str(T) + ".dat");
+                            "data/metro_adapt/T_" + to_str(T) + ".dat");
 
         //              --- small step metropolis
         cout << "running small step metropolis" << endl;
@@ -55,7 +58,7 @@ int main(int mainArgCount, char **mainArgs)
                 lattice, dt, t_end, T, J, 
                 algo::dt::metropolis_smallStep);
         data::store_data(metro_smst,
-                            "data/metro_smst_" + to_str(T) + ".dat");
+                            "data/metro_smst/T_" + to_str(T) + ".dat");
 
         //              --- random step metropolis
         cout << "running random step metropolis" << endl;
@@ -64,7 +67,7 @@ int main(int mainArgCount, char **mainArgs)
         Array2D<flt> metro_rndm = algo::dt::test_algorithm(
             lattice, dt, t_end, T, J,algo::dt::metropolis_random);
         data::store_data(metro_rndm,
-                            "data/metro_rndm_" + to_str(T) + ".dat");
+                            "data/metro_rndm/T_" + to_str(T) + ".dat");
 
         //              --- wolff
         cout << "running wolff" << endl;
@@ -73,7 +76,7 @@ int main(int mainArgCount, char **mainArgs)
         Array2D<flt> wolff_data = algo::dt::test_algorithm(
             lattice, dt, t_end, T, J, algo::dt::wolff_);
         data::store_data(wolff_data,
-                            "data/wolff_" + to_str(T) + ".dat");
+                            "data/wolff/T_" + to_str(T) + ".dat");
 
         //              --- wolff omp
         cout << "running wolff omp" << endl;
@@ -82,7 +85,7 @@ int main(int mainArgCount, char **mainArgs)
         Array2D<flt> wolff_omp_data = algo::dt::test_algorithm(
             lattice, dt, t_end, T, J, algo::dt::wolff_omp_);
         data::store_data(wolff_data,
-                            "data/wolff_" + to_str(T) + ".dat");
+                            "data/wolff/T_" + to_str(T) + ".dat");
 
         //              --- plot data
 
@@ -106,9 +109,9 @@ int main(int mainArgCount, char **mainArgs)
             
             l->location(plt::legend::general_alignment::bottomright);
             plt::xlabel("Time in s");
-            plt::ylabel("Energy");
+            plt::ylabel("Magnetistation");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/magnet_" + to_str(T) + ".png");
+            plt::save("plots/magnet/T_" + to_str(T) + ".png");
             plt::hold(false);
         }
 
@@ -134,7 +137,7 @@ int main(int mainArgCount, char **mainArgs)
             plt::xlabel("Time in s");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/energy_" + to_str(T) + ".png");
+            plt::save("plots/energy/T_" + to_str(T) + ".png");
             plt::hold(false);
         }
     }
