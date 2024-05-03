@@ -26,7 +26,7 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& of, std::vector<d
 //  Inputs: array of temperatures, h, k, 
 //  Output: void, prints results to file
 
-void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int Nmax, int Ns, float Time){
+void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int64_t Nmax, int Ns, float Time){
     //      METROPOLIS
     const uint seed = 42;
     rng::set_seed(seed);
@@ -38,9 +38,15 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     std::ofstream outFile(filename_metro);
     if (outFile.is_open()) {
         // Write output data to file
-        outFile << "Metropolis" << endl << "Lattice = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
+        outFile << filename_metro << endl << "Metropolis" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
         << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
-        for (float temp: temperatures){outFile << temp << " ";}
+        // Loop over the vector with a counter
+        for (size_t i = 0; i < temperatures.size(); ++i) {
+            outFile << temperatures[i];
+            if (i+1 != temperatures.size()){
+                outFile << ",";
+            }
+        }
         outFile << endl << "====" << endl;
         // Write additional simulation results if needed
         cout << "Output saved to " << filename_metro << endl;
@@ -80,6 +86,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     outFile.close();
 
+    
     //        WOLFF
 
     std::string filename_wolff = "Wolff, Lattice Size " + to_string(Lx) + "x" + to_string(Ly) + "x" + to_string(Lz) + ", h_z " + to_string(h(2)) + ", k_z " + to_string(k(2)) + ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
@@ -88,10 +95,14 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     std::ofstream outFile1(filename_wolff);
     if (outFile1.is_open()) {
         // Write output data to file
-        outFile1 << "Wolff" << endl << "Lattice = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
+        outFile1 << filename_wolff << endl << "Wolff" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
         << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
-        for (float temp: temperatures){outFile1 << temp << " ";}
-        outFile1 << endl << "====" << endl;
+        for (size_t i = 0; i < temperatures.size(); ++i) {
+            outFile1 << temperatures[i];
+            if (i+1 != temperatures.size()){
+                outFile1 << ",";
+            }
+        }
         // Write additional simulation results if needed
         cout << "Output saved to " << filename_wolff << endl;
     } 
@@ -130,7 +141,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     outFile1.close();
 
- 
+
     //        ADAPTIVE METROPOLIs
 
     std::string filename_adametro = "Adaptive Metropolis, Lattice Size " + to_string(Lx) + "x" + to_string(Ly) + "x" + to_string(Lz) + ", h_z " + to_string(h(2)) + ", k_z " + to_string(k(2)) + ".txt"; //Create .txt file with name "mag_and_energy_T.txt"
@@ -139,10 +150,14 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     std::ofstream outFile2(filename_adametro);
     if (outFile2.is_open()) {
         // Write output data to file
-        outFile2 << "Adaptive Metropolis" << endl << "Lattice = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
+        outFile2 << filename_adametro<< endl << "Adaptive Metropolis" << endl << "L = " <<  Lx << "," << Ly << "," << Lz << endl << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
         << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl << "Ns = " << Ns << endl << "Nmax = " << Nmax << endl << "No_of_datapoints = " << number_of_steps << endl;
-        for (float temp: temperatures){outFile2 << temp << " ";}
-        outFile2 << endl << "====" << endl;
+        for (size_t i = 0; i < temperatures.size(); ++i) {
+            outFile2 << temperatures[i];
+            if (i+1 != temperatures.size()){
+                outFile2 << ",";
+            }
+        }
         // Write additional simulation results if needed
         cout << "Output saved to " << filename_adametro << endl;
     } 
@@ -191,8 +206,8 @@ F64 Time = 100000.0;
 Spin h = Spin(0.0,0.0,0.0);
 Spin k = Spin(0.0,0.0,0.0);
 //Define maximal number of steps, step width and number of iterations 
-int Nmax = 1e5;
-int Ns = 100;
+int64_t Nmax = 1e7;
+int Ns = 1e2;
 int number_of_steps = round(Nmax/Ns);
 
 // lattice size
@@ -200,6 +215,8 @@ int L = 8;
 int Lx = 8;
 int Ly = 8;
 int Lz = 8;
+std::vector<double> temperatures = {0.01};
+/*
 std::vector<double> temperatures = {
         1.00000000e-02, 5.06122449e-02, 9.12244898e-02, 1.31836735e-01,
         1.72448980e-01, 2.13061224e-01, 2.53673469e-01, 2.94285714e-01,
@@ -227,6 +244,8 @@ std::vector<double> temperatures = {
         7.12708333e+02, 7.53750000e+02, 7.94791667e+02, 8.35833333e+02,
         8.76875000e+02, 9.17916667e+02, 9.58958333e+02, 1.00000000e+03
     };
+*/
+
 
 int main() {
     simulation(temperatures, h, k, Lx, Ly, Lz, J, Nmax, Ns, Time);
