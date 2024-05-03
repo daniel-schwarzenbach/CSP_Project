@@ -103,6 +103,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
                 outFile1 << ",";
             }
         }
+        outFile1 << endl << "====" << endl;
         // Write additional simulation results if needed
         cout << "Output saved to " << filename_wolff << endl;
     } 
@@ -158,6 +159,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
                 outFile2 << ",";
             }
         }
+        outFile2 << endl << "====" << endl;
         // Write additional simulation results if needed
         cout << "Output saved to " << filename_adametro << endl;
     } 
@@ -206,7 +208,7 @@ F64 Time = 100000.0;
 Spin h = Spin(0.0,0.0,0.0);
 Spin k = Spin(0.0,0.0,0.0);
 //Define maximal number of steps, step width and number of iterations 
-int64_t Nmax = 1e7;
+int64_t Nmax = 1e4;
 int Ns = 1e2;
 int number_of_steps = round(Nmax/Ns);
 
