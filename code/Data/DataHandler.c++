@@ -231,8 +231,7 @@ bool data::append_algo_data(const std::string& filename,
             return false;
         }
     }
-    data::append_lines_in_file(filename, 
-            {(","+to_string(n_data)), (","+to_str(T))}, {7,8});
+    appent_algo_lines(filename, n_data, T);
     // Open the file in append mode
     std::ofstream file(filename, std::ios_base::app);
 
