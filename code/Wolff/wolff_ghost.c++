@@ -55,8 +55,8 @@ bool activate_spin_spin(Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
     Spin spin_x_r = get_flipped_spin(spin_r,spin_x);
     flt Z1 = spin_x_r | spin_y;
     flt Z2 = spin_x | spin_y;
-    F64 active = std::max(0.0, 1 - std::exp(beta *( F64(Z1) - F64(Z2)) ));
-    flt p = rng::rand_f64();
+    flt active = std::max(0.0, 1 - std::exp(beta *( flt(Z1) - flt(Z2)) ));
+    flt p = rng::rand_uniform();
     return (p <= active);
 }
 
@@ -233,16 +233,16 @@ performs the wolff algoritm on the lattice
 */
 
 flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J, 
-                flt const& MaxTime, uint const& MaxSteps, Spin const& h){
+                flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
 
     flt beta = Beta(T);
 
     measure::Timer watch;
 
     Array<int> clusters;
-    uint nRuns = 0;
+    u64 nRuns = 0;
 
-    for (uint i = 0; i <= MaxSteps; ++i){
+    for (u64 i = 0; i <= MaxSteps; ++i){
         uint clusterSize = wolff_ghost_algorithm(lattice, beta, h);
 
         clusters.push_back(clusterSize);
