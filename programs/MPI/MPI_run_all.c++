@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <Metropolis/metropolis.h++>
-#include <mpi/mpi.h>
+#include <mpi.h>
 
 void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly, int Lz, float J, int64_t Nwolff, int64_t Nmet, int Ns, float Time){
     //      METROPOLIS
@@ -231,8 +231,8 @@ constexpr uint Lz = L;
 constexpr u64 Ns = 1e3;
 
 
-constexpr u64 N_wolff = 1e+6;
-constexpr u64 N_met = 1e+9;
+constexpr u64 N_wolff = 1e+5;
+constexpr u64 N_met = 1e+8;
 // constexpr u64 N_wolff = 1e+9;
 // constexpr u64 N_met = 1e+11;
 
@@ -272,6 +272,7 @@ int main(int argc, char** argv)
     int size;
     MPI_Comm_size(comm, &size);
     Array<flt> local_temperatures = split_array(temperatures, rank, size);
+    cout << local_temperatures.size() << " out of " << temperatures.size() <<endl
 
     simulation(local_temperatures, h, k, Lx, Ly, Lz, J, N_wolff, N_met, Ns, Time);
     MPI_Finalize();
