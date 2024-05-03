@@ -1,47 +1,54 @@
-#include <Base.h++>
-
 #ifndef __LATTICEIPPL_H__
 #define __LATTICEIPPL_H__
 
-#include <Base.h++>
+#include <Heisenberg.h++>
 #include <Ippl.h>
-#include <Spin.h++>
 
 constexpr uint dim = 3;
 constexpr uint numGhostCells = 1;
 
+using VecIppl  = ippl::Vector<u16, dim>;
+constexpr u16 _maxU16_ = 0xff'ff;
+constexpr flt u16factor = _maxU16_;
+
+static Vector3 from_ippl(VecIppl const& v){
+    return Vector3{v[0]/u16factor, v[1]/u16factor, v[2]/u16factor};
+}
+static VecIppl to_ippl(Vector3 const& v){
+    return VecIppl(v[0]*u16factor, v[1]*u16factor, v[2]*u16factor);
+}
+
+using mdrange_type = Kokkos::MDRangePolicy<Kokkos::Rank<3>>;
 /*
 parralel 3D Lattice using ippl
 */
-template <class IpplT>
 class LatticeIppl
 {
 private:
-    // using IpplT = ippl::Vector<U16, dim>;
-    using Mesh = ippl::UniformCartesian<flt, dim>;
-    using Field = ippl::Field<IpplT, dim, Mesh, Mesh::DefaultCentering>;
-    using BareField = ippl::BareField<IpplT, dim>;
-    using BoundryConditions = ippl::BConds<Field, dim>;
+    using Mesh=ippl::UniformCartesian<flt, dim>;
+    using Field=ippl::Field<VecIppl,dim,Mesh,Mesh::DefaultCentering>;
+    using BoundryConditions=ippl::BConds<Field, dim>;
 
+public:
     const ippl::NDIndex<dim> owned;
     ippl::FieldLayout<dim> layout;
     Mesh mesh;
     Field field;
     ippl::BConds<Field, dim> bConds;
 
-    // ippl::BareField<IpplT, 3U>& bareField;
-    typename Field::view_type &view;
+    // ippl::VecIppl<VecIppl, 3U>& bareField;
+    typename Field::view_type& view;
 
 public:
-    inline uint Lx() const
+    inline uint local_Lx() const
     {
         return layout.getLocalNDIndex()[0].length();
     }
-    inline uint Ly() const
+    inline uint local_Ly() const
     {
         return layout.getLocalNDIndex()[1].length();
     }
-    inline uint Lz() const
+    inline uint local_Lz() const
     {
         return layout.getLocalNDIndex()[2].length();
     }
@@ -52,7 +59,7 @@ public:
                  owned,
                  {true, true, true}),
           mesh(owned, 1.0 / double(_Lx), 0),
-          field(mesh, layout, 1),
+          field(mesh, layout, 1), // with one layer of ghost cells
           view(field.getView())
     {
         srand(seed + ippl::Comm->rank());
@@ -63,14 +70,14 @@ public:
     // destructor
     ~LatticeIppl() = default;
     // acess operator const
-    inline IpplT operator()(int x, int y, int z) const
+    inline VecIppl operator()(int x, int y, int z) const
     {
-        return view(x + 1, y + 1, z + 1);
+        return field(x+1,y+1,z+1);
     }
     // acess operator
-    inline IpplT &operator()(int x, int y, int z)
+    inline VecIppl &operator()(int x, int y, int z)
     {
-        return view(x + 1, y + 1, z + 1);
+        return view(x+1,y+1,z+1);
     }
     // changes the boundry conditions
     void set_boundary_conditions(BC bc)
@@ -111,28 +118,18 @@ public:
     inline void parrallel_for(
         function<void(uint, uint, uint)> const &f)
     {
-        Kokkos::parallel_for("lattice", field.getFieldRangePolicy(), f);
+        Kokkos::parallel_for("lattice", field.getFieldRangePolicy(),f);
     }
 
     bool randomize(int seed = 42)
-    {
-        srand(seed + ippl::Comm->rank());
-        for (int x = -1; x < Lz() + 1; ++x)
-        {
-            for (int y = -1; y < Ly() + 1; ++y)
-            {
-                for (int z = -1; z < Lz() + 1; ++z)
-                {
-                    (*this)(x, y, z) = IpplT();
-                }
-            }
-        }
+    {  
+        Kokkos::parallel_for(
+            "Assign field", field.getFieldRangePolicy(),
+            KOKKOS_LAMBDA(const int i, const int j, const int k) {
+                view(i, j, k) = to_ippl(Spin::get_random());
+        });
         return true;
     }
 };
-
-#include <Spin.h++>
-template class LatticeIppl<SpinVector>;
-template class LatticeIppl<SpinCompressed>;
 
 #endif // __LATTICEIPPL_H__

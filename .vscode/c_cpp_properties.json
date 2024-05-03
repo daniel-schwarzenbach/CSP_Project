@@ -9,6 +9,7 @@
                 
                 "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 "${workspaceFolder}/code",
+                "${workspaceFolder}/code_ippl",
                 "${workspaceFolder}/libraries/matplotplusplus/source",
                 "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot",
                 "${workspaceFolder}/libraries/Ippl/build/ippl/src/",
