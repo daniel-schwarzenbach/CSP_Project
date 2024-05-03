@@ -117,7 +117,7 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps){
+flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, u64 MaxSteps){
 
     flt beta = Beta(T);
     measure::Timer watch;
@@ -152,3 +152,4 @@ flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, uint MaxSteps){
 
     return susceptibility;
 }
+
