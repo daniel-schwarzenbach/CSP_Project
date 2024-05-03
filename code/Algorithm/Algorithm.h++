@@ -116,63 +116,71 @@ namespace algo
         / @param T: temperature
         */
         using Algorithm = function<
-            void(Lattice &, uint const &, flt const &, flt const &)>;
+            void(Lattice &, uint const &, flt const &, flt const &,
+            Spin const&, Spin const&)>;
 
         static Algorithm wolff_omp_ =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             wolff_omp(lattice, T, J, _inf_, ds);
         };
 
         static Algorithm metropolis_smallStep_omp =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
-            metropolis_omp(lattice, T, J, _inf_, ds, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis_omp(lattice, T, J, _inf_, ds, h,k,
                            MoveType::SmallStep);
         };
 
         static Algorithm metropolis_adaptive_omp =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             metropolis_omp(lattice, T, J, _inf_, ds, 
-                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            h,k,
                             MoveType::Addaptive);
         };
 
         static Algorithm metropolis_random_omp =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             metropolis_omp(lattice, T, J, _inf_, ds, 
-                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            h,k,
                             MoveType::Random);
         };
 
         static Algorithm metropolis_adaptive =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             adaptive_metropolis(lattice, T, J, _inf_,
-                                ds, Spin{0, 0, 0}, Spin{0, 0, 0},
+                                ds, h,k,
                                 60);
         };
 
         static Algorithm metropolis_smallStep =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
-            metropolis(lattice, T, J, _inf_, ds, Spin{0, 0, 0}, 
-                        Spin{0, 0, 0},
+            metropolis(lattice, T, J, _inf_, ds, h, k,
                         MoveType::SmallStep);
         };
 
         static Algorithm metropolis_random =
-        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             metropolis(lattice, T, J, _inf_, ds, 
-                            Spin{0, 0, 0}, Spin{0, 0, 0},
+                            h, k,
                             MoveType::Random);
         };
 
         static Algorithm wolff_ =
-        [](Lattice &lattice, flt const &ds, flt const &T, flt const &J)
+        [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
+                Spin const& h, Spin const& k)
         {
             wolff(lattice, T, J, _inf_, ds);
         };
@@ -191,7 +199,8 @@ namespace algo
         */
         Array2D<flt> test_algorithm(
             Lattice &lattice,
-            uint const &ds, uint const &numSteps,flt const &T,flt const &J,
+            uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
+            Spin const& h, Spin const& k,
             Algorithm const &algorithmus);
 
     }

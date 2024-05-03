@@ -4,7 +4,7 @@
     funciton for reading and stroring data
 */
 
-#include <Base.h++>
+#include <Heisenberg.h++>
 
 namespace data
 {
@@ -35,13 +35,17 @@ namespace data
     bool store_data(const StaticArray<Array<flt>, I> &data,
                     const string &filename);
                     
-    bool store_alo_data(const std::string& filename, 
+    bool store_alo_data(const string& filename, 
+                        string const& algoname,
                         const Array2D<flt>& data, 
-                        flt const& T);
+                        flt const& T, flt const& J, 
+                        Spin const& h, Spin const& k,
+                        u64 const& Ns, u64 const& Nmax,
+                        Index const& L);
 
 
-    bool append_alo_data(const std::string& filename, 
-                        const Array2D<flt>& newColumns, 
+    bool append_algo_data(const string& filename, 
+                        const Array2D<flt>& data, 
                         flt const& T);
 
     /*

@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <Data/DataHandler.h++>
 
+
 flt data::read_flt(char *in)
 {
     flt valueF64 = 1;
@@ -24,23 +25,43 @@ flt data::read_flt(char *in)
     return valueF64;
 }
 
-bool data::store_alo_data(const std::string& filename, 
+bool data::store_alo_data(const string& filename, 
+                        string const& algoname,
                         const Array2D<flt>& data, 
-                        flt const& T){
-    std::ofstream outfile(filename);
-    assert(data.size);
-
+                        flt const& T, flt const& J, 
+                        Spin const& h, Spin const& k,
+                        u64 const& Ns, u64 const& Nmax,
+                        Index const& L){
+    // check data size!!!
+    if(data.size() != 4){
+        cerr << ERROR << " wrong data size:" << filename << endl;
+        return false;
+    }
+    u64 n_data = data[0].size();
+    for (Array<flt> d : data){
+        if(d.size() != n_data){
+            cerr << ERROR << " wrong data size:" << filename << endl;
+            return false;
+        }
+    }
+    // openfile
+    std::ofstream outfile(filename + to_str(T));
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file:" << filename << endl;
-        return false;
+        return "";
     }
-    outfile << "header1"; outfile << '\n';
-    outfile << "header2"; outfile << '\n';
-    outfile << T << " M " << " Mz " << " E "; outfile << '\n';
+    outfile     << filename << endl 
+                << algoname << endl 
+                << "L = " <<  L[0] << "," << L[1] << ","<< L[2]<< endl 
+                << "h = " << h(0)<< "," << h(1) << "," << h(2) << endl
+                << "k = " << k(0)<< "," << k(1) << "," << k(2) << endl 
+                << "Ns = " << Ns << endl 
+                << "Nmax = " << Nmax << endl 
+                << "No_of_datapoints = " << n_data<< endl;
+    outfile << T << " M " << " Mz " << " E " << endl;
     // Write data to the header
-    uint size = data[0].size();
-    for(uint i = 0; i< size; ++i){
+    for(uint i = 0; i< n_data; ++i){
         for (const auto& col : data) {
             outfile << ' ' << col[i];
             
@@ -50,46 +71,39 @@ bool data::store_alo_data(const std::string& filename,
     return true;
 }
 
-    bool data::append_alo_data(const std::string& filename, 
-                        const Array2D<flt>& newColumns, 
-                        flt const& T) {
-    static constexpr uint headerSize = 2;
-    assert(newColumns.size() == 4);
-    std::ifstream fileIn(filename);
-    std::ofstream fileOut(filename + "tmp");
+bool data::append_algo_data(const std::string& filename, 
+                            const Array2D<flt>& data, 
+                            flt const& T) {
 
-    if (!fileIn.is_open() || !fileOut.is_open()) {
-        std::cerr << "Failed to open the files." << std::endl;
+    // check data size!!!
+    if(data.size() != 4){
+        cerr << ERROR << " wrong data size:" << filename << endl;
         return false;
     }
-
-    std::string line;
-    size_t rowIndex = 0;
-
-    while (getline(fileIn, line)) {
-        fileOut << line;
-        if (rowIndex == headerSize){
-            fileOut << T << " M " << " Mz " << " E ";
+    u64 n_data = data[0].size();
+    for (Array<flt> d : data){
+        if(d.size() != n_data){
+            cerr << ERROR << " wrong data size:" << filename << endl;
+            return false;
         }
-        if(rowIndex > headerSize) // skip header
-            for (const auto& col : newColumns) {
-                if (rowIndex-headerSize-1 < col.size()) {
-                    fileOut << ' ' << col[rowIndex-headerSize-1];
-                } else {
-                    // Handle the case where the new column is shorter than the existing data
-                    fileOut << ' ';
-                }
-            }
-        fileOut << '\n';
-        ++rowIndex;
     }
+    // Open the file in append mode
+    std::ofstream file(filename, std::ios_base::app);
 
-    fileIn.close();
-    fileOut.close();
-
-    // Replace the original file with the temporary file
-    std::remove(filename.c_str());
-    std::rename((filename + "tmp").c_str(), filename.c_str());
+    // Check if the file was opened successfully
+    if (!file.is_open()) {
+        cerr << ERROR << " opening file for appending." << std::endl;
+        return false;
+    }
+    file << to_str(T) << " M " << " Mz " << " E " << endl;
+    // Append data
+    for (uint i = 0; i < n_data; i++)
+        for (uint j = 0; j < 4; j++) {
+            file << data[j][i];
+            file << '\n';
+    }
+    // Close the file
+    file.close();
     return true;
 }
 

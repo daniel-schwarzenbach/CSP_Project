@@ -61,7 +61,7 @@ if(MPI AND NOT IPPL)
 
     # programs
     add_executable(HeisenbergMPI ${SRC_FILES}
-        ./programs/MPI/MPI_run_all.c++)
+        ./programs/MPI/MPI_ds.c++)
     # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
     # lib/

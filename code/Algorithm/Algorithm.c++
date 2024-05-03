@@ -42,8 +42,9 @@ Array2D<flt> algo::dt::test_algorithm(
 
 Array2D<flt> algo::ds::test_algorithm(
     Lattice &lattice,
-    uint const &ds, uint const &numSteps, flt const &T, flt const &J,
-    algo::ds::Algorithm const &algo)
+    uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
+    Spin const& h, Spin const& k,
+    algo::ds::Algorithm const &algorithmus)
 {
     Vector3 z = {0,0,1};
     uint maxSize = ceil(flt(numSteps) / flt(ds));
@@ -59,7 +60,7 @@ Array2D<flt> algo::ds::test_algorithm(
     M_z.reserve(maxSize);
     measure::LoadingBar lbar(60);
     // not zero
-    flt step = 0;
+    u64 step = 0;
     flt t_elapsed = 0;
     while (step < numSteps)
     {
@@ -71,7 +72,7 @@ Array2D<flt> algo::ds::test_algorithm(
         M_z.push_back(magnVec | z);
         E.push_back(measure::get_energy(lattice));
         measure::Timer timer; timer.start();
-        algo(lattice, ds, T, J);
+        algorithmus(lattice, ds, T, J, h, k);
         timer.stop();
         t_elapsed += timer.time();
         step += ds;
