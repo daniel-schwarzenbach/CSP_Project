@@ -115,7 +115,8 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff(Lattice &lattice, flt const& T, flt const& J, flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
+flt wolff(Lattice &lattice, flt const& T, flt const& J, 
+          flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
 
     flt beta = Beta(T);
     measure::Timer watch;

@@ -10,6 +10,17 @@ template <class T>
 using Array3D = Array<Array<Array<T>>>;
 
 
+struct IndexHash {
+    std::size_t operator()(const std::array<int, 3>& index) const {
+        std::size_t seed = 0;
+        std::hash<int> hasher;
+        seed ^= hasher(index[0]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= hasher(index[1]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= hasher(index[2]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        return seed;
+    }
+};
+
 // Generate ghost cell i.e. a random matrix in O(3)
 Matrix3x3 generate_ghost() {
     Eigen::Quaternionf randomQuaternion = Eigen::Quaternionf::UnitRandom();
@@ -73,7 +84,7 @@ bool activate_spin_spin(Spin& spin_x, Spin& spin_x_r, Spin& spin_r, flt beta, Sp
                 active = 1.0 - exp(-dE * beta);
               }
     //F64 active = 1 - exp(std::min(0.0, (beta *( F64(B1) - F64(B2)) )));
-    flt p = rng::rand_f64();
+    flt p = rng::rand_uniform();
     return (p <= active);
 }
 
@@ -202,8 +213,8 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H, Matrix3x3& ghost){
     //Spin H = Spin::get_random(); //Initialize random external magnetic field
 
     // Choose random lattice site as first point of cluster
-    int x = rng::rand_uniform(0,Ly);
-    int y = rng::rand_uniform(0,Ly);
+    int x = rng::rand_int_range(0,Ly);
+    int y = rng::rand_int_range(0,Ly);
     int z = rng::rand_int_range(0,Lz);
     
     //Define spin_x to be flipped, first point of the cluster (random site m_0)
@@ -302,7 +313,8 @@ flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J,
     u64 nRuns = 0;
 
     for (u64 i = 0; i <= MaxSteps; ++i){
-        uint clusterSize = wolff_ghost_algorithm(lattice, beta, h);
+        Matrix3x3 ghost = generate_ghost();
+        uint clusterSize = wolff_ghost_algorithm(lattice, beta, h, ghost);
 
         clusters.push_back(clusterSize);
 
@@ -319,7 +331,7 @@ flt wolff_ghost(Lattice& lattice, flt const& T, flt const& J,
         totalClusterSize += size; 
     }
     
-    flt averageClusterSize = static_cast<F64>(totalClusterSize)/nRuns;
+    flt averageClusterSize = flt(totalClusterSize)/ flt(nRuns);
 
     return averageClusterSize;
 }
