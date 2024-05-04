@@ -83,7 +83,7 @@ namespace algo
         static Algorithm wolff_ =
         [](Lattice &lattice, flt const &dt, flt const &T, flt const &J)
         {
-            wolff(lattice, T, J, dt, _maxUint_);
+            wolff(lattice, T, J, dt, _maxUint_, Spin{0,0,0});
         };
 
         /*
@@ -182,7 +182,7 @@ namespace algo
         [](Lattice &lattice, flt const &ds, flt const &T,flt const &J,
                 Spin const& h, Spin const& k)
         {
-            wolff(lattice, T, J, _inf_, ds);
+            wolff(lattice, T, J, _inf_, ds,h);
         };
 
         /*

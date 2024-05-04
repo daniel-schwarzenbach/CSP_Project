@@ -65,6 +65,7 @@ SpinVector SpinVector::get_random()
         std::cos(theta);
     return s;
 }
+// Trial moves
 
 void SpinVector::spin_flip_step()
 {

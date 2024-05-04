@@ -84,15 +84,13 @@ int wolf_algorithm(Lattice& lattice, flt beta){
         int cy = current[1];
         int cz = current[2];
 
-        //Mark as visited
-        visited[cx][cy][cz] = true;
-
         Spin& spin_x = lattice(cx,cy,cz);
 
+        //Visit neighboring sites
         if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cy+1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cy-1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy-1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cy-1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[cx][cy][(cz+1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[cx][cy][(cz-1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
 
@@ -117,7 +115,7 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff(Lattice &lattice, flt T, flt J, flt MaxTime, u64 MaxSteps){
+flt wolff(Lattice &lattice, flt const& T, flt const& J, flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
 
     flt beta = Beta(T);
     measure::Timer watch;

@@ -15,6 +15,7 @@ Array3D<bool> checked(const int Lx, const int Ly, const int Lz) {
             }
         }
     }
+    
     return visited;
 }
 
