@@ -19,6 +19,7 @@ Array<Array<Array<bool>>> checked(const int Lx, const int Ly, const int Lz) {
             }
         }
     }
+    
     return visited;
 }
 

@@ -57,9 +57,9 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::rand_f64()*Lx;
-    int y = rng::rand_f64()*Ly;
-    int z = rng::rand_f64()*Lz;
+    int x = rng::rand_f64()*(Lx-1);
+    int y = rng::rand_f64()*(Ly-1);
+    int z = rng::rand_f64()*(Lz-1);
     
     //Define spin_x to be flipped, first point of the cluster
     Spin& spin_x = lattice(x,y,z);
@@ -115,7 +115,7 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, u64 MaxSteps){
+F64 wolff(Lattice& lattice, F64 T, F64 J, F64 MaxTime, u64 MaxSteps, Spin h){
 
     F64 beta = Beta(T);
 
