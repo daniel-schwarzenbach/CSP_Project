@@ -79,9 +79,11 @@ int main(int argc, char** argv)
 
 
     //      --- set Filenames
-    metropolisSmallFile = "Metropolis_";
-    metropolisAdaptFile = "MetropolisAdaptive_";
-    wolffFile = "Wolff_";
+    data::make_folder("L8");
+    
+    metropolisSmallFile = "L8/Metropolis_";
+    metropolisAdaptFile = "L8/MetropolisAdaptive_";
+    wolffFile = "L8/Wolff_";
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
 
