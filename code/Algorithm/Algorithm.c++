@@ -71,10 +71,12 @@ Array2D<flt> algo::ds::test_algorithm(
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
         E.push_back(measure::get_energy(lattice));
+        Time.push_back(t_elapsed);
         measure::Timer timer; timer.start();
         algorithmus(lattice, ds, T, J, h, k);
         timer.stop();
         t_elapsed += timer.time();
+        
         step += ds;
     }
 
@@ -83,5 +85,6 @@ Array2D<flt> algo::ds::test_algorithm(
     M.push_back(magnVec.norm());
     M_z.push_back(magnVec | z);
     E.push_back(measure::get_energy(lattice));
-    return {Step, M, M_z, E};
+    Time.push_back(t_elapsed);
+    return {Step, M, M_z, E, Time};
 }

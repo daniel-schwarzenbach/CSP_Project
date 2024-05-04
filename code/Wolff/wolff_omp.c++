@@ -37,9 +37,9 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int sx = rng::rand_uniform() * Lx;
-    int sy = rng::rand_uniform() * Ly;
-    int sz = rng::rand_uniform() * Lz;
+    int sx = rng::rand_int_range(0,Lx);
+    int sy = rng::rand_int_range(0,Ly);
+    int sz = rng::rand_int_range(0,Lz);
 
     // Define spin_x to be flipped, first point of the cluster
     Spin &spin_x = lattice(sx, sy, sz);
@@ -89,7 +89,6 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 // Mark as visited
 #pragma omp critical
             visited.set(current, true);
-
             Array<Index> neighbors = {
                 {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
                 {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};

@@ -69,7 +69,7 @@ bool adaptive_metropolis(   Lattice &lattice,
         // Acceptance condition
         if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta)) {
             // Accept the new configuration
-            spin = newSpin;
+            spin = newSpin.normalized();
             // Update the factor sigma based on the acceptance rate R:
             // The acceptance rate is given by the ratio of the accepted
             // steps and the proposed steps.
