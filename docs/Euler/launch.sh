@@ -4,6 +4,6 @@
 #SBATCH --ntasks=48                  
 #SBATCH --ntasks-per-node=1 
 #SBATCH --error=error.txt
-#SBATCH --time=01:00:00
+#SBATCH --time=04:00:00
 
 mpirun -bind-to core -map-by core -n 48 ../../../build/HeisenbergMPI

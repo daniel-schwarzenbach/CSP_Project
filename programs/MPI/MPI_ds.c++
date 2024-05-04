@@ -17,16 +17,16 @@ constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 
 
-constexpr u64 Ns = 1e+4;
+constexpr u64 Ns = 1e+5;
 
 
-constexpr u64 Nmax_wolff = 1e+6;
-constexpr u64 Nmax_met = 1e+8;
+constexpr u64 Nmax_wolff = 1e+8;
+constexpr u64 Nmax_met = 1e+9;
 // constexpr u64 N_wolff = 1e+9;
 // constexpr u64 N_met = 1e+11;
 
 Array<double> temperatures = 
-{1.00000000e-05, 3.75958333e-03, 7.50916667e-03, 1.12587500e-02
+{/*1.00000000e-05, 3.75958333e-03,*/ 7.50916667e-03, 1.12587500e-02
 , 1.50083333e-02, 1.87579167e-02, 2.25075000e-02, 2.62570833e-02
 , 3.00066667e-02, 3.37562500e-02, 3.75058333e-02, 4.12554167e-02
 , 4.50050000e-02, 4.87545833e-02, 5.25041667e-02, 5.62537500e-02
@@ -50,7 +50,7 @@ Array<double> temperatures =
 , 3.84375000e+02, 4.25416667e+02, 4.66458333e+02, 5.07500000e+02
 , 5.48541667e+02, 5.89583333e+02, 6.30625000e+02, 6.71666667e+02
 , 7.12708333e+02, 7.53750000e+02, 7.94791667e+02, 8.35833333e+02
-, 8.76875000e+02, 9.17916667e+02, 9.58958333e+02, 1.00000000e+03};
+, 8.76875000e+02, 9.17916667e+02 /*,9.58958333e+02, 1.00000000e+03*/};
 
 string metropolisSmallFile;
 string metropolisAdaptFile;
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
 
 
-        //      --- Wolff
+    //      --- Wolff
     // run through all teperatures
     for(uint i = 0; i < local_size; ++i){
         rng::set_seed(Seed);
