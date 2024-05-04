@@ -16,10 +16,10 @@ constexpr Index Ls = {Lx,Ly,Lz};
 
 
 constexpr u64 Ns_met = 1e+4;
-constexpr u64 Ns_wolff = 1e+1;
+constexpr u64 Ns_wolff = 1e+2;
 
 constexpr u64 Nmax_met = 1e+6;
-constexpr u64 Nmax_wolff = 1e+3;
+constexpr u64 Nmax_wolff = 1e+4;
 
 
 int main(int argc, char* argv[])
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
         try {
             // Convert the first argument to a float
             T = data::read_flt(argv[1]);
-            cout << INFO << "T has been set to " << T;
+            cout << INFO << "T has been set to " << T << endl;
         } catch (const std::invalid_argument& e) {
             cerr << ERROR 
                  << "Invalid argument: please enter a valid "
@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
              << "T = 1.0 by default" << endl;
         T = 1;
     }
+    
     cout << rank <<" is running for T = "<<  T
          << " out of " << size << " ranks" << endl;
     // activate Loading bar fore a single core
@@ -79,6 +80,7 @@ int main(int argc, char* argv[])
 
     //      --- Metropolis
     {
+        measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
         rng::set_seed(Seed);
         if(T > 1.3)
@@ -92,12 +94,14 @@ int main(int argc, char* argv[])
                         J, h, k, algo::ds::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
+        cout << "finished metropolis in: " << watch.time() <<endl << endl;
     }
 
 
 
         //      --- Metropolis Adaptive
     {   
+        measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis adaptive ..."<< endl;
         rng::set_seed(Seed);
         if(T > 1.3)
@@ -112,6 +116,7 @@ int main(int argc, char* argv[])
                         J, h, k, algo::ds::metropolis_adaptive,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile + to_string(rank));
+        cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
     }
 
 
@@ -119,6 +124,7 @@ int main(int argc, char* argv[])
     //      --- Wolff
     // run through all teperatures
    {
+        measure::Timer watch; watch.start();
         cout << rank <<" is running wolff ..."<< endl;
         rng::set_seed(Seed);
         if(T > 1.3)
@@ -132,6 +138,7 @@ int main(int argc, char* argv[])
                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
                         J, h, k, algo::ds::wolff_, loading_bar);
         data::store_data(data,wolffFile + to_string(rank));
+        cout << "finished wolff in: " << watch.time() << endl << endl;
     }
     cout << rank << " has finished the calculations" << endl;
     MPI_Finalize();
