@@ -16,10 +16,10 @@ constexpr Index Ls = {Lx,Ly,Lz};
 
 
 constexpr u64 Ns_met = 1e+4;
-constexpr u64 Ns_wolff = 1e+3;
+constexpr u64 Ns_wolff = 1e+1;
 
-constexpr u64 Nmax_met = 1e+7;
-constexpr u64 Nmax_wolff = 1e+6;
+constexpr u64 Nmax_met = 1e+6;
+constexpr u64 Nmax_wolff = 1e+3;
 
 
 int main(int argc, char* argv[])
