@@ -21,6 +21,10 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/HeisenbergMPI",
             "cwd": "${workspaceFolder}/build",
+            "args": [
+                "2.0",
+                "3.0"
+            ]
         },
         {
             "preLaunchTask": "build-mpi-euler",

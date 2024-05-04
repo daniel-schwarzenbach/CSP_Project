@@ -33,11 +33,12 @@ int main(int argc, char* argv[])
 
     const uint Seed = 42 + rank;
     // read input
-    flt T = 0;
+    flt T = -1;
     if (argc > 1) {
         try {
             // Convert the first argument to a float
-            flt T = std::stof(argv[1]);
+            T = data::read_flt(argv[1]);
+            cout << INFO << "T has been set to " << T;
         } catch (const std::invalid_argument& e) {
             cerr << ERROR 
                  << "Invalid argument: please enter a valid "
@@ -50,8 +51,8 @@ int main(int argc, char* argv[])
             << endl;
     } 
     // set T to 1
-    if(T==0){
-        cerr << ERROR << "no imput was given" << endl
+    if(T < 0){
+        cerr << ERROR << "no imput could been read!" << endl
              << "T = 1.0 by default" << endl;
         T = 1;
     }
