@@ -75,6 +75,7 @@ public:
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
+    bool set_constant(T const& value);
 
     static Lattice3d constant_lattice(uint Lx, uint Ly, uint Lz,
                                       T const &value);
@@ -130,6 +131,7 @@ public:
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
+    bool set_constant(bool const& value);
 
     static Lattice3d constant_lattice(uint Lx, uint Ly, uint Lz,
                                       bool const &value);

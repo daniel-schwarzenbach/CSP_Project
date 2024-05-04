@@ -5,7 +5,6 @@ namespace measure{
 // init loading bar with 0%
 LoadingBar::LoadingBar(uint width) : barWidth(width)
 {
-    this->update(0.0);
 }
 // set loadin bar in percent
 void LoadingBar::update(flt percent)

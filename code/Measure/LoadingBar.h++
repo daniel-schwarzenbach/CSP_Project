@@ -17,6 +17,8 @@ private:
     flt progress = 0.0;
 
 public:
+    //
+    LoadingBar() = default;
     // init loading bar with 0%
     LoadingBar(uint barWith);
     // set loadin bar in percent

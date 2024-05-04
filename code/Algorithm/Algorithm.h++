@@ -101,7 +101,7 @@ namespace algo
         Array2D<flt> test_algorithm(
             Lattice &lattice,
             flt const &dt, flt const &t_end,flt const &T,flt const &J,
-            Algorithm const &algorithmus);
+            Algorithm const &algorithmus, bool loadingbar = true);
 
     }
 
@@ -201,7 +201,7 @@ namespace algo
             Lattice &lattice,
             uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
             Spin const& h, Spin const& k,
-            Algorithm const &algorithmus);
+            Algorithm const &algorithmus, bool loadingbar = true);
 
     }
 }

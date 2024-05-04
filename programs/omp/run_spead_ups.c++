@@ -10,19 +10,18 @@ uint constexpr Seed = 42;
 const Spin h = Spin{0.0,0.0,0.0};
 const Spin k = Spin{0.0,0.0,0.0};
 
-constexpr uint L = 8;
+constexpr uint L = 32;
 constexpr uint Lx = L;
 constexpr uint Ly = L; 
 constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 
 
-constexpr u64 Ns_met = 1e+5;
-constexpr u64 Ns_wolff = 1e+3;
+constexpr u64 Ns = 1e+3;
 
 
-constexpr u64 Nmax_wolff = 1e+7;
-constexpr u64 Nmax_met = 1e+9;
+constexpr u64 Nmax_wolff = 1e+5;
+constexpr u64 Nmax_met = 1e+7;
 // constexpr u64 N_wolff = 1e+9;
 // constexpr u64 N_met = 1e+11;
 
@@ -53,96 +52,54 @@ Array<double> temperatures =
 , 7.12708333e+02, 7.53750000e+02, 7.94791667e+02, 8.35833333e+02
 , 8.76875000e+02, 9.17916667e+02 /*,9.58958333e+02, 1.00000000e+03*/};
 
+
+flt T = 0.1;
+
 string metropolisSmallFile;
 string metropolisAdaptFile;
 string wolffFile;
 
 int main(int argc, char** argv)
 {
-    MPI_Init(&argc, &argv);
-    MPI_Comm comm = MPI_COMM_WORLD;
-    int rank;
-    MPI_Comm_rank(comm, &rank);
-    int size;
-    MPI_Comm_size(comm, &size);
-    Array<flt> local_temperatures 
-            = data::split_array(temperatures, rank, size);
-    uint local_size = local_temperatures.size();
-    cout << rank <<" is running "<< local_temperatures.size() 
-         << " out of " << temperatures.size() << endl;
     
-    // activate Loading bar fore a single core
-    bool loading_bar = false;
-    if (size == 1){
-        loading_bar = true;
-    }
-
-
-    //      --- set Filenames
-    metropolisSmallFile = "Metropolis_";
-    metropolisAdaptFile = "MetropolisAdaptive_";
-    wolffFile = "Wolff_";
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
 
 
-
-    //      --- Metropolis
+    //      --- Metropolis Adaptive
     // run through all teperatures
-    for(uint i = 0; i < local_size; ++i){
-        const flt T = local_temperatures[i];
-        rng::set_seed(Seed);
-        if(T > 1.3)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
-        
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
-                        loading_bar);
-        data::store_data(data,metropolisSmallFile+to_str(T));
-    }
-
-
-
-        //      --- Metropolis Adaptive
-    // run through all teperatures
-    for(uint i = 0; i < local_size; ++i){
-        const flt T = local_temperatures[i];
-        rng::set_seed(Seed);
-        if(T > 1.3)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
-
+    rng::set_seed(Seed);
+    lattice.randomize();
+    cout << "T = " << T << endl;
+    Array2D<flt> data = 
+            algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
+                        J, h, k, algo::ds::metropolis_adaptive);
+    data::store_data(data,metropolisAdaptFile + to_str(T));
     
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
-                        loading_bar);
-        data::store_data(data,metropolisAdaptFile + to_str(T));
-    }
+
+        //      --- Metropolis Adaptive OMP
+    // run through all teperatures
+    rng::set_seed(Seed);
+    lattice.randomize();
+    const flt T = local_temperatures[i];
+    cout << "T = " << T << endl;
+    Array2D<flt> data = 
+                algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
+                        J, h, k, algo::ds::metropolis_adaptive);
+    data::store_data(data,metropolisAdaptFile + to_str(T));
 
 
 
-    //      --- Wolff
+    //      --- Wolff OMP
     // run through all teperatures
     for(uint i = 0; i < local_size; ++i){
-        const flt T = local_temperatures[i];
         rng::set_seed(Seed);
-        if(T > 1.3)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
-
-    
+        lattice.randomize();
+        const flt T = local_temperatures[i];
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-                        J, h, k, algo::ds::wolff_, loading_bar);
+                algo::ds::test_algorithm(lattice, Ns, Nmax_wolff, T,
+                        J, h, k, algo::ds::wolff_);
         data::store_data(data,wolffFile + to_str(T));
     }
 

@@ -3,7 +3,7 @@
 Array2D<flt> algo::dt::test_algorithm(
     Lattice &lattice,
     flt const &dt, flt const &t_end, flt const &T, flt const &J,
-    algo::dt::Algorithm const &algo)
+    algo::dt::Algorithm const &algo, bool loadingBar)
 {
     Vector3 z = {0,0,1};
     uint maxSize = ceil(flt(t_end) / flt(dt));
@@ -20,7 +20,8 @@ Array2D<flt> algo::dt::test_algorithm(
     flt t_elapsed = 0;
     while (t_elapsed < t_end)
     {
-        lbar.update(t_elapsed / t_end * 100.0);
+        if(loadingBar)
+            lbar.update(t_elapsed / t_end * 100.0);
         Vector3 magnVec = measure::get_magnetization(lattice);
         Time.push_back(t_elapsed);
         M.push_back(magnVec.norm());
@@ -44,7 +45,7 @@ Array2D<flt> algo::ds::test_algorithm(
     Lattice &lattice,
     uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
     Spin const& h, Spin const& k,
-    algo::ds::Algorithm const &algorithmus)
+    algo::ds::Algorithm const &algorithmus, bool loadingBar)
 {
     Vector3 z = {0,0,1};
     uint maxSize = ceil(flt(numSteps) / flt(ds));
@@ -64,7 +65,8 @@ Array2D<flt> algo::ds::test_algorithm(
     flt t_elapsed = 0;
     while (step < numSteps)
     {
-        lbar.update(flt(step) / flt(numSteps) * 100.0);
+        if(loadingBar)
+            lbar.update(flt(step) / flt(numSteps) * 100.0);
         
         Vector3 magnVec = measure::get_magnetization(lattice);
         Step.push_back(step);

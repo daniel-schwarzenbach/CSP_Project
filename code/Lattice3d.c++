@@ -179,6 +179,20 @@ bool Lattice3d<T>::randomize()
 }
 
 template <typename T>
+bool Lattice3d<T>::set_constant(T const& value){
+    for (uint x = 0; x < Lx_; ++x)
+    {
+        for (uint y = 0; y < Ly_; ++y)
+        {
+            for (uint z = 0; z < Lz_; ++z)
+            {
+                this->set(x, y, z, value);
+            }
+        }
+    }
+}
+
+template <typename T>
 Lattice3d<T> Lattice3d<T>::constant_lattice(
     uint Lx, uint Ly, uint Lz, T const &value)
 {
@@ -312,6 +326,19 @@ bool Lattice3d<bool>::randomize()
         }
     }
     return true;
+}
+
+bool Lattice3d<bool>::set_constant(bool const& value){
+    for (uint x = 0; x < Lx_; ++x)
+    {
+        for (uint y = 0; y < Ly_; ++y)
+        {
+            for (uint z = 0; z < Lz_; ++z)
+            {
+                this->set(x, y, z, value);
+            }
+        }
+    }
 }
 
 Lattice3d<bool> Lattice3d<bool>::constant_lattice(
