@@ -3,6 +3,7 @@
 #SBATCH --nodes=48                   
 #SBATCH --ntasks=48                  
 #SBATCH --ntasks-per-node=1 
+#SBATCH --mem-per-cpu=2000
 #SBATCH --error=error.txt
 #SBATCH --time=04:00:00
 
