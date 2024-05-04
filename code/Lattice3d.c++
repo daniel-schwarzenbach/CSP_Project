@@ -190,6 +190,7 @@ bool Lattice3d<T>::set_constant(T const& value){
             }
         }
     }
+    return 0;
 }
 
 template <typename T>
@@ -339,6 +340,7 @@ bool Lattice3d<bool>::set_constant(bool const& value){
             }
         }
     }
+    return true;
 }
 
 Lattice3d<bool> Lattice3d<bool>::constant_lattice(
