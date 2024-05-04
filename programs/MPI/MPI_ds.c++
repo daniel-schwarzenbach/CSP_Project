@@ -17,14 +17,11 @@ constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 
 
-constexpr u64 Ns_met = 1e+5;
+constexpr u64 Ns_met = 1e+6;
 constexpr u64 Ns_wolff = 1e+3;
 
-
-constexpr u64 Nmax_wolff = 1e+7;
 constexpr u64 Nmax_met = 1e+9;
-// constexpr u64 N_wolff = 1e+9;
-// constexpr u64 N_met = 1e+11;
+constexpr u64 Nmax_wolff = 1e+6;
 
 Array<double> temperatures = 
 {/*1.00000000e-05, 3.75958333e-03,*/ 7.50916667e-03, 1.12587500e-02
