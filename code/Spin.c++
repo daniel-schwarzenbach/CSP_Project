@@ -89,6 +89,7 @@ void SpinVector::small_step(flt openingAngle)
         Eigen::Quaternion<f32>::FromTwoVectors(
             northPole, *this);
     *this = rotationToOriginal * randomPole;
+    this->normalize();
 }
 
 void SpinVector::adaptive_step(flt sigma)

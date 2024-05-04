@@ -8,13 +8,13 @@
 
 namespace plt = matplot;
 
-const flt dt = 1;
+const flt dt = 0.01;
 // end Time
-const flt t_end = 120.0;
+const flt t_end = 5.0;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
-const uint L = 16;
+const uint L = 64;
 // interaction strenth
 const flt J = 1.0;
 
@@ -23,7 +23,7 @@ int main(int mainArgCount, char **mainArgs)
     data::make_folder("plots");
     data::make_folder("data");
     Lattice lattice(L, L, L);
-    Array<flt> Ts = 
+    Array<flt> Ts =
     {0.001, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
     3.0, 4.0, 5.0, 10, 100};
     for (flt T : Ts)
@@ -133,7 +133,7 @@ int main(int mainArgCount, char **mainArgs)
                                   "Adaptive Metropolis Omp",
                                   "Wolff Omp"});
             
-            l->location(plt::legend::general_alignment::bottomright);
+            l->location(plt::legend::general_alignment::topright);
             plt::xlabel("Time in s");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));

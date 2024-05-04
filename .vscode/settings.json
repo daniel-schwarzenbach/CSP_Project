@@ -95,7 +95,8 @@
         "future": "cpp",
         "ios": "cpp",
         "locale": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "format": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "cmake.configureOnOpen": true,

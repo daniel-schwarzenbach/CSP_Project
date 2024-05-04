@@ -119,6 +119,7 @@ bool data::append_lines_in_file(string const& filename,
     return true;
 }
 
+
 bool data::store_alo_data(const string& filename, 
                         string const& algoname,
                         const Array2D<flt>& data, 
@@ -283,26 +284,27 @@ bool data::make_folder(string foldername)
 bool data::store_data(const Array<Array<flt>> &data,
                       const std::string &filename)
 {
+    uint cols = data.size();
+    u64 rows = data[0].size();
+    for (Array<flt> d : data){
+        if(d.size() != rows){
+            cerr << ERROR << " wrong data size:" << filename << endl;
+            return false;
+        }
+    }
+    // openfile
     std::ofstream outfile(filename);
-
     if (!outfile)
     {
-        cerr << ERROR << " couldnt open file:" << filename << endl;
-        return false;
+        cerr << ERROR << " couldnt open file to write to:" << filename << endl;
+        return "";
     }
-
-    // Write data to the file
-    for (const auto &row : data)
-    {
-        for (const flt value : row)
-        {
-            outfile << value << ' ';
+    for(u64 i = 0; i < rows; ++i){
+        for(u64 j = 0; j < cols; ++j){
+            outfile << data[j][i] << ' ';
         }
         outfile << '\n';
     }
-
-    outfile.close();
-    cout << "Data successfully stored in " << filename << endl;
     return true;
 }
 
@@ -310,24 +312,20 @@ template <uint I>
 bool data::store_data(const StaticArray<Array<flt>, I> &data,
                       const string &filename)
 {
+        // openfile
     std::ofstream outfile(filename);
-
     if (!outfile)
     {
-        cerr << ERROR << " couldnt open file:" << filename << endl;
-        return false;
+        cerr << ERROR << " couldnt open file to write to:" << filename << endl;
+        return "";
     }
-    // Write data to the file
-    for (uint i = 0; i < I; ++i)
-    {
+    for(u64 i = 0; i < I; ++i){
         for (const flt value : data[i])
         {
             outfile << value << ' ';
         }
         outfile << '\n';
     }
-    outfile.close();
-    cout << "Data successfully stored in " << filename << endl;
     return true;
 }
 
@@ -344,41 +342,39 @@ template bool data::store_data<5>(
     const StaticArray<Array<flt>, 5> &,
     const string &);
 
-Array<Array<flt>> data::load_data(string const &filename)
-{
-    Array<Array<flt>> data;
+Array2D<flt> data::load_data(string const &filename){
     std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        cerr << "Could not open the file - '" << filename << "'" << endl;
-        // Return an empty vector if the file can't be opened
-        return data;
-    }
-    //
-    std::string line;
-    while (getline(file, line))
-    {
-        Array<flt> row;
-        std::stringstream lineStream(line);
-        string cell;
-
-        while (getline(lineStream, cell, ','))
+        if (!file)
         {
-            try
-            {
-                // Convert string to double and add to row
-                row.push_back(stod(cell));
-            }
-            catch (const std::invalid_argument &e)
-            {
-                cerr << "Could not convert the string to double: "
-                     << cell << std::endl;
-                // Handle the conversion error or add a default value
+            cerr << ERROR << " couldnt open file to loat:" 
+                    << filename << endl;
+            return {{}};
+        }
+    Array2D<flt> columns;
+    string line;
+
+    // Read the first line to determine the number of columns
+    if (std::getline(file, line)) {
+        std::istringstream iss(line);
+        double value;
+        while (iss >> value) {
+            columns.push_back(std::vector<double>{value});
+        }
+    }
+
+    // Read the rest of the lines
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        double value;
+        int colIndex = 0;
+        while (iss >> value) {
+            if (colIndex < columns.size()) {
+                columns[colIndex].push_back(value);
+                colIndex++;
             }
         }
-        data.push_back(row);
     }
 
     file.close();
-    return data;
+    return columns;
 }

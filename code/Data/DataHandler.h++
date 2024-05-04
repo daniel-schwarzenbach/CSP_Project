@@ -57,7 +57,7 @@ namespace data
     /*
     loads Array form a specified file:<filename
     */
-    Array<Array<flt>> load_data(string const &filenam);
+    Array2D<flt> load_data(string const &filenam);
 
     extern template bool store_data<2>(
         const StaticArray<Array<flt>, 2> &,

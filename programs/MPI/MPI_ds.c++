@@ -68,7 +68,7 @@ int main(int argc, char** argv)
             = data::split_array(temperatures, rank, size);
     uint local_size = local_temperatures.size();
     cout << rank <<" is running "<< local_temperatures.size() 
-         << " out of " << temperatures.size() <<endl;
+         << " out of " << temperatures.size() << endl;
     // make sure it runs in parallel
     // if (size == 1){
     //     cerr << ERROR << "no parallel execution" << endl;
@@ -77,9 +77,9 @@ int main(int argc, char** argv)
 
 
     //      --- set Filenames
-    metropolisSmallFile = "Metropolis_" + to_string(rank);
-    metropolisAdaptFile = "MetropolisAdaptive_" + to_string(rank);
-    wolffFile = "Wolff_" + to_string(rank);
+    metropolisSmallFile = "Metropolis_";
+    metropolisAdaptFile = "MetropolisAdaptive_";
+    wolffFile = "Wolff_";
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
 
@@ -95,12 +95,7 @@ int main(int argc, char** argv)
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
                         J, h, k, algo::ds::metropolis_smallStep);
-        if(i == 1){
-            data::store_alo_data(metropolisSmallFile, "metropolis",
-                                data, T, J, h, k, Ns, Nmax_met, Ls);
-        } else{
-            data::append_algo_data(metropolisSmallFile, data, T);
-        }
+        data::store_data(data,metropolisSmallFile + to_str(T));
     }
 
 
@@ -115,12 +110,7 @@ int main(int argc, char** argv)
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, Nmax_met, T,
                         J, h, k, algo::ds::metropolis_adaptive);
-        if(i == 1){
-            data::store_alo_data(metropolisAdaptFile, "adaptive metropolis",
-                                data, T, J, h, k, Ns, Nmax_met, Ls);
-        } else{
-            data::append_algo_data(metropolisAdaptFile, data, T);
-        }
+        data::store_data(data,metropolisAdaptFile + to_str(T));
     }
 
 
@@ -135,12 +125,7 @@ int main(int argc, char** argv)
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns, Nmax_wolff, T,
                         J, h, k, algo::ds::wolff_);
-        if(i == 1){
-            data::store_alo_data(wolffFile, "wolff",
-                                data, T, J, h, k, Ns, Nmax_wolff, Ls);
-        } else{
-            data::append_algo_data(wolffFile, data, T);
-        }
+        data::store_data(data,wolffFile + to_str(T));
     }
 
     MPI_Finalize();
