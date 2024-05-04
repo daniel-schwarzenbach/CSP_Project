@@ -3,6 +3,27 @@
 #include <Data/DataHandler.h++>
 #include <mpi.h>
 
+u64 get_wolf_steps(flt const& T){
+    flt T_lower = 1.3;
+    flt T_upper = 1.6;
+    flt N_t0 =  1e4;
+    flt N_tinf = 1e+6;
+    flt T_inf = 100;
+    flt T_0 = 0.01;
+    flt N_tc = 1e+8;
+
+    if (T <= T_lower)
+        return u64( (N_t0 + (T - T_0) * (N_tc - N_t0))/(T_lower - T_0) );
+    else if (T >= T_upper)
+        return u64( (N_tc + (T_upper - T) * (N_tc - N_tinf))/(T_inf - T_upper) );
+    else if (T_lower <= T <= T_upper)
+        return u64( N_tc );
+    else{
+        cerr << "invalid temperature" << endl;
+        return 1e-4;
+    }
+}
+
 flt constexpr J = 1.0;
 
 const Spin h = Spin{0.0,0.0,0.0};
@@ -15,11 +36,7 @@ constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 
 
-constexpr u64 Ns_met = 1e+6;
-constexpr u64 Ns_wolff = 1e+4;
 
-constexpr u64 Nmax_met = 1e+9;
-constexpr u64 Nmax_wolff = 1e+7;
 
 
 int main(int argc, char* argv[])
@@ -73,6 +90,15 @@ int main(int argc, char* argv[])
     string metropolisFile = foldername + "/Metropolis_";
     string metropolisAdaptFile = foldername + "/MetropolisAdaptive_";
     string wolffFile = foldername + "/Wolff_";
+
+    
+
+    constexpr u64 Nmax_met = 1e+9;
+    const u64 Nmax_wolff = std::max(get_wolf_steps(T), 10'000UL);
+
+    constexpr u64 Ns_met = 1e+6;
+    const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e-3);
+
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
 
