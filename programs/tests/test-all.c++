@@ -20,6 +20,16 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& of, std::vector<d
     //of << "\n";
 }
 
+flt mean(const std::vector<double>& values, int start, int end) {
+    flt sum = 0.0;
+    int count = 0;
+    for (int i = start; i < end; ++i) {
+        sum += values[i];
+        ++count;
+    }
+    if (count == 0) return 0.0; // To handle cases where start >= end
+    return sum / count;
+}
 
 // Loop over specified system at different temperatures
 // function defintion:
@@ -115,11 +125,13 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
+        //Lattice lattice = Lattice::constant_lattice(Lx,Ly,Lz, Spin(1.0,0.0,0.0));
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
         Array<Vector3> magnetisations(number_of_steps + 1); 
         Array<F64> energies(number_of_steps + 1); 
+        //Array<F64> energies_squared(number_of_steps + 1); 
 
-        double temperature = temperatures[i]; //Get temperature
+        double temperature = temperatures[i]; //Get temperature 
 
         cout << "Simulating at temperature: " << temperature << endl;
 
@@ -135,13 +147,18 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
             flt mag = magnetisation.norm();
             flt mag_z = magnetisation(2);
             energies[j] = energy;
+            //energies_squared[j] = pow(energy,2);
 
-            wolff(lattice, temperature, J, Time, Ns, h);
-            F64 a = wolff(lattice, temperature, J, Time, Ns, h);
+            adaptive_metropolis(lattice, temperature, J, Time, Ns, h);
+            F64 a = adaptive_metropolis(lattice, temperature, J, Time, Ns, h);
             cout << Ns*j  << " average cluster size: " << a << " mag: " << mag << ", mag_z: " << mag_z << ", energy: " << energy << endl;
-
             outFile1 << Ns*j << " " <<  mag << " " << mag_z << " "<< energy;
             if(j != number_of_steps) {outFile1 << std::endl;}
+            // if (j >= 10){
+            //     flt c_v;
+            //     c_v = - (mean(energies_squared, 10, j) - pow(mean(energies, 10, j),2) )/ pow(temperature, 2);
+            //     cout << mean(energies_squared, 10, j) - pow(mean(energies, 10, j),2) << "c_v at " << Ns*j << " = " << c_v;
+            // }
         }
         if(i + 1 != temperatures.size()){outFile1 << endl << "====" << endl;}
     }
@@ -215,8 +232,8 @@ F64 Time = 100000.0;
 Spin h = Spin(0.0,0.0,0.0);
 Spin k = Spin(0.0,0.0,0.0);
 //Define maximal number of steps, step width and number of iterations 
-int64_t Nmax = 1e6;
-int Ns = 10000;
+int64_t Nmax = 1e9;
+int Ns = 1e6;
 int number_of_steps = round(Nmax/Ns);
 
 // lattice size
@@ -224,7 +241,7 @@ int L = 8;
 int Lx = 8;
 int Ly = 8;
 int Lz = 8;
-std::vector<double> temperatures = {0.01};
+std::vector<double> temperatures = {1.43};
 /*
 std::vector<double> temperatures = {
         1.00000000e-02, 5.06122449e-02, 9.12244898e-02, 1.31836735e-01,

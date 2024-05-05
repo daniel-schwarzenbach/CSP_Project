@@ -18,6 +18,7 @@ wolff algorithm for the Heisenberg3D model
 #include <array>
 #include <functional>
 
+//Needed for using std::unordered_set
 struct IndexHash {
     std::size_t operator()(const std::array<int, 3>& index) const {
         std::size_t seed = 0;
