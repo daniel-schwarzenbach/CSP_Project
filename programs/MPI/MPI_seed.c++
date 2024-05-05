@@ -94,10 +94,13 @@ int main(int argc, char* argv[])
     
 
     constexpr u64 Nmax_met = 1e+9;
-    const u64 Nmax_wolff = std::max(get_wolf_steps(T), 10'000UL);
+    const u64 Nmax_wolff = std::min(
+        std::max(get_wolf_steps(T), 10'000UL), 100'000'000UL);
 
     constexpr u64 Ns_met = 1e+6;
     const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e-3);
+    what_is(Ns_wolff);
+    what_is(Nmax_wolff);
 
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);

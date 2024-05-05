@@ -149,8 +149,8 @@ if(IPPL AND NOT MPI)
     # target_link_libraries(IpplTest ${LIBRARIES})
 endif()
 
-if(NOT MPI)# without MPI and IPPL
-
+if(NOT MPI AND NOT IPPL)# without MPI and IPPL
+message(STATUS "compiling gtests")
     # google-tests
     add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
     set_target_properties(Test_Lattice PROPERTIES

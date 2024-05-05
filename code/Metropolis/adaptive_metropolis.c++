@@ -53,9 +53,9 @@ bool adaptive_metropolis(   Lattice &lattice,
     // Check if max number of steps is reached
     for(u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
-        int x = rand() % lattice.Lx();
-        int y = rand() % lattice.Ly();
-        int z = rand() % lattice.Lz();
+        int x = rng::rand_int_range(0, lattice.Lx());
+        int y = rng::rand_int_range(0, lattice.Ly());
+        int z = rng::rand_int_range(0, lattice.Lz());
 
         // Get the spin at the chosen site (cartesian)
         Spin &spin = lattice(x, y, z);
