@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
         T = 1;
     }
     
-    cout << rank <<" is running for T = "<<  T
-         << " out of " << size << " ranks" << endl;
+    cout << rank <<" is running for T = "<<  T << endl
+         << "and wtith Seed = " << Seed << endl;
     // activate Loading bar fore a single core
     bool loading_bar = false;
     if (size == 1){
