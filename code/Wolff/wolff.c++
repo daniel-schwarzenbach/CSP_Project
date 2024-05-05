@@ -57,9 +57,9 @@ int wolf_algorithm(Lattice& lattice, flt beta){
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::rand_f64()*Lx;
-    int y = rng::rand_f64()*Ly;
-    int z = rng::rand_f64()*Lz;
+    int x = rand() % lattice.Lx();
+    int y = rand() % lattice.Ly();
+    int z = rand() % lattice.Lz();
     
     //Define spin_x to be flipped, first point of the cluster
     Spin& spin_x = lattice(x,y,z);
@@ -89,7 +89,7 @@ int wolf_algorithm(Lattice& lattice, flt beta){
         //Visit neighboring sites
         if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-        if(!visited[cx][(cy+1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
+        if(!visited[cx][(cy+1+Ly)%Ly][cz]){ check_neighbor(lattice, cx, (cy+1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[cx][(cy-1+Lx)%Ly][cz]){ check_neighbor(lattice, cx, (cy-1+Ly)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[cx][cy][(cz+1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz+1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
         if(!visited[cx][cy][(cz-1+Lz)%Lz]){ check_neighbor(lattice, cx, cy, (cz-1+Lz)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
