@@ -4,7 +4,7 @@
     random number generation
 */
 
-#define RandomDebug
+//#define RandomDebug
 
 //          --- Random
 #include <RNG.h++>
