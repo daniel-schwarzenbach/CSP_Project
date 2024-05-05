@@ -29,7 +29,7 @@ flt constexpr J = 1.0;
 const Spin h = Spin{0.0,0.0,0.0};
 const Spin k = Spin{0.0,0.0,0.0};
 
-constexpr uint L = 8;
+constexpr uint L = 32;
 constexpr uint Lx = L;
 constexpr uint Ly = L; 
 constexpr uint Lz = L;
@@ -55,36 +55,28 @@ int main(int argc, char* argv[])
         try {
             // Convert the first argument to a float
             T = data::read_flt(argv[1]);
-            cout << INFO << "T has been set to " << T << endl;
         } catch (const std::invalid_argument& e) {
             cerr << ERROR 
                  << "Invalid argument: please enter a valid "
                  <<"floating-point number."<< endl;
         } catch (const std::out_of_range& e) {
-            cerr << "Out of range: the number is too large." << endl;
+            cerr << ERROR <<"Out of range: the number is too large." 
+                 << endl;
+            return 0;
         }
     } else {
-        cerr << "No floating-point number was provided as an argument." 
-            << endl;
+        cerr << ERROR << "to few arguments";
+        return 0;
     } 
-    // set T to 1
-    if(T < 0){
-        cerr << ERROR << "no imput could been read!" << endl
-             << "T = 1.0 by default" << endl;
-        T = 1;
-    }
-    
-    cout << rank <<" is running for T = "<<  T << endl
-         << "and wtith Seed = " << Seed << endl;
+    what_is(T);
     // activate Loading bar fore a single core
     bool loading_bar = false;
     if (size == 1){
         loading_bar = true;
     }
 
-
     //      --- set Filenames
-    string foldername = "T_" + to_string(uint(T*1000)) + "e3";
+    string foldername = "T_" + to_string(uint(T*1000)) + "e-3";
     data::make_folder(foldername);
     
     string metropolisFile = foldername + "/Metropolis_";
@@ -107,46 +99,46 @@ int main(int argc, char* argv[])
 
 
 
-    //      --- Metropolis
-    // {
-    //     measure::Timer watch; watch.start();
-    //     cout << rank <<" is running metropolis ..."<< endl;
-    //     rng::set_seed(Seed);
-    //     if(T > 1.45)
-    //         lattice.randomize();
-    //     else
-    //         lattice.set_constant(Spin{0,0,1});
+    //         --- Metropolis
+    {
+        measure::Timer watch; watch.start();
+        cout << rank <<" is running metropolis ..."<< endl;
+        rng::set_seed(Seed);
+        if(T > 1.45)
+            lattice.randomize();
+        else
+            lattice.set_constant(Spin{0,0,1});
         
-    //     cout << "T = " << T << endl;
-    //     Array2D<flt> data = 
-    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-    //                     J, h, k, algo::ds::metropolis_smallStep, 
-    //                     loading_bar);
-    //     data::store_data(data,metropolisFile+to_string(rank));
-    //     cout << "finished metropolis in: " << watch.time() <<endl << endl;
-    // }
+        cout << "T = " << T << endl;
+        Array2D<flt> data = 
+                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, algo::ds::metropolis_smallStep, 
+                        loading_bar);
+        data::store_data(data,metropolisFile+to_string(rank));
+        cout << "finished metropolis in: " << watch.time() <<endl << endl;
+    }
 
 
 
-    //     //      --- Metropolis Adaptive
-    // {   
-    //     measure::Timer watch; watch.start();
-    //     cout << rank <<" is running metropolis adaptive ..."<< endl;
-    //     rng::set_seed(Seed);
-    //     if(T > 1.45)
-    //         lattice.randomize();
-    //     else
-    //         lattice.set_constant(Spin{0,0,1});
+        //      --- Metropolis Adaptive
+    {   
+        measure::Timer watch; watch.start();
+        cout << rank <<" is running metropolis adaptive ..."<< endl;
+        rng::set_seed(Seed);
+        if(T > 1.45)
+            lattice.randomize();
+        else
+            lattice.set_constant(Spin{0,0,1});
 
     
-    //     cout << "T = " << T << endl;
-    //     Array2D<flt> data = 
-    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-    //                     J, h, k, algo::ds::metropolis_adaptive,
-    //                     loading_bar);
-    //     data::store_data(data,metropolisAdaptFile + to_string(rank));
-    //     cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
-    // }
+        cout << "T = " << T << endl;
+        Array2D<flt> data = 
+                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, algo::ds::metropolis_adaptive,
+                        loading_bar);
+        data::store_data(data,metropolisAdaptFile + to_string(rank));
+        cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
+    }
 
 
 
