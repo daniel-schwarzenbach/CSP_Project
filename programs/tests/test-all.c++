@@ -84,6 +84,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
             metropolis(lattice, temperature, J, Time, Ns_met, h, k, MoveType::SmallStep);
             outFile << Ns_met*j << " " << mag << " " << mag_z << " "<< energy;
             if(j != number_of_steps_met) {outFile << std::endl;}
+            cout << Ns_met*j <<  " mag = " << mag << ", energy = " << energy << endl;
         }
         if(i + 1 != temperatures.size()){outFile << endl << "====" << endl;}
     }
@@ -312,10 +313,10 @@ F64 Time_ = 100000.0;
 Spin h_ = Spin(0.0,0.0,0.0);
 Spin k_ = Spin(0.0,0.0,0.0);
 //Define maximal number of steps, step width and number of iterations 
-int64_t Nmax_met = 1e9;
+int64_t Nmax_met = 1e3;
 int64_t Nmax_adamet = 1e9;
 int64_t Nmax_wolff = 1e9;
-int Ns_met = 1e3;
+int Ns_met = 20;
 int Ns_adamet = 1e3;
 int Ns_wolff = 1e3;
 
@@ -326,11 +327,12 @@ int Ly_ = 8;
 int Lz_ = 8;
 int N_datapoints_met = 10;
 int N_datapoints_adamet = 10;
-int N_datapoints_wolff = 10;
-//std::vector<double> temperatures = {0.01};
 
-std::vector<std::vector<double>> N_eq_ = {{169,307,930},{135,246,744},{15,26,74}};
-std::vector<double> temperatures_ = {0.01};
+int N_datapoints_wolff = 10;
+std::vector<double> temperatures = {0.01};
+
+//std::vector<std::vector<double>> N_eq_ = {{169,307,930},{135,246,744},{15,26,74}};
+//std::vector<double> temperatures_ = {0.01};
 //{-2.6,-2.5,-2.4000000000000004,-2.1,-2.0,-1.9000000000000001}
 //{{1000,885,771,428,314,200},{2007,1914,1821,1542,1450,1357},{302,294,285,260,251,242}}
 std::vector<string> algos= {"Metropolis","Wolff","Adaptive Metropolis"};
@@ -346,7 +348,7 @@ float maxTime = 100;
 int main()
 {   
     TimeKeeper watch;
-    simulation(temperatures_, h_, k_, Lx_, Ly_, Lz_, J_, Nmax_met, Nmax_adamet,
+    simulation(temperatures, h_, k_, Lx_, Ly_, Lz_, J_, Nmax_met, Nmax_adamet,
     Nmax_wolff, Ns_met, Ns_adamet, Ns_wolff, Time_);
     std::cout << watch.time();
     //calc_ramp(temperatures_, N_eq_, N_datapoints_met, N_datapoints_adamet,
