@@ -108,30 +108,52 @@ int main(int argc, char* argv[])
 
 
     //      --- Metropolis
-    {
-        measure::Timer watch; watch.start();
-        cout << rank <<" is running metropolis ..."<< endl;
-        rng::set_seed(Seed);
-        if(T > 1.3)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
+    // {
+    //     measure::Timer watch; watch.start();
+    //     cout << rank <<" is running metropolis ..."<< endl;
+    //     rng::set_seed(Seed);
+    //     if(T > 1.45)
+    //         lattice.randomize();
+    //     else
+    //         lattice.set_constant(Spin{0,0,1});
         
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
-                        loading_bar);
-        data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: " << watch.time() <<endl << endl;
-    }
+    //     cout << "T = " << T << endl;
+    //     Array2D<flt> data = 
+    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+    //                     J, h, k, algo::ds::metropolis_smallStep, 
+    //                     loading_bar);
+    //     data::store_data(data,metropolisFile+to_string(rank));
+    //     cout << "finished metropolis in: " << watch.time() <<endl << endl;
+    // }
 
 
 
-        //      --- Metropolis Adaptive
-    {   
+    //     //      --- Metropolis Adaptive
+    // {   
+    //     measure::Timer watch; watch.start();
+    //     cout << rank <<" is running metropolis adaptive ..."<< endl;
+    //     rng::set_seed(Seed);
+    //     if(T > 1.45)
+    //         lattice.randomize();
+    //     else
+    //         lattice.set_constant(Spin{0,0,1});
+
+    
+    //     cout << "T = " << T << endl;
+    //     Array2D<flt> data = 
+    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+    //                     J, h, k, algo::ds::metropolis_adaptive,
+    //                     loading_bar);
+    //     data::store_data(data,metropolisAdaptFile + to_string(rank));
+    //     cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
+    // }
+
+
+
+//          --- Wolff
+   {
         measure::Timer watch; watch.start();
-        cout << rank <<" is running metropolis adaptive ..."<< endl;
+        cout << rank <<" is running wolff ..."<< endl;
         rng::set_seed(Seed);
         if(T > 1.3)
             lattice.randomize();
@@ -141,34 +163,11 @@ int main(int argc, char* argv[])
     
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
-                        loading_bar);
-        data::store_data(data,metropolisAdaptFile + to_string(rank));
-        cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
+                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
+                        J, h, k, algo::ds::wolff_, loading_bar);
+        data::store_data(data,wolffFile + to_string(rank));
+        cout << "finished wolff in: " << watch.time() << endl << endl;
     }
-
-
-
-    //      --- Wolff
-    // run through all teperatures
-//    {
-//         measure::Timer watch; watch.start();
-//         cout << rank <<" is running wolff ..."<< endl;
-//         rng::set_seed(Seed);
-//         if(T > 1.3)
-//             lattice.randomize();
-//         else
-//             lattice.set_constant(Spin{0,0,1});
-
-    
-//         cout << "T = " << T << endl;
-//         Array2D<flt> data = 
-//                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-//                         J, h, k, algo::ds::wolff_, loading_bar);
-//         data::store_data(data,wolffFile + to_string(rank));
-//         cout << "finished wolff in: " << watch.time() << endl << endl;
-//     }
     cout << rank << " has finished the calculations" << endl;
 
     what_is(programTimer.time());
