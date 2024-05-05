@@ -51,6 +51,14 @@ EXPECT_FALSE(is_the_same(l1,l2));
     rng::set_seed(89);
     l2 = Lattice::random_lattice(L, L, L);
 EXPECT_TRUE(is_the_same(l1, l2));
+    rng::set_seed(90);
+    Lattice l3 = Lattice::random_lattice(L, L, L);
+EXPECT_FALSE(is_the_same(l1, l3));
+    rng::set_seed(80);
+    Spin s1 = Spin::get_random();
+    rng::set_seed(81);
+    Spin s2 = Spin::get_random();
+EXPECT_FALSE(is_the_same(l1, l3));  
 }
 
 TEST(LatticeTests, Lattice_Periodic){

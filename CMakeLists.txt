@@ -81,7 +81,7 @@ endif()
 
 
 
-# IPPL if it is aked for
+# # IPPL if it is aked for
 option(IPPL "Use IPPL" OFF)
 if(IPPL AND NOT MPI)
     message(STATUS "IPPL option is set to ${IPPL}")
@@ -149,7 +149,7 @@ if(IPPL AND NOT MPI)
     # target_link_libraries(IpplTest ${LIBRARIES})
 endif()
 
-if(NOT MPI AND NOT IPPL)# without MPI and IPPL
+if(NOT MPI)# without MPI and IPPL
 
     # google-tests
     add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)

@@ -17,7 +17,7 @@ namespace rng
     */
     void set_seed(unsigned int seed)
     {
-        engine.seed();
+        engine.seed(seed);
     }
 
     /*
