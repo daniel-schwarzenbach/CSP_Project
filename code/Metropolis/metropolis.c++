@@ -30,14 +30,14 @@ bool metropolis(Lattice &lattice,
                 int64_t maxSteps, Spin h,
                 Spin k,
                 MoveType moveType) {
-    // Start time and set step counter to 0
-    uint step_count = 0;
+    // Start time
     TimeKeeper watch;
+    // Calculate Boltzmann factor for given temperature
     F64 beta = Beta(T); 
 
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
-    for(u64 step = 0; step < maxSteps; ++step){
+    for(int64_t step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = rand() % lattice.Lx();
         int y = rand() % lattice.Ly();
@@ -65,7 +65,8 @@ bool metropolis(Lattice &lattice,
                                         newSpin, J, h, k);
  
         if (deltaE <= 0 || rng::rand_f64() < exp(-deltaE * beta))
-        {                  
+        {                   // Boltzmann constant k is
+                            // normalized with interaction strength J in this implementation
             spin = newSpin; // Accept the new configuration
         }
 

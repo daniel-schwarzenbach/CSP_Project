@@ -21,6 +21,16 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& of, std::vector<d
     //of << "\n";
 }
 
+flt mean(const std::vector<double>& values, int start, int end) {
+    flt sum = 0.0;
+    int count = 0;
+    for (int i = start; i < end; ++i) {
+        sum += values[i];
+        ++count;
+    }
+    if (count == 0) return 0.0; // To handle cases where start >= end
+    return sum / count;
+}
 
 // Loop over specified system at different temperatures
 // function defintion:
@@ -65,12 +75,12 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
         Array<Vector3> magnetisations(number_of_steps_met + 1); 
         Array<F64> energies(number_of_steps_met + 1); 
 
-        double temperature = temperatures[i]; //Get temperature
+    //     double temperature = temperatures[i]; //Get temperature
 
-        cout << "Simulating at temperature: " << temperature << endl;
+    //     cout << "Simulating at temperature: " << temperature << endl;
 
-        std::vector<std::vector<double>> newData;
-        outFile << to_string(temperature) << " M " << "Mz " << "E " << endl;
+    //     std::vector<std::vector<double>> newData;
+    //     outFile << to_string(temperature) << " M " << "Mz " << "E " << endl;
 
         //Run algorithm "number_of_steps" times and save energy and magnetisation for each step
         for (int j = 0; j < number_of_steps_met + 1; ++j){
@@ -118,11 +128,12 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     for (size_t i = 0; i < temperatures.size(); ++i) {
         Lattice lattice = Lattice::random_lattice(Lx, Ly, Lz);
+        //Lattice lattice = Lattice::constant_lattice(Lx,Ly,Lz, Spin(1.0,0.0,0.0));
         //Plot magnetisation and energy as a function of steps to determine N_eq (until equilibrium)
         Array<Vector3> magnetisations(number_of_steps_wolff + 1); 
         Array<F64> energies(number_of_steps_wolff + 1); 
 
-        double temperature = temperatures[i]; //Get temperature
+        double temperature = temperatures[i]; //Get temperature 
 
         cout << "Simulating at temperature: " << temperature << endl;
 
@@ -147,6 +158,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     outFile1.close();
 
+    /*
 
     //        ADAPTIVE METROPOLIs
 

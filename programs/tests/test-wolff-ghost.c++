@@ -46,7 +46,7 @@ int main()
     //Define temperature array which we loop over
 
     //std::vector<double> temperatures = {0.01, 0.03, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.0, 5.0, 10.0};
-    std::vector <double> temperatures = {0.01};
+    std::vector <double> temperatures = {10.01};
 
     for (int a = 0; a < nruns; ++a){
         for (size_t i = 0; i < temperatures.size(); ++i) {
@@ -90,7 +90,7 @@ int main()
                 flt mag_y = magnetisation[1];
                 flt mag_z = magnetisation[2];
                 energies[j] = energy;
-                wolff_ghost(lattice, temperature, J, Time, Ns);
+                wolff_ghost(lattice, temperature, J, Time, Ns, h);
 
                 outFile << Ns*j << " " << mag << " " << mag_z << " " << energy << std::endl; //Write current total step number, mag and E into file
                 cout << "nsteps: " << Ns*j << "mag "  << mag << " mag_z: " << mag_z << ", energy: " << energy << endl; 

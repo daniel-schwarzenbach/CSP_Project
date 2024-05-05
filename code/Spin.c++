@@ -70,10 +70,8 @@ SpinVector SpinVector::get_random()
         std::cos(theta);
     return s;
 }
-
 // Trial moves
 
-// Spin flip: reflects spin across origin
 void SpinVector::spin_flip()
 {
     *this *= -1;
@@ -99,6 +97,8 @@ void SpinVector::small_step_move(F64 openingAngle)
             northPole, *this);
     *this = rotationToOriginal * randomPole;
 }
+// Adaptive step: add random gaussian vector multiplied by the adaptive 
+//factor sigma to initial step and normalize
 // Adaptive step: add random gaussian vector multiplied by the adaptive 
 //factor sigma to initial step and normalize
 void SpinVector::adaptive_step(F64 sigma)
