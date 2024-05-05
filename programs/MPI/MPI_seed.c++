@@ -93,11 +93,11 @@ int main(int argc, char* argv[])
 
     
 
-    constexpr u64 Nmax_met = 1e+9;
+    constexpr u64 Nmax_met = 5e+7;
     const u64 Nmax_wolff = std::min(
         std::max(get_wolf_steps(T), 10'000UL), 10'000'000UL);
 
-    constexpr u64 Ns_met = 1e+6;
+    constexpr u64 Ns_met = 5e+4;
     const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e3);
     what_is(Ns_wolff);
     what_is(Nmax_wolff);

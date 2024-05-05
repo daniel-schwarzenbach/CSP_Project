@@ -38,7 +38,7 @@ using Array3D = Array<Array<Array<T>>>;
 //     return (p <= active);
 // }
 
-int wolf_algorithm(Lattice& lattice, flt beta){
+int wolf_algorithm(Lattice& lattice, flt const& beta){
 
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
@@ -121,11 +121,11 @@ flt wolff(Lattice &lattice, flt const& T, flt const& J,
     flt beta = Beta(T);
     measure::Timer watch;
 
-    Array<int> clusters;
+    Array<int> clusters(0);
     u64 nRuns = 0;
 
     //Run MaxSteps wolff steps or until the maximal time has been reached
-    for (u64 i = 0; i <= MaxSteps; ++i){
+    for (u64 i = 0; i < MaxSteps; ++i){
         uint clusterSize = wolf_algorithm(lattice, beta);
 
         clusters.push_back(clusterSize);

@@ -21,12 +21,12 @@
 // of 50%. A more detailed description of the algorithm can be found 
 // in the report.
 
-flt sigma = 100;
+flt sigma = 60;
 u64 totalSteps = 0;
 u64 acceptedCount = 0;
 
 void restet_adaptive(){
-    flt sigma = 100;
+    flt sigma = 60;
     u64 totalSteps = 0;
     u64 acceptedCount = 0;
 }

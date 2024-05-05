@@ -8,3 +8,5 @@ module load gcc/11.4.0 eigen/3.4.0 cmake/3.26.3 openblas/0.3.20 fftw/3.3.10  cud
 
 # module list
 # module avaiable
+
+# scp -r jgrabowsky@euler.ethz.ch:CSP_Project/docs/Euler/output ~/Desktop/

@@ -165,16 +165,20 @@ Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
 template <typename T>
 bool Lattice3d<T>::randomize()
 {
+    #pragma omp critical
+    #pragma optimize("", off)
     for (uint x = 0; x < Lx_; ++x)
     {
         for (uint y = 0; y < Ly_; ++y)
         {
             for (uint z = 0; z < Lz_; ++z)
             {
-                this->set(x, y, z, rng::get_random<T>());
+                T t = rng::get_random<T>();
+                this->operator()(x, y, z) =  rng::get_random<T>();
             }
         }
     }
+    #pragma optimize("", on)
     return true;
 }
 

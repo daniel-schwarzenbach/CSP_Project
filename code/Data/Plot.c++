@@ -58,7 +58,8 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
     Vector3 mag = measure::get_magnetization(lattice);
-    mag.normalize();
+    mag * (1.0 / flt(Lx * Ly * Lz));
+    flt maxmag = mag.norm();
     uint sizeL = Lx * Ly * Lz + 2;
     // initialize Arrays
     Array<double> x(sizeL, 0), y(sizeL, 0), z(sizeL, 0),
@@ -96,7 +97,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     u[i] = 0;
     v[i] = 0;
     w[i] = 0;
-    color[i] = -1;
+    color[i] = -maxmag;
     ++i;
     x[i] = 0;
     y[i] = 0;
@@ -104,7 +105,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     u[i] = 0;
     v[i] = 0;
     w[i] = 0;
-    color[i] = 1;
+    color[i] = maxmag;
     ++i;
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
     
@@ -154,7 +155,7 @@ bool data::plot_lattice(Lattice &lattice, std::string filename)
                              arrays[4], arrays[5], arrays[6], 0.5);
     plot->line_width(3);
     plot->normalize(true);
-    plt::caxis({1, -1});
+    //plt::caxis({1, -1});
     plt::xlabel("x");
     plt::ylabel("y");
     plt::zlabel("z");
