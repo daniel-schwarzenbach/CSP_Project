@@ -12,6 +12,7 @@
 flt sigma_omp = 100;
 u64 totalSteps_omp = 0;
 u64 acceptedCount_omp = 0;
+constexpr flt maxFactor_omp = 60;
 
 void restet_adaptive_omp(){
     flt sigma_omp = 100;
@@ -19,20 +20,6 @@ void restet_adaptive_omp(){
     u64 acceptedCount_omp = 0;
 }
 
-// Input:
-//      - refrence to the lattice
-//      - temperature T
-//      - maximal running time of the algorithm
-//      - maximal number of steps
-//      - interaction strength of the Heisenberg model
-//      - external magnetic field
-//      - spatial anisotropy of the system
-//      - trial move which we want to use to generate new spins:SpinFlip,
-//        Random or SmallStep; default: small step move
-//
-// Output:
-//      Returns true when the algorithm has finished running. The lattice
-//      is modified throughout the runtime of the algorithm.
 bool metropolis_omp(Lattice &lattice,
                     flt const& T /*temperature*/,
                     flt const& J /*interaction Strength*/,
@@ -42,82 +29,90 @@ bool metropolis_omp(Lattice &lattice,
                     Spin const& k,
                     MoveType const& moveType)
 {
-
-#pragma omp parallel
+    measure::Timer watch;
+    const uint Lx = lattice.Lx();
+    const uint Ly = lattice.Ly();
+    const uint Lz = lattice.Lz();
+    const flt beta = Beta(T);
+    flt simga_total = 0.0;
+    #pragma omp parallel
     {
+    u64 thread_totalSteps = totalSteps_omp;
+    u64 thread_acceptedCount = acceptedCount_omp;
+    flt thread_sigma = sigma_omp;
+    #pragma omp for schedule (dynamic, 50)
+    for (u64 step = 0; step < maxSteps; ++step){
+        ++thread_totalSteps;
+        // Choose a random lattice site
+        int x = rng::rand_int_range(0, Lx);
+        int y = rng::rand_int_range(0, Ly);
+        int z = rng::rand_int_range(0, Lz);
+        // Get the spin at the chosen site (cartesian)
+        Spin spin;
+        //#pragma omp atomic update
+        #pragma omp critical
+        spin = lattice(x, y, z);
 
-        u64 numSteps = ceil(flt(maxSteps) / 
-                        flt(omp_get_num_threads()));
-
-        flt maxFactor = 100;
-        measure::Timer watch;
-        uint accepted_count = 0;
-        uint Lx = lattice.Lx();
-        uint Ly = lattice.Ly();
-        uint Lz = lattice.Lz();
-        flt beta = Beta(T);
-        watch.start();
-        for (u64 step = 0; step < numSteps; ++step)
+        // Propose spin change based on given trial move
+        Spin newSpin = spin;
+        // do the requested move
+        switch (moveType)
         {
-#pragma omp critical
-            ++totalSteps_omp;
-            // Choose a random lattice site
-            int x = rng::rand_int_range(0, Lx);
-            int y = rng::rand_int_range(0, Ly);
-            int z = rng::rand_int_range(0, Lz);
-
-            // Get the spin at the chosen site (cartesian)
-            Spin spin;
-#pragma omp critical
-            spin = lattice(x, y, z);
-
-            // Propose spin change based on given trial move
-            Spin newSpin = spin;
-            // do the requested move
-            switch (moveType)
-            {
-                case MoveType::SpinFlip:
-                    newSpin.spin_flip_step(); // Spin flip move (reflect the spin)
-                    break;
-                case MoveType::Random:
-                    newSpin.random_step(); // Random move (generate a random spin)
-                    break;
-                case MoveType::SmallStep:
-                    newSpin.small_step(0.1); // Small step move (small change around the current spin)
-                    break;
-                case MoveType::Addaptive:
-                    newSpin.adaptive_step(sigma_omp);
-                    break;
-                }
-            // Calculate energy difference
-            flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
-                                             newSpin, J, h, k);
-            
-            // Acceptance condition
-            if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
-            { // Boltzmann constant k is
-              // normalized with interaction strength J in this implementation
-              // Accept the new configuration
-#pragma omp critical
-                lattice(x, y, z) = newSpin;
-                if(moveType == MoveType::Addaptive){
-                    ++acceptedCount_omp;
-                    // Update acceptance rate
-                    flt R = acceptedCount_omp/(totalSteps_omp+1.0);
-                    // Calculate update factor
-                    flt f = 0.5 / (1.0 - R + 1e-18);
-                    // Update sigma
-                    sigma_omp = std::min(maxFactor, sigma_omp * f );
-                }
+            case MoveType::SpinFlip:
+                newSpin.spin_flip_step(); // Spin flip move (reflect the spin)
+                break;
+            case MoveType::Random:
+                newSpin.random_step(); // Random move (generate a random spin)
+                break;
+            case MoveType::SmallStep:
+                newSpin.small_step(0.1); // Small step move (small change around the current spin)
+                break;
+            case MoveType::Addaptive:
+                newSpin.adaptive_step(sigma_omp);
+                break;
             }
+        // Calculate energy difference
+        flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
+                                            newSpin, J, h, k);
+        
+        // Acceptance condition
+        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
+        { // Boltzmann constant k is
+            // normalized with interaction strength J in this implementation
+            // Accept the new configuration
+            #pragma omp critical
+            lattice(x, y, z) = newSpin;
 
-            // Check if maximum time has been reached
-            if (watch.time() >= maxTimeSeconds)
-            {
-                break; // Stop simulation if maximum time reached
+            if(moveType == MoveType::Addaptive){
+                ++thread_acceptedCount;
+                // Update acceptance rate
+                const flt R = acceptedCount_omp/(totalSteps_omp+1.0);
+                // Calculate update factor
+                const flt f = 0.5 / (1.0 - R + 1e-18);
+                // Update sigma   
+                thread_sigma = std::min(maxFactor_omp, thread_sigma*f);
             }
         }
-    } // end parrallel
 
+        // Check if maximum time has been reached
+        if (watch.time() >= maxTimeSeconds)
+        {
+            #ifndef WITH_OPENMP
+            break;
+            #endif
+            #pragma omp cancel for // Stop simulation if maximum time reached
+        }
+    } // end for
+    if(moveType == MoveType::Addaptive){
+        
+        #pragma omp critical  
+        {
+        totalSteps_omp += thread_totalSteps;
+        acceptedCount_omp += thread_acceptedCount;
+        simga_total += thread_sigma;
+        } // end critical
+    }
+    } // end parrallel
+    sigma_omp = simga_total / omp_get_num_threads();
     return true;
 }

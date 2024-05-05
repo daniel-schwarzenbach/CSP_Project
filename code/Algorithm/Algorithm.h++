@@ -199,7 +199,8 @@ namespace algo
         */
         Array2D<flt> test_algorithm(
             Lattice &lattice,
-            uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
+            uint const &ds, u64 const &numSteps,flt const &T,
+            flt const &J,
             Spin const& h, Spin const& k,
             Algorithm const &algorithmus, bool loadingbar = true);
 
