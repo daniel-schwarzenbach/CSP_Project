@@ -21,6 +21,15 @@
 // of 50%. A more detailed description of the algorithm can be found 
 // in the report.
 
+flt sigma = 100;
+u64 totalSteps = 0;
+u64 acceptedCount = 0;
+
+void restet_adaptive(){
+    flt sigma = 100;
+    u64 totalSteps = 0;
+    u64 acceptedCount = 0;
+}
 
 // Input:
 //      - reference to the lattice
@@ -44,14 +53,13 @@ bool adaptive_metropolis(   Lattice &lattice,
                             Spin const& k,
                             flt const& maxFactor){
     // Initialize sigma with the max value, start timer, calculate 
-    // Boltzmann factor and initialize counter of accepted steps
-    flt sigma = maxFactor;
+    // Boltzmann factor and initialize counter of accepted steps;
     measure::Timer watch;
     flt beta = Beta(T);
-    int accepted_count = 0;
     // Main Metropolis loop until number of steps or max time is reached
     // Check if max number of steps is reached
     for(u64 step = 0; step < maxSteps; ++step){
+        ++totalSteps;
         // Choose a random lattice site
         int x = rng::rand_int_range(0, lattice.Lx());
         int y = rng::rand_int_range(0, lattice.Ly());
@@ -79,9 +87,9 @@ bool adaptive_metropolis(   Lattice &lattice,
             //small number to the denominator.
 
             // Increase counter of accepted steps
-            ++accepted_count;
+            ++acceptedCount;
             // Update acceptance rate
-            flt R = flt(accepted_count)/flt(step+1.0);
+            flt R = flt(acceptedCount)/flt(totalSteps+1.0);
             // Calculate update factor
             flt f = 0.5 / (1.0 - R + 1e-18);
             // Update sigma

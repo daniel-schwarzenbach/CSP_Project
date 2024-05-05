@@ -81,4 +81,7 @@ bool adaptive_metropolis(   Lattice &lattice,
                             Spin const& k = {0,0,0},
                             flt const& maxFactor = 60.0);
 
+void restet_adaptive_omp();
+void restet_adaptive();
+
 #endif

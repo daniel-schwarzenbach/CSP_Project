@@ -9,6 +9,16 @@
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
 
+flt sigma_omp = 100;
+u64 totalSteps_omp = 0;
+u64 acceptedCount_omp = 0;
+
+void restet_adaptive_omp(){
+    flt sigma_omp = 100;
+    u64 totalSteps_omp = 0;
+    u64 acceptedCount_omp = 0;
+}
+
 // Input:
 //      - refrence to the lattice
 //      - temperature T
@@ -42,7 +52,6 @@ bool metropolis_omp(Lattice &lattice,
         flt maxFactor = 100;
         measure::Timer watch;
         uint accepted_count = 0;
-        flt sigma = maxFactor;
         uint Lx = lattice.Lx();
         uint Ly = lattice.Ly();
         uint Lz = lattice.Lz();
@@ -50,6 +59,8 @@ bool metropolis_omp(Lattice &lattice,
         watch.start();
         for (u64 step = 0; step < numSteps; ++step)
         {
+#pragma omp critical
+            ++totalSteps_omp;
             // Choose a random lattice site
             int x = rng::rand_int_range(0, Lx);
             int y = rng::rand_int_range(0, Ly);
@@ -75,7 +86,7 @@ bool metropolis_omp(Lattice &lattice,
                     newSpin.small_step(0.1); // Small step move (small change around the current spin)
                     break;
                 case MoveType::Addaptive:
-                    newSpin.adaptive_step(sigma);
+                    newSpin.adaptive_step(sigma_omp);
                     break;
                 }
             // Calculate energy difference
@@ -90,13 +101,13 @@ bool metropolis_omp(Lattice &lattice,
 #pragma omp critical
                 lattice(x, y, z) = newSpin;
                 if(moveType == MoveType::Addaptive){
-                    ++accepted_count;
+                    ++acceptedCount_omp;
                     // Update acceptance rate
-                    flt R = accepted_count/(step+1.0);
+                    flt R = acceptedCount_omp/(totalSteps_omp+1.0);
                     // Calculate update factor
                     flt f = 0.5 / (1.0 - R + 1e-18);
                     // Update sigma
-                    sigma = std::min(maxFactor, sigma * f );
+                    sigma_omp = std::min(maxFactor, sigma_omp * f );
                 }
             }
 
