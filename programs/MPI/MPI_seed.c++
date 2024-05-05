@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(comm, &rank);
     int size = 1;
     MPI_Comm_size(comm, &size);
-
+    measure::Timer programTimer; programTimer.start();
     const uint Seed = 42 + rank;
     // read input
     flt T = -1;
@@ -152,24 +152,26 @@ int main(int argc, char* argv[])
 
     //      --- Wolff
     // run through all teperatures
-   {
-        measure::Timer watch; watch.start();
-        cout << rank <<" is running wolff ..."<< endl;
-        rng::set_seed(Seed);
-        if(T > 1.3)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
+//    {
+//         measure::Timer watch; watch.start();
+//         cout << rank <<" is running wolff ..."<< endl;
+//         rng::set_seed(Seed);
+//         if(T > 1.3)
+//             lattice.randomize();
+//         else
+//             lattice.set_constant(Spin{0,0,1});
 
     
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-                        J, h, k, algo::ds::wolff_, loading_bar);
-        data::store_data(data,wolffFile + to_string(rank));
-        cout << "finished wolff in: " << watch.time() << endl << endl;
-    }
+//         cout << "T = " << T << endl;
+//         Array2D<flt> data = 
+//                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
+//                         J, h, k, algo::ds::wolff_, loading_bar);
+//         data::store_data(data,wolffFile + to_string(rank));
+//         cout << "finished wolff in: " << watch.time() << endl << endl;
+//     }
     cout << rank << " has finished the calculations" << endl;
+
+    what_is(programTimer.time());
     MPI_Finalize();
     return 0;
 }
