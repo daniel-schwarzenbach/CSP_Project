@@ -11,6 +11,7 @@
 #include <Metropolis/metropolis.h++>
 #include <iostream>
 #include <assert.h>
+#include <functional>
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& of, std::vector<double> const& array){
     for (double x : array){
@@ -88,7 +89,7 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
     }
 
     outFile.close();
-
+/*
     
     //        WOLFF
 
@@ -200,13 +201,13 @@ void simulation(std::vector<double> temperatures, Spin h, Spin k, int Lx, int Ly
 
     outFile2.close();   
 
-
+*/
 }
 
 // Temperatures: temperatures at which we want to drive the system to
 // equilibrium, array with N entries
 // N_eq: number of steps needed for the different temperatures to bring
-// the system to equilibrium, different for the thress algorithms,
+// the system to equilibrium, different for the three algorithms,
 // array with dimension N x 3
 void calc_ramp(std::vector<double> temperatures, std::vector<std::vector<double>> N_eq,
     int N_datapoints_met, int N_datapoints_adamet, int N_datapoints_wolff,
@@ -231,7 +232,76 @@ void calc_ramp(std::vector<double> temperatures, std::vector<std::vector<double>
         
         simulation(current_temperature, h, k, Lx, Ly, Lz, J, Nmax_met_i, Nmax_adamet_i,
             Nmax_wolff_i, Ns_met, Ns_adamet, Ns_wolff, Time);
-        // Process simulation_result as needed
+        // Process simulation result as needed
+    }
+}
+
+void benchmark_algorithms(string algorithm_name, int N_eq, int M_max, 
+    int N_s, int N_max, int L, float T, float J, float MaxTime, 
+    Spin h, Spin k){
+    // Check which algorithm is benchmarked
+    if (algorithm_name == "Metropolis") {
+        std::function<bool(Lattice&, F64, F64, F64, int64_t, Spin, Spin, MoveType)> algorithm = metropolis;
+    } else if (algorithm_name == "Adaptive Metropolis") {
+        std::function<bool(Lattice&, F64, F64, F64, int64_t, Spin, Spin, F64)> algorithm = adaptive_metropolis;
+    } else if (algorithm_name == "Wolff") {
+        std::function<bool(Lattice&, F64, F64, F64, u64)> algorithm = wolff;
+    } else {
+        std::cerr << "Error: Unknown algorithm\n";
+        return;
+    }
+    std::cout << "Benchmarking " << algorithm_name << endl;
+    // Perform benchmarking
+    for (int i = 0; i < M_max; ++i) {
+        uint seed = i;
+        rng::set_seed(i);
+        Lattice lattice = Lattice::random_lattice(L, L, L);
+
+        // Check which algorithm is benchmarked
+        if (algorithm_name == "Metropolis") {
+            metropolis(lattice, T, J, MaxTime, N_eq, h, k);
+        } else if (algorithm_name == "Adaptive Metropolis") {
+            adaptive_metropolis(lattice, T, J, MaxTime, N_eq, h, k);
+        } else if (algorithm_name == "Wolff") {
+            wolff(lattice, T, J, MaxTime, N_eq);;
+        } else {
+            std::cerr << "Error: Unknown algorithm\n";
+            return;
+        }
+
+        // Variables to track sum and sum of squares
+        double energy_sum = 0.0;
+        double energy_sum_squared = 0.0;
+        double magnetization_sum = 0.0;
+        double magnetization_sum_squared = 0.0;
+
+        // Perform N_s steps N_max times
+        for (int j = 0; j < N_max; ++j) {
+            // calculate M and E and their variance
+            flt energy = measure::get_energy(lattice, h, k, J);
+            Vector3 magnetisation = measure::get_magnetization(lattice);
+            // Now calculate variance up until now
+            // Update sums and sum of squares
+            energy_sum += energy;
+            energy_sum_squared += energy * energy;
+            magnetization_sum += magnetisation.norm();
+            magnetization_sum_squared += magnetisation.norm() * magnetisation.norm();
+            // Calculate variance up until now
+            double energy_variance = (energy_sum_squared / (j + 1)) - std::pow(energy_sum / (j + 1), 2);
+            double magnetization_variance = (magnetization_sum_squared / (j + 1)) - std::pow(magnetization_sum / (j + 1), 2);
+            // Perform N_s steps of the algorithm
+            // Check which algorithm is benchmarked
+            if (algorithm_name == "Metropolis") {
+                metropolis(lattice, T, J, MaxTime, N_s, h, k);
+            } else if (algorithm_name == "Adaptive Metropolis") {
+                adaptive_metropolis(lattice, T, J, MaxTime, N_s, h, k);
+            } else if (algorithm_name == "Wolff") {
+                wolff(lattice, T, J, MaxTime, N_s);;
+            } else {
+                std::cerr << "Error: Unknown algorithm\n";
+                return;
+            }
+        }
     }
 }
 
@@ -242,12 +312,12 @@ F64 Time_ = 100000.0;
 Spin h_ = Spin(0.0,0.0,0.0);
 Spin k_ = Spin(0.0,0.0,0.0);
 //Define maximal number of steps, step width and number of iterations 
-int64_t Nmax_met = 1e4;
-int64_t Nmax_adamet = 1e4;
-int64_t Nmax_wolff = 1e4;
-int Ns_met = 1e2;
-int Ns_adamet = 1e2;
-int Ns_wolff = 1e2;
+int64_t Nmax_met = 1e9;
+int64_t Nmax_adamet = 1e9;
+int64_t Nmax_wolff = 1e9;
+int Ns_met = 1e3;
+int Ns_adamet = 1e3;
+int Ns_wolff = 1e3;
 
 // lattice size
 int L = 8;
@@ -260,16 +330,31 @@ int N_datapoints_wolff = 10;
 //std::vector<double> temperatures = {0.01};
 
 std::vector<std::vector<double>> N_eq_ = {{169,307,930},{135,246,744},{15,26,74}};
-std::vector<double> temperatures_ = {0.1,0.3,1.2};
+std::vector<double> temperatures_ = {0.01};
 //{-2.6,-2.5,-2.4000000000000004,-2.1,-2.0,-1.9000000000000001}
 //{{1000,885,771,428,314,200},{2007,1914,1821,1542,1450,1357},{302,294,285,260,251,242}}
+std::vector<string> algos= {"Metropolis","Wolff","Adaptive Metropolis"};
+// Define arrays for N_eq, M_max, N_s, N_max for each algorithm
+std::vector<int> N_eq_values = {100, 200, 150};   // Example values, replace with appropriate values
+std::vector<int> M_max_values = {10, 20, 15};     // Example values, replace with appropriate values
+std::vector<int> N_s_values = {1000, 1000, 1000};       // Example values, replace with appropriate values
+std::vector<int> N_max_values = {20, 30, 25};     // Example values, replace with appropriate values
+float temp = 0.01;
+float maxTime = 100;
+
 
 int main()
-{
-    //simulation(temperatures, h, k, Lx, Ly, Lz, J, Nmax_met, Nmax_adamet,
-    //Nmax_wolff, Ns_met, Ns_adamet, Ns_wolff, Time);
+{   
+    TimeKeeper watch;
+    simulation(temperatures_, h_, k_, Lx_, Ly_, Lz_, J_, Nmax_met, Nmax_adamet,
+    Nmax_wolff, Ns_met, Ns_adamet, Ns_wolff, Time_);
+    std::cout << watch.time();
     //calc_ramp(temperatures_, N_eq_, N_datapoints_met, N_datapoints_adamet,
     //    N_datapoints_wolff, h_, k_, Lx_, Ly_, Lz_, J_, Time_);
-    
+    // Iterate over each algorithm name and benchmark it
+    // Iterate over each algorithm name and benchmark it
+    //for (size_t i = 0; i < algos.size(); ++i) {
+    //    benchmark_algorithms(algos[i], N_eq_values[i], M_max_values[i], N_s_values[i], N_max_values[i], L, temp, J_, maxTime, h_, k_);
+    //}
     return 0;
 }
