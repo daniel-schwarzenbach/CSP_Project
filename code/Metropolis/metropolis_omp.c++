@@ -16,7 +16,7 @@ flt calculate_energy_diff_omp(Lattice& lattice, int  const& x,
                         int const& y,int const& z, 
                         Spin const& oldSpin, Spin const& newSpin, 
                         flt const& J, Spin const& h, Spin const& k){
-    Array<Spin>& latticeArray = lattice.get_raw_data();
+    const Array<Spin>& latticeArray = lattice.get_raw_data();
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
