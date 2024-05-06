@@ -60,7 +60,7 @@ if(MPI)
 
     # programs
     add_executable(HeisenbergMPI ${SRC_FILES}
-        ./programs/MPI/MPI_metropolis_speed_up.c++)
+        ./programs/MPI/MPI_seed.c++)
     # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
 
     # lib/
