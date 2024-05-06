@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt Ns_met = 5e+5;
+const flt Ns_met = 1e+7;
 // end Time
-const flt Nmax_met = 5e+7;
+const flt Nmax_met = 1e+9;
 
 const flt Ns_wolff = 1e+2;
 // end Time
@@ -69,6 +69,8 @@ int main(int mainArgCount, char **mainArgs)
         // plot magnitisation
         cout << "plot magnitistion" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
             auto p2 = plt::plot(metro[0],metro[1],"--s");
             auto p5 = plt::plot(metro_omp[0],metro_omp[1],"--s");
@@ -83,6 +85,8 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/magnet/T_" + to_str(T) + ".png");
+            fig.reset();
+            plt::figure(false);
             plt::cla();
             
         }
@@ -90,6 +94,8 @@ int main(int mainArgCount, char **mainArgs)
         // plot energy
         cout << "plot energy" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
             auto p2 = plt::plot(metro[0],metro[2],"--s");
             auto p5 = plt::plot(metro_omp[0],metro_omp[2],"--s");
@@ -105,12 +111,16 @@ int main(int mainArgCount, char **mainArgs)
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/energy/T_" + to_str(T) + ".png");
             plt::hold(false);
+            fig.reset();
+            plt::figure(false);
             plt::cla();
         }
 
                 // plot number of steps
         cout << "plot number of steps" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
             auto p2 = plt::plot(metro[3],metro[0],"--s");
             auto p5 = plt::plot(metro_omp[3],metro_omp[0],"--s");
@@ -126,6 +136,8 @@ int main(int mainArgCount, char **mainArgs)
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/number_of_steps/" + to_str(T) + ".png");
             plt::hold(false);
+            fig.reset();
+            plt::figure(false);
             plt::cla();
         }
         flt Speed_up = metro[3][metro[3].size()-1]/

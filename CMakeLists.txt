@@ -27,7 +27,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_speed_up_metropolis_adaptive.c++)
+add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot_speed_up_metropolis.c++)
 
 
 find_package(OpenMP)

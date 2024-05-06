@@ -179,14 +179,14 @@ bool metropolis_omp(Lattice &lattice,
             // Accept the new configuration
             {
             uint lid = lattice.get_raw_id(x,y,z);
-            // #pragma omp atomic write
-            // latticArray[lid][0] = newSpin[0];
-            // #pragma omp atomic write
-            // latticArray[lid][1] = newSpin[1];
-            // #pragma omp atomic write
-            // latticArray[lid][2] = newSpin[2];
-            #pragma omp critical
-            latticArray[lid] = newSpin;
+            #pragma omp atomic write
+            latticArray[lid][0] = newSpin[0];
+            #pragma omp atomic write
+            latticArray[lid][1] = newSpin[1];
+            #pragma omp atomic write
+            latticArray[lid][2] = newSpin[2];
+            // #pragma omp critical
+            // latticArray[lid] = newSpin;
             }
 
             if(moveType == MoveType::Addaptive){
