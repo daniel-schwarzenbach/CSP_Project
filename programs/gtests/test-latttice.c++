@@ -33,7 +33,7 @@ bool is_the_same(Lattice const &l1, Lattice const &l2)
             {
                 if (l1(x, y, z) != l2(x, y, z))
                 {
-                    cout << l1(x, y, z) << " != " << l2(x, y, z) << endl;
+                    cout << l1(x, y, z) << " != " <<l2(x, y, z)<<endl;
                     what_is(x);
                     what_is(y);
                     what_is(z);
@@ -72,7 +72,8 @@ TEST(LatticeTests, Lattice_Periodic)
     Lattice lattice = Lattice::random_lattice(L, L, L);
     int x = -3, y = 500, z = 302;
     Array<Index> neighbors = {
-        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, {x, y, z + 1}, {x, y, z - 1}};
+        {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, 
+        {x, y - 1, z}, {x, y, z + 1}, {x, y, z - 1}};
     for (Index neighbor : neighbors)
     {
         int nx = neighbor[0];
@@ -122,7 +123,7 @@ TEST(LatticeTests, Lattice3d_bool_periodic)
 {
     uint L = 8;
     rng::set_seed(89);
-    Lattice3d<bool> lattice = Lattice3d<bool>::constant_lattice(L, L, L, false);
+    Lattice3D<bool> lattice = Lattice3D<bool>::constant_lattice(L, L, L, false);
     int x = -3, y = 500, z = 302;
     Array<Index> neighbors = {
         {x + 1, y, z}, {x - 1, y, z}, {x, y + 1, z}, {x, y - 1, z}, {x, y, z + 1}, {x, y, z - 1}};
@@ -145,7 +146,7 @@ TEST(LatticeTests, Lattice3d_bool_dirichlet)
 {
     uint L = 4;
     rng::set_seed(89);
-    Lattice3d<bool> lattice = Lattice3d<bool>::constant_lattice(L, L, L, false);
+    Lattice3D<bool> lattice = Lattice3D<bool>::constant_lattice(L, L, L, false);
     lattice.set_boundary_conditions(BC::_0);
     EXPECT_TRUE(lattice.get(0, 0, -1) == true);
     EXPECT_TRUE(lattice.get(0, 0, 4) == true);
@@ -161,14 +162,13 @@ TEST(LatticeTests, Store_and_Load)
     Lattice l1 = Lattice::random_lattice(L, L, L);
     Lattice l2 = Lattice::constant_lattice(L, L, L, {0, 0, 1});
     EXPECT_FALSE(is_the_same(l1, l2));
-    what_is(l1(0,0,0));
-    what_is(l1(0,0,1));
-    what_is(l1(0,0,2));
+    what_is(l1(0, 0, 0));
+    what_is(l1(0, 0, 1));
+    what_is(l1(0, 0, 2));
     data::store_lattice(l1, "test_save_lattice");
     data::load_lattice(l2, "test_save_lattice");
-    what_is(l2(0,0,0));
-    what_is(l2(0,0,1));
-    what_is(l2(0,0,2));
+    what_is(l2(0, 0, 0));
+    what_is(l2(0, 0, 1));
+    what_is(l2(0, 0, 2));
     EXPECT_TRUE(is_the_same(l1, l2));
-    
 }

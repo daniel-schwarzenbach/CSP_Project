@@ -48,7 +48,7 @@ int main(int mainArgCount, char **mainArgs)
         restet_adaptive_omp();
         Array2D<flt> metro_omp_adapt = algo::ds::test_algorithm(
                 lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive_omp);
+            J, h, k, algo::ds::metropolis_random_omp);
         data::store_data(metro_omp_adapt,
                         Folder + "/metropolis_adaptive_omp");
 
@@ -59,7 +59,7 @@ int main(int mainArgCount, char **mainArgs)
         restet_adaptive();
         Array2D<flt> metro_adapt = algo::ds::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive);
+            J, h, k, algo::ds::metropolis_random);
         data::store_data(metro_adapt,
                         Folder + "/metropolis_adaptive");
 
@@ -70,8 +70,8 @@ int main(int mainArgCount, char **mainArgs)
         cout << "plot magnitistion" << endl;
         {
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[1],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[1],"--s");
+            auto p2 = plt::plot(metro_adapt[0],metro_adapt[1],"--s");
+            auto p5 = plt::plot(metro_omp_adapt[0],metro_omp_adapt[1],"--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Adaptive Metropolis",
@@ -79,8 +79,8 @@ int main(int mainArgCount, char **mainArgs)
                                   });
             
             l->location(plt::legend::general_alignment::bottomright);
-            plt::xlabel("Time in s");
-            plt::ylabel("Magnetistation");
+            plt::xlabel("Number of Steps");
+            plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/magnet/T_" + to_str(T) + ".png");
             plt::figure(false);
@@ -91,8 +91,8 @@ int main(int mainArgCount, char **mainArgs)
         cout << "plot energy" << endl;
         {
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[3],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[3],"--s");
+            auto p2 = plt::plot(metro_adapt[0],metro_adapt[2],"--s");
+            auto p5 = plt::plot(metro_omp_adapt[0],metro_omp_adapt[2],"--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Adaptive Metropolis",
@@ -100,7 +100,7 @@ int main(int mainArgCount, char **mainArgs)
                                   });
             
             l->location(plt::legend::general_alignment::topright);
-            plt::xlabel("Time in s");
+            plt::xlabel("Number of Steps");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/energy/T_" + to_str(T) + ".png");
@@ -112,8 +112,8 @@ int main(int mainArgCount, char **mainArgs)
         cout << "plot number of steps" << endl;
         {
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[0],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[0],"--s");
+            auto p2 = plt::plot(metro_adapt[3],metro_adapt[0],"--s");
+            auto p5 = plt::plot(metro_omp_adapt[3],metro_omp_adapt[0],"--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Adaptive Metropolis",
