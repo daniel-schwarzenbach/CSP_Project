@@ -35,10 +35,14 @@ private:
     BC bc = BC::Periodic;
     // value on the zero boundary
     T zero_element;
-    // is return for refrence on 0 boundary
-    T dummy_element;
 
 public:
+    // return raw data
+    Array<T>& get_raw_data();
+    // return raw data id
+    uint get_raw_id(int const& x,int  const& y, int const& z) const;
+    // return raw data id
+    uint get_raw_id(Index const& index) const;
     // size of the lattice in x-direction
     uint Lx() const;
     // size of the lattice in y-direction

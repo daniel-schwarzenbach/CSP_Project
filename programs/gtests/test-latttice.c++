@@ -102,13 +102,20 @@ TEST(LatticeTests, Lattice_Dirichlet_){
     lattice.set_boundary_conditions(BC::_0);
     Spin zero{0,0,0};
     EXPECT_TRUE(zero == lattice(0,0,-1));
+    what_is(lattice(0,0,-1));
     EXPECT_TRUE(zero == lattice(0,-1,0));
+    what_is(lattice(0,-2,-1));
     EXPECT_TRUE(zero == lattice(-1,0,0));
+    what_is(lattice(-1,0,0));
     EXPECT_TRUE(zero == lattice(0,0,L));
+    cout << "4\n";
     EXPECT_TRUE(zero == lattice(0,L,0));
+    cout << "wfaslkfj\n";
+    cout << "3\n";
     EXPECT_TRUE(zero == lattice(L,0,0));
-
+    cout << "1\n";
     EXPECT_FALSE(zero == lattice(0,0,0));
+    cout << "2\n";
     
 }
 

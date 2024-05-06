@@ -9,6 +9,51 @@
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
 
+flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
+                        int const& y,int const& z, 
+                        Spin const& oldSpin, Spin const& newSpin, 
+                        flt const& J, Spin const& h, Spin const& k){
+    Array<Spin>& latticeArray = lattice.get_raw_data();
+    // Get dimensions of the lattice
+    int Lx = lattice.Lx();
+    int Ly = lattice.Ly();
+    int Lz = lattice.Lz();
+
+    Array<Index> neighbors = {
+        {x + 1, y, z}, {x - 1, y, z}, 
+        {x, y + 1, z}, {x, y - 1, z}, 
+        {x, y, z + 1}, {x, y, z - 1}};
+    // Energies of old and new configuration
+    flt energyOld = 0.0;
+    flt energyNew = 0.0;
+    for (Index neighbor : neighbors)
+    {
+        // Get indices of neighbors
+        // Get neighboring spin
+        Spin spin;
+        {
+        uint lid = lattice.get_raw_id(neighbor);
+        #pragma omp atomic read
+        spin[0] = latticeArray[lid][0];
+        #pragma omp atomic read
+        spin[1] = latticeArray[lid][1];
+        #pragma omp atomic read
+        spin[2] = latticeArray[lid][2];
+        }
+
+        // Calcualte and add energies
+        energyOld += -J * (oldSpin | spin) 
+                     - (oldSpin | h) 
+                     - pow((oldSpin | k), 2);
+        energyNew += -J * (newSpin | spin) 
+                     - (newSpin | h) 
+                     - pow((newSpin | k), 2);
+    }   
+    // Calculate energy difference (deltaE)
+    flt deltaE = energyNew - energyOld;
+    return deltaE;
+}
+
 flt sigma_omp = 100;
 u64 totalSteps_omp = 0;
 u64 acceptedCount_omp = 0;
@@ -35,6 +80,7 @@ bool metropolis_omp(Lattice &lattice,
     const uint Lz = lattice.Lz();
     const flt beta = Beta(T);
     flt simga_total = 0.0;
+    Array<Spin>& latticArray = lattice.get_raw_data();
     #pragma omp parallel
     {
     u64 thread_totalSteps = totalSteps_omp;
@@ -50,8 +96,15 @@ bool metropolis_omp(Lattice &lattice,
         // Get the spin at the chosen site (cartesian)
         Spin spin;
         //#pragma omp atomic update
-        #pragma omp critical
-        spin = lattice(x, y, z);
+        {
+        uint lid = lattice.get_raw_id(x,y,z);
+        #pragma omp atomic read
+        spin[0] = latticArray[lid][0];
+        #pragma omp atomic read
+        spin[1] = latticArray[lid][1];
+        #pragma omp atomic read
+        spin[2] = latticArray[lid][2];
+        }
 
         // Propose spin change based on given trial move
         Spin newSpin = spin;
@@ -72,7 +125,7 @@ bool metropolis_omp(Lattice &lattice,
                 break;
             }
         // Calculate energy difference
-        flt deltaE = calculateEnergyDiff(lattice, x, y, z, spin,
+        flt deltaE = calculate_energy_diff_omp(lattice, x, y, z, spin,
                                             newSpin, J, h, k);
         
         // Acceptance condition
@@ -80,8 +133,15 @@ bool metropolis_omp(Lattice &lattice,
         { // Boltzmann constant k is
             // normalized with interaction strength J in this implementation
             // Accept the new configuration
-            #pragma omp critical
-            lattice(x, y, z) = newSpin;
+            {
+            uint lid = lattice.get_raw_id(x,y,z);
+            #pragma omp atomic write
+            latticArray[lid][0] = newSpin[0];
+            #pragma omp atomic write
+            latticArray[lid][1] = newSpin[1];
+            #pragma omp atomic write
+            latticArray[lid][2] = newSpin[2];
+            }
 
             if(moveType == MoveType::Addaptive){
                 ++thread_acceptedCount;
@@ -90,7 +150,7 @@ bool metropolis_omp(Lattice &lattice,
                 // Calculate update factor
                 const flt f = 0.5 / (1.0 - R + 1e-18);
                 // Update sigma   
-                thread_sigma = std::min(maxFactor_omp, thread_sigma*f);
+                thread_sigma = std::min(maxFactor_omp,thread_sigma*f);
             }
         }
 

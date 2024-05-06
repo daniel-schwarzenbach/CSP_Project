@@ -14,6 +14,46 @@ inline uint modulo(int const &i, uint u)
 // row access
 #define access(ix, iy, iz) ix *Ly_ *Lz_ + iy *Lz_ + iz
 
+// return raw data
+template <typename T>
+Array<T>& Lattice3d<T>::get_raw_data(){
+    return data;
+}
+// return raw data id
+template <typename T>
+uint Lattice3d<T>::get_raw_id(
+        int const& x, int const& y, int const& z) const
+{
+        switch (bc)
+    {
+    case BC::_0:
+        if (x >= 0 && x < Lx_ &&
+            y >= 0 && y < Ly_ &&
+            z >= 0 && z < Lz_)
+        {
+            return access(x, y, z);
+        }
+        else
+        {
+            return Lz_*Ly_*Lx_;
+        }
+        break;
+
+    default:
+        uint x_ = modulo(x, Lx_);
+        uint y_ = modulo(y, Ly_);
+        uint z_ = modulo(x, Lz_);
+        return access(x_, y_, z_);
+        break;
+    }
+}
+
+// return raw data id
+template <typename T>
+uint Lattice3d<T>::get_raw_id(Index const& index) const{
+    return get_raw_id(index[0], index[1], index[2]);
+}
+
 // size of the lattice in x-direction
 template <typename T>
 uint Lattice3d<T>::Lx() const { return Lx_; }
@@ -64,6 +104,7 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
         return data.at(access(x_, y_, z_));
         break;
     }
+    return zero_element;
 }
 
 
@@ -96,8 +137,8 @@ T &Lattice3d<T>::operator()(int x, int y, int z)
         }
         else
         {
-            dummy_element = zero_element;
-            return dummy_element;
+            data.at(Lx_*Lz_*Ly_) = zero_element;
+            return data.at(Lx_*Lz_*Ly_);
         }
     default:
         uint x_ = modulo(x, Lx_);
@@ -153,10 +194,10 @@ T Lattice3d<T>::get(Index const &id) const
 template <typename T>
 Lattice3d<T>::Lattice3d(uint Lx, uint Ly, uint Lz)
     : zero_element(0), Lx_(Lx), Ly_(Ly), Lz_(Lz),
-      data(Lx * Ly * Lz)
+      data(Lx * Ly * Lz +1)
 {
-    dummy_element = zero_element;
-    data.resize(Lx * Ly * Lz);
+    data.resize(Lx * Ly * Lz + 1);
+    data[Lx*Ly*Lz] = zero_element;
     data.shrink_to_fit();
 }
 

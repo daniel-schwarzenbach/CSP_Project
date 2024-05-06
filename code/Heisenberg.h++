@@ -92,4 +92,5 @@ extern template f64 mean<f64>(Array<f64> const&);
 extern template f32 variance<f32>(Array<f32> const&);
 extern template f64 variance<f64>(Array<f64> const&);
 
+
 #endif // __HEISENBERG_H__
