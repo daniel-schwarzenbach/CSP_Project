@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
     
 
-    u64 Nmax_met;
+    u64 Nmax_met = 1e+9;
     if(T_low <= T   &&  T_high >= T){
         Nmax_met = 1e+10;
     }
