@@ -43,7 +43,6 @@ flt calculateEnergyDiff(Lattice const& lattice, int  const& x,
         // Get indices of neighbors
         // Get neighboring spin
         Spin neighborSpin;
-        #pragma omp critical
         neighborSpin = lattice(neighbor);
 
         // Calcualte and add energies

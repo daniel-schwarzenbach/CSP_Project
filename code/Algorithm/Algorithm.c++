@@ -88,5 +88,5 @@ Array2D<flt> algo::ds::test_algorithm(
     M_z.push_back(magnVec | z);
     E.push_back(measure::get_energy(lattice));
     Time.push_back(t_elapsed);
-    return {Step, M, M_z, E, Time};
+    return {Step, M, E, Time};
 }

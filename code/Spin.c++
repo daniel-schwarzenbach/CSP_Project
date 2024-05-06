@@ -78,7 +78,7 @@ void SpinVector::random_step()
 
 void SpinVector::small_step(flt openingAngle)
 {
-    flt theta = rng::rand_uniform() * openingAngle;
+    flt theta = (rng::rand_uniform()*2 -1) * openingAngle;
     flt phi = rng::rand_uniform() * _2pi_;
     Vector3 randomPole;
     randomPole << std::sin(theta) * std::cos(phi),

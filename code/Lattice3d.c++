@@ -24,7 +24,7 @@ template <typename T>
 uint Lattice3d<T>::get_raw_id(
         int const& x, int const& y, int const& z) const
 {
-        switch (bc)
+    switch (bc)
     {
     case BC::_0:
         if (x >= 0 && x < Lx_ &&
@@ -35,16 +35,13 @@ uint Lattice3d<T>::get_raw_id(
         }
         else
         {
-            return Lz_*Ly_*Lx_;
+            return Lx_*Ly_*Lz_;
         }
-        break;
-
     default:
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
-        uint z_ = modulo(x, Lz_);
+        uint z_ = modulo(z, Lz_);
         return access(x_, y_, z_);
-        break;
     }
 }
 
@@ -95,16 +92,12 @@ T Lattice3d<T>::operator()(int x, int y, int z) const
         {
             return zero_element;
         }
-        break;
-
     default:
         uint x_ = modulo(x, Lx_);
         uint y_ = modulo(y, Ly_);
-        uint z_ = modulo(x, Lz_);
+        uint z_ = modulo(z, Lz_);
         return data.at(access(x_, y_, z_));
-        break;
     }
-    return zero_element;
 }
 
 
@@ -153,24 +146,7 @@ template <typename T>
 void Lattice3d<T>::set(int const &x, int const &y, int const &z,
                        T const &v)
 {
-    switch (bc)
-    {
-    case BC::_0:
-        if (x >= 0 && x < Lx_ &&
-            y >= 0 && y < Ly_ &&
-            z >= 0 && z < Lz_)
-        {
-            data.at(access(x, y, z)) = v;
-        }
-        break;
-    // BC = periodic
-    default:
-        uint x_ = modulo(x, Lx_);
-        uint y_ = modulo(y, Ly_);
-        uint z_ = modulo(z, Lz_);
-        data.at(access(x_, y_, z_)) = v;
-        break;
-    }
+    data.at(get_raw_id(x,y,z)) = v;
 }
 
 template <typename T>
@@ -277,12 +253,37 @@ Lattice3d<T> Lattice3d<T>::random_lattice(uint Lx, uint Ly, uint Lz)
 
 Lattice3d<bool>::Lattice3d(uint Lx, uint Ly, uint Lz)
     : zero_element(true), Lx_(Lx), Ly_(Ly), Lz_(Lz),
-      data(Lx_ * Ly_ * Lz_)
+      data(Lx * Ly * Lz + 1)
 {
-    dummy_element = zero_element;
-    data.resize(Lx_ * Ly_ * Lz_);
+    data.resize(Lx_ * Ly_ * Lz_+1);
+    data.at(Lx_ * Ly_ * Lz_) = true;
     data.shrink_to_fit();
 }
+
+
+// return raw data id
+uint Lattice3d<bool>::get_raw_id(int const& x,int  const& y, int const& z) const{
+    switch (bc)
+    {
+    case BC::_0:
+        if (x >= 0 && x < Lx_ &&
+            y >= 0 && y < Ly_ &&
+            z >= 0 && z < Lz_)
+        {
+            return access(x, y, z);
+        }
+        else
+        {
+            return Lx_*Ly_*Lz_;
+        }
+    default:
+        uint x_ = modulo(x, Lx_);
+        uint y_ = modulo(y, Ly_);
+        uint z_ = modulo(z, Lz_);
+        return access(x_, y_, z_);
+    }
+}
+
 
 // size of the lattice in x-direction
 uint Lattice3d<bool>::Lx() const { return Lx_; }
@@ -297,6 +298,7 @@ BC Lattice3d<bool>::get_boundary_conditions() const { return bc; }
 void Lattice3d<bool>::set_zero_element(bool const &zero)
 {
     zero_element = zero;
+    data[Lx_*Ly_*Lz_] = zero;
 }
 
 void Lattice3d<bool>::set_boundary_conditions(BC bc_) { bc = bc_; }
@@ -306,24 +308,7 @@ void Lattice3d<bool>::set_boundary_conditions(BC bc_) { bc = bc_; }
 void Lattice3d<bool>::set(int const &x, int const &y, int const &z,
                           bool const &v)
 {
-    switch (bc)
-    {
-    case BC::_0:
-        if (x >= 0 && x < Lx_ &&
-            y >= 0 && y < Ly_ &&
-            z >= 0 && z < Lz_)
-        {
-            data.at(access(x, y, z)) = v;
-        }
-        break;
-    // BC = periodic
-    default:
-        uint x_ = modulo(x, Lx_);
-        uint y_ = modulo(y, Ly_);
-        uint z_ = modulo(z, Lz_);
-        data.at(access(x_, y_, z_)) = v;
-        break;
-    }
+    data[get_raw_id(x,y,z)] = v;
 }
 
 void Lattice3d<bool>::set(Index const &id, bool const &v)
@@ -333,24 +318,7 @@ void Lattice3d<bool>::set(Index const &id, bool const &v)
 
 bool Lattice3d<bool>::get(int const &x, int const &y, int const &z) const
 {
-    switch (bc)
-    {
-    case BC::_0:
-        if (x >= 0 && x < Lx_ &&
-            y >= 0 && y < Ly_ &&
-            z >= 0 && z < Lz_)
-        {
-            return data.at(access(x, y, z));
-        }
-        return zero_element;
-        break;
-    // BC = periodic
-    default:
-        uint x_ = modulo(x, Lx_);
-        uint y_ = modulo(y, Ly_);
-        uint z_ = modulo(z, Lz_);
-        return data.at(access(x_, y_, z_));
-    }
+    return data[get_raw_id(x,y,z)];
 }
 
 bool Lattice3d<bool>::get(Index const &id) const

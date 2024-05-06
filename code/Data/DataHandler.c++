@@ -383,12 +383,12 @@ Array2D<flt> data::load_data(string const &filename){
     return columns;
 }
 std::ofstream& operator<<(std::ofstream& of, Spin const& v){
-    of << "{" << v[0] <<", " <<v[1] <<", " <<v[2] <<", " <<"}";
+    of << "{" << v[0] <<", " <<v[1] <<", " <<v[2] <<"}";
     return of;
 }
 
 bool data::store_lattice(Lattice3d<Spin> const& lattice, 
-                    string const& filename){
+                        string const& filename){
     // openfile
     std::ofstream outfile(filename);
     if (!outfile)
@@ -404,7 +404,7 @@ bool data::store_lattice(Lattice3d<Spin> const& lattice,
     for(uint x = 0; x < Lx; ++x){
         outfile << "{" << endl;
         for(uint y = 0; y < Ly; ++y){
-            outfile << "{";
+            outfile << "{" << endl;
             for(uint z = 0; z < Lz; ++z){
                 outfile << lattice(x,y,z) << endl;
             }
@@ -431,18 +431,18 @@ bool data::load_lattice(Lattice3d<Spin>& lattice, string const& filename) {
     char brace;
 
     for(uint x = 0; x < Lx; ++x) {
-        std::getline(infile, line); // Skip the opening brace of each x layer
+        std::getline(infile, line); // Skip {
         for(uint y = 0; y < Ly; ++y) {
-            std::getline(infile, line); // Read the entire y layer
-            std::istringstream iss(line);
-            iss >> brace; // Skip the opening brace of each y layer
+            std::getline(infile, line); // Skip {
             for(uint z = 0; z < Lz; ++z) {
+                std::getline(infile, line);
+                std::istringstream iss(line);
                 iss >> brace >> spinX >> brace >> spinY >> brace >> spinZ >> brace;
                 lattice(x, y, z) = Spin{spinX, spinY, spinZ};
             }
-            std::getline(infile, line); // Skip the closing brace of each y layer
+            std::getline(infile, line); // Skip }
         }
-        std::getline(infile, line); // Skip the closing brace of each x layer
+        std::getline(infile, line); // Skip }
     }
 
     infile.close();

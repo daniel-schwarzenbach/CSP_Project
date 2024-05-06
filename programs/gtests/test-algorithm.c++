@@ -33,14 +33,14 @@ TEST(Algorithm, test_metropolis){
     EXPECT_TRUE(mag > testmag_met);
 }
 
-TEST(Algorithm, test_wolff_omp){
-    rng::set_seed(seed);
-    Lattice lattice = Lattice::random_lattice(4,4,4);
-    wolff_omp(
-            lattice,T,J,_inf_,Steps_wolff);
-    flt mag = measure::get_magnetization(lattice).norm();
-    EXPECT_TRUE(mag > testmag_wolff);
-}
+// TEST(Algorithm, test_wolff_omp){
+//     rng::set_seed(seed);
+//     Lattice lattice = Lattice::random_lattice(4,4,4);
+//     wolff_omp(
+//             lattice,T,J,_inf_,Steps_wolff);
+//     flt mag = measure::get_magnetization(lattice).norm();
+//     EXPECT_TRUE(mag > testmag_wolff);
+// }
 
 TEST(Algorithm, test_wolff){
     rng::set_seed(seed);

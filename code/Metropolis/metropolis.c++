@@ -58,7 +58,7 @@ bool metropolis(Lattice &lattice,
             newSpin.random_step(); // Random move (generate a random spin)
             break;
         case MoveType::SmallStep:
-            newSpin.small_step(0.1); // Small step move (small change around the current spin)
+            newSpin.small_step(0.2); // Small step move (small change around the current spin)
             break;
         case MoveType::Addaptive:
             cerr << ERROR 

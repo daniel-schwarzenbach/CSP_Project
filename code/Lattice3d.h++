@@ -103,8 +103,6 @@ private:
     BC bc = BC::Periodic;
     // value on the zero boundary
     bool zero_element;
-    // is return for refrence on 0 boundary
-    bool dummy_element;
 
 public:
     // size of the lattice in x-direction
@@ -113,6 +111,8 @@ public:
     uint Ly() const;
     // size of the lattice in z-direction
     uint Lz() const;
+    // return raw data id
+    uint get_raw_id(int const& x,int  const& y, int const& z) const;
     // get boundary condition
     BC get_boundary_conditions() const;
     // set value of the BC::_0

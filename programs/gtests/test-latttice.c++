@@ -166,6 +166,8 @@ TEST(LatticeTests, Store_and_Load)
     what_is(l1(0,0,2));
     data::store_lattice(l1, "test_save_lattice");
     data::load_lattice(l2, "test_save_lattice");
+    what_is(l2(0,0,0));
+    what_is(l2(0,0,1));
     what_is(l2(0,0,2));
     EXPECT_TRUE(is_the_same(l1, l2));
     

@@ -2,6 +2,7 @@
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
+#include <ctime>
 
 u64 get_wolf_steps(flt const& T){
     flt T_lower = 1.3;
@@ -35,6 +36,8 @@ constexpr uint Ly = L;
 constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
 constexpr flt T_critical = 1.45;
+constexpr flt T_low = 1.3;
+constexpr flt T_high = 1.6;
 
 
 
@@ -49,7 +52,11 @@ int main(int argc, char* argv[])
     int size = 1;
     MPI_Comm_size(comm, &size);
     measure::Timer programTimer; programTimer.start();
-    const uint Seed = 42332 + rank;
+    // set a ranndom seed
+        const u64 FullSeed = static_cast<uint>(time(0))*rank;
+    const uint Seed = 
+            static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
+    cout << " for rank " << rank << " has " ;what_is(Seed);
     // read input
     flt T = -1;
     if (argc > 1) {
@@ -85,14 +92,12 @@ int main(int argc, char* argv[])
 
     
 
-    constexpr u64 Nmax_met = 1e+11;
-    const u64 Nmax_wolff = std::min(
-        std::max(get_wolf_steps(T), 10'000UL), 10'000'000UL);
+    u64 Nmax_met;
+    if(T_low <= T   &&  T_high >= T){
+        Nmax_met = 1e+10;
+    }
 
-    constexpr u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
-    const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e3);
-    what_is(Ns_wolff);
-    what_is(Nmax_wolff);
+    const u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
 
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
@@ -115,6 +120,8 @@ int main(int argc, char* argv[])
                         J, h, k, algo::ds::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
+        data::store_lattice(lattice,
+                        metropolisFile+"Lattice_"+to_string(rank));
         cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
     }
 
@@ -137,30 +144,34 @@ int main(int argc, char* argv[])
                         J, h, k, algo::ds::metropolis_adaptive,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile + to_string(rank));
-        cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
+        data::store_lattice(lattice,
+                        metropolisAdaptFile+"Lattice_"+to_string(rank));
+        cout << "finished metropolis adaptive in: "<< watch.time()<<endl<<endl;
     }
 
 
 
 //          --- Wolff
-   {
-        measure::Timer watch; watch.start();
-        cout << rank <<" is running wolff ..."<< endl;
-        rng::set_seed(Seed);
-        if(T > T_critical)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
+//    {
+//         measure::Timer watch; watch.start();
+//         cout << rank <<" is running wolff ..."<< endl;
+//         rng::set_seed(Seed);
+//         if(T > T_critical)
+//             lattice.randomize();
+//         else
+//             lattice.set_constant(Spin{0,0,1});
 
     
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-                        J, h, k, algo::ds::wolff_, loading_bar);
-        data::store_data(data,wolffFile + to_string(rank));
-        cout << "finished wolff in: " << watch.time() << endl << endl;
-    }
-    cout << rank << " has finished the calculations" << endl;
+//         cout << "T = " << T << endl;
+//         Array2D<flt> data = 
+//                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
+//                         J, h, k, algo::ds::wolff_, loading_bar);
+//         data::store_data(data,wolffFile + to_string(rank));
+//         data::store_lattice(lattice,
+//                         wolffFile+"Lattice_"+to_string(rank));
+//         cout << "finished wolff in: " << watch.time() << endl << endl;
+//     }
+//     cout << rank << " has finished the calculations" << endl;
 
     what_is(programTimer.time());
     MPI_Finalize();
