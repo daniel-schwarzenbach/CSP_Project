@@ -24,6 +24,14 @@ namespace rng
     random number generator flt
 
     / @brief
+    / @return uniform random number r ∈ [-1,1)
+    */
+    double rand_uniform_singed();
+
+    /*
+    random number generator flt
+
+    / @brief
     / @return
     */
     double rand_gaussian();

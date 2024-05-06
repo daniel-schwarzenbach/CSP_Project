@@ -3,30 +3,18 @@
 
 #include <Base.h++>
 #include <Spin.h++>
-#include <Eigen.h++>
-
-/*
-Spin class
-- with scalar product: |
-- with standard product: *
-- with addition operator: +
-- with subtraction operator: -
-- with normalization: normalize()
-- with output operator: <<
-- with compareration operator: ==
-- with assignment operator: =
-*/
-using Spin = SpinVector;
 #include <Lattice3D.h++>
 
-extern template class Lattice3D<SpinVector>;
+
+
+
+extern template class Lattice3D<Spin>;
 extern template class Lattice3D<bool>;
 /*
 Lattice class
 - with acces operator: (x,y,z)
 - with boundry conditions: set_boundry_conditions()
 - Lx(), Ly(), Lz() // size of the lattice
-- comunicate_ghost_cells() // does nothing in Serial
 */
 using Lattice = Lattice3D<Spin>;
 

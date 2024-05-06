@@ -1,84 +1,85 @@
 #include "Spin.h++"
 
-//            --- SpinVector ---
-SpinVector::SpinVector(Vector3 const &v) : base(v) {}
-SpinVector &SpinVector::operator=(Vector3 const &other)
+//            --- Spin ---
+Spin::Spin(Vector3 const &v) : base(v) {}
+Spin &Spin::operator=(Vector3 const &other)
 {
     this->base::operator=(other);
     return *this;
 }
 
-f32 SpinVector::x() const { return this->base::operator()(0); }
-f32 SpinVector::y() const { return this->base::operator()(1); }
-f32 SpinVector::z() const { return this->base::operator()(2); }
+f32 Spin::x() const { return this->base::operator()(0); }
+f32 Spin::y() const { return this->base::operator()(1); }
+f32 Spin::z() const { return this->base::operator()(2); }
 
-f32 SpinVector::theta() const
+f32 Spin::theta() const
 {
-    SpinVector s = this->base::normalized();
+    Spin s = this->base::normalized();
     return acos(s.z());
 }
-f32 SpinVector::phi() const
+f32 Spin::phi() const
 {
-    SpinVector s = this->normalized();
+    Spin s = this->normalized();
     f32 phi = atan2(s.y(), s.x());
     if (phi < 0)
         phi += _2pi_;
     return phi;
 }
 
-SpinVector::SpinVector(f32 x, f32 y, f32 z) : base(x, y, z) {}
-SpinVector &SpinVector::operator=(SpinVector const &other)
+Spin::Spin(f32 x, f32 y, f32 z) : base(x, y, z) {}
+Spin &Spin::operator=(Spin const &other)
 {
     this->base::operator=(other);
     return *this;
 }
 
 std::ostream &operator<<(std::ostream &os,
-                         SpinVector const &s)
+                         Spin const &s)
 {
     os << "{" << s.x() << ", " << s.y() << ", " << s.z() << "}";
     return os;
 }
 
-SpinVector SpinVector::from_xyz(f32 x, f32 y, f32 z)
+Spin Spin::from_xyz(f32 x, f32 y, f32 z)
 {
-    SpinVector s;
+    Spin s;
     s << x, y, z;
     return s;
 }
-SpinVector SpinVector::from_phi_theata(f32 phi, f32 theta)
+Spin Spin::from_phi_theata(f32 phi, f32 theta)
 {
-    SpinVector s;
+    Spin s;
     s << std::sin(theta) * std::cos(phi),
         std::sin(theta) * std::sin(phi),
         std::cos(theta);
     return s;
 }
 
-SpinVector SpinVector::get_random()
+
+Spin Spin::get_random()
 {
-    SpinVector s;
-    flt theta = rng::rand_uniform() * _pi_;
-    flt phi = rng::rand_uniform() * _2pi_;
-    s << std::sin(theta) * std::cos(phi),
-        std::sin(theta) * std::sin(phi),
-        std::cos(theta);
-    return s;
+    f32 z = rng::rand_uniform_singed();
+    f32 y = rng::rand_uniform_singed();
+    f32 x = rng::rand_uniform_singed();
+    Spin s = {x,y,z};
+    return s.normalized();
 }
+
+
 // Trial moves
 
-void SpinVector::spin_flip_step()
+void Spin::spin_flip_step()
 {
     *this *= -1;
 }
-void SpinVector::random_step()
+void Spin::random_step()
 {
     *this = get_random();
 }
 
-void SpinVector::small_step(flt openingAngle)
+void Spin::small_step(flt openingAngle)
 {
-    flt theta = (rng::rand_uniform()*2 -1) * openingAngle;
+    flt theta = rng::rand_uniform_singed() * openingAngle;
     flt phi = rng::rand_uniform() * _2pi_;
     Vector3 randomPole;
     randomPole << std::sin(theta) * std::cos(phi),
@@ -92,12 +93,12 @@ void SpinVector::small_step(flt openingAngle)
     this->normalize();
 }
 
-void SpinVector::adaptive_step(flt sigma)
+void Spin::adaptive_step(flt sigma)
 {
     flt dx = rng::rand_gaussian();
     flt dy = rng::rand_gaussian();
     flt dz = rng::rand_gaussian();
-    *this += sigma * SpinVector(dx, dy, dz);
+    *this += sigma * Spin(dx, dy, dz);
     this->normalize();
 }
 

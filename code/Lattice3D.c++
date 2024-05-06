@@ -368,5 +368,5 @@ Lattice3D<bool> Lattice3D<bool>::random_lattice(uint Lx, uint Ly, uint Lz)
     return lattice;
 }
 
-template class Lattice3D<SpinVector>;
+template class Lattice3D<Spin>;
 template class Lattice3D<bool>;

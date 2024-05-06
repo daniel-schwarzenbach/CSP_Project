@@ -50,7 +50,20 @@ namespace rng
         return dist(engine);
     }
 
-        /*
+    /*
+    random number generator flt
+
+    / @brief
+    / @return uniform random number r ∈ [-1,1)
+    */
+    double rand_uniform_singed()
+    {
+        static std::uniform_real_distribution<double> dist(-1.0, 1.0);
+        //return dist(engine);
+        return dist(engine);
+    }
+
+    /*
     random number generator flt
 
 

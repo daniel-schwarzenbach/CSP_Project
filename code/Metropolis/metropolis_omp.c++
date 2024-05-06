@@ -91,6 +91,7 @@ bool metropolis_omp(Lattice &lattice,
     std::mt19937 rndmgen(seed + omp_get_thread_num());
     std::normal_distribution<flt> gaussian(0.0, 1.0);
     std::uniform_real_distribution<flt> uniform(0.0, 1.0);
+    std::uniform_real_distribution<flt> uniform_signed(0.0, 1.0);
     std::uniform_int_distribution<int> disLx(0, Lx-1);
     std::uniform_int_distribution<int> disLy(0, Ly-1);
     std::uniform_int_distribution<int> disLz(0, Lz-1);
@@ -100,7 +101,7 @@ bool metropolis_omp(Lattice &lattice,
     flt thread_sigma = sigma_omp;
     // cout << INFO; what_is(thread_totalSteps);
     // cout << INFO; what_is(thread_acceptedCount);
-    #pragma omp for schedule (dynamic, 50)
+    #pragma omp for schedule (dynamic, 100)
     for (u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = disLx(rndmgen);
@@ -129,19 +130,26 @@ bool metropolis_omp(Lattice &lattice,
                 break;
             }
             case MoveType::Random:{
-                f32 nx = 2*uniform(rndmgen)+_eps_ -1;
-                f32 ny = 2*uniform(rndmgen)+_eps_ -1;
-                f32 nz = 2*uniform(rndmgen)+_eps_ -1;
+                f32 nx = uniform_signed(rndmgen);
+                f32 ny = uniform_signed(rndmgen);
+                f32 nz = uniform_signed(rndmgen);
                 Spin randomSpin{nx,ny,nz};
                 newSpin = randomSpin.normalized();
                 break;
             }
             case MoveType::SmallStep:{
-                f32 nx = gaussian(rndmgen);
-                f32 ny = gaussian(rndmgen);
-                f32 nz = gaussian(rndmgen);
-                Spin addSpin{nx,ny,nz};
-                newSpin = (spin + 0.1*addSpin).normalized();
+                constexpr flt openingAngle = 0.2;
+                flt theta = rng::rand_uniform_singed() * openingAngle;
+                flt phi = rng::rand_uniform() * _2pi_;
+                Vector3 randomPole;
+                randomPole << std::sin(theta) * std::cos(phi),
+                        std::sin(theta) * std::sin(phi),
+                        std::cos(theta);
+                Vector3 northPole(0, 0, 1);
+                Eigen::Quaternion<f32> rotationToOriginal =
+                        Eigen::Quaternion<f32>::FromTwoVectors(
+                        northPole, spin);
+                newSpin = rotationToOriginal * randomPole;
                 break;
             }
             case MoveType::Addaptive:{
@@ -171,23 +179,26 @@ bool metropolis_omp(Lattice &lattice,
             // Accept the new configuration
             {
             uint lid = lattice.get_raw_id(x,y,z);
-            #pragma omp atomic write
-            latticArray[lid][0] = newSpin[0];
-            #pragma omp atomic write
-            latticArray[lid][1] = newSpin[1];
-            #pragma omp atomic write
-            latticArray[lid][2] = newSpin[2];
+            // #pragma omp atomic write
+            // latticArray[lid][0] = newSpin[0];
+            // #pragma omp atomic write
+            // latticArray[lid][1] = newSpin[1];
+            // #pragma omp atomic write
+            // latticArray[lid][2] = newSpin[2];
+            #pragma omp critical
+            latticArray[lid] = newSpin;
             }
 
             if(moveType == MoveType::Addaptive){
                 //thread_sigma /= chanerate;
                 ++thread_acceptedCount;
                 // Update acceptance rate
-                const flt R = thread_acceptedCount/(thread_totalSteps+1.0);
+                const flt R =   thread_acceptedCount/
+                                (thread_totalSteps+1.0);
                 // Calculate update factor
                 const flt f = 0.5 / (1.0 - R + _eps_);
                 // Update sigma   
-                thread_sigma = min(maxFactor_omp,thread_sigma*f)+_eps_;
+                thread_sigma=min(maxFactor_omp,thread_sigma*f);
             }
         }
         // else if(moveType == MoveType::Addaptive){
@@ -206,13 +217,13 @@ bool metropolis_omp(Lattice &lattice,
     if(moveType == MoveType::Addaptive){
          
         {
-        #pragma omp atomic update 
-        totalSteps_omp += thread_totalSteps;
-        #pragma omp atomic update
-        acceptedCount_omp += thread_acceptedCount;
         if(omp_get_thread_num() == 0){
-            #pragma omp atomic write
-            sigma_omp = thread_sigma;
+        #pragma omp atomic write
+        totalSteps_omp = thread_totalSteps;
+        #pragma omp atomic write
+        acceptedCount_omp = thread_acceptedCount;
+        #pragma omp atomic write
+        sigma_omp = thread_sigma;
         }
         } // end critical
     }
