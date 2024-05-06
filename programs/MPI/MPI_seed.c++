@@ -96,41 +96,67 @@ int main(int argc, char* argv[])
     if(T_low <= T   &&  T_high >= T){
         Nmax_met = 1e+10;
     }
+    const u64 Nmax_wolff = 1e+8;
 
     const u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
+    const u64 Ns_wolff = ceil(flt(Nmax_met) / 1e3);
 
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
 
 
 
-    //         --- Metropolis
-    {
-        measure::Timer watch; watch.start();
-        cout << rank <<" is running metropolis ..."<< endl;
-        rng::set_seed(Seed);
-        if(T > T_critical)
-            lattice.randomize();
-        else
-            lattice.set_constant(Spin{0,0,1});
+    // //         --- Metropolis
+    // {
+    //     measure::Timer watch; watch.start();
+    //     cout << rank <<" is running metropolis ..."<< endl;
+    //     rng::set_seed(Seed);
+    //     if(T > T_critical)
+    //         lattice.randomize();
+    //     else
+    //         lattice.set_constant(Spin{0,0,1});
         
-        cout << "T = " << T << endl;
-        Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
-                        loading_bar);
-        data::store_data(data,metropolisFile+to_string(rank));
-        data::store_lattice(lattice,
-                        metropolisFile+"Lattice_"+to_string(rank));
-        cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
-    }
+    //     cout << "T = " << T << endl;
+    //     Array2D<flt> data = 
+    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+    //                     J, h, k, algo::ds::metropolis_smallStep, 
+    //                     loading_bar);
+    //     data::store_data(data,metropolisFile+to_string(rank));
+    //     data::store_lattice(lattice,
+    //                     metropolisFile+"Lattice_"+to_string(rank));
+    //     cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
+    // }
 
 
 
-        //      --- Metropolis Adaptive
-    {   
+    //     //      --- Metropolis Adaptive
+    // {   
+    //     measure::Timer watch; watch.start();
+    //     cout << rank <<" is running metropolis adaptive ..."<< endl;
+    //     rng::set_seed(Seed);
+    //     if(T > T_critical)
+    //         lattice.randomize();
+    //     else
+    //         lattice.set_constant(Spin{0,0,1});
+
+    
+    //     cout << "T = " << T << endl;
+    //     Array2D<flt> data = 
+    //             algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+    //                     J, h, k, algo::ds::metropolis_adaptive,
+    //                     loading_bar);
+    //     data::store_data(data,metropolisAdaptFile + to_string(rank));
+    //     data::store_lattice(lattice,
+    //                     metropolisAdaptFile+"Lattice_"+to_string(rank));
+    //     cout << "finished metropolis adaptive in: "<< watch.time()<<endl<<endl;
+    // }
+
+
+
+//         --- Wolff
+   {
         measure::Timer watch; watch.start();
-        cout << rank <<" is running metropolis adaptive ..."<< endl;
+        cout << rank <<" is running wolff ..."<< endl;
         rng::set_seed(Seed);
         if(T > T_critical)
             lattice.randomize();
@@ -140,38 +166,14 @@ int main(int argc, char* argv[])
     
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
-                        loading_bar);
-        data::store_data(data,metropolisAdaptFile + to_string(rank));
+                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
+                        J, h, k, algo::ds::wolff_, loading_bar);
+        data::store_data(data,wolffFile + to_string(rank));
         data::store_lattice(lattice,
-                        metropolisAdaptFile+"Lattice_"+to_string(rank));
-        cout << "finished metropolis adaptive in: "<< watch.time()<<endl<<endl;
+                        wolffFile+"Lattice_"+to_string(rank));
+        cout << "finished wolff in: " << watch.time() << endl << endl;
     }
-
-
-
-//          --- Wolff
-//    {
-//         measure::Timer watch; watch.start();
-//         cout << rank <<" is running wolff ..."<< endl;
-//         rng::set_seed(Seed);
-//         if(T > T_critical)
-//             lattice.randomize();
-//         else
-//             lattice.set_constant(Spin{0,0,1});
-
-    
-//         cout << "T = " << T << endl;
-//         Array2D<flt> data = 
-//                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-//                         J, h, k, algo::ds::wolff_, loading_bar);
-//         data::store_data(data,wolffFile + to_string(rank));
-//         data::store_lattice(lattice,
-//                         wolffFile+"Lattice_"+to_string(rank));
-//         cout << "finished wolff in: " << watch.time() << endl << endl;
-//     }
-//     cout << rank << " has finished the calculations" << endl;
+    cout << rank << " has finished the calculations" << endl;
 
     what_is(programTimer.time());
     MPI_Finalize();
