@@ -1,5 +1,6 @@
 #include <Metropolis/metropolis.h++>
 #include <Metropolis/energy_diff.h++>
+#include <random>
 
 // Metropolis algorithm //
 
@@ -8,6 +9,8 @@
 // We can specify the trial move which we want to use. The algorithm
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
+
+constexpr flt _eps_ = 1e-200;
 
 flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
                         int const& y,int const& z, 
@@ -81,8 +84,16 @@ bool metropolis_omp(Lattice &lattice,
     const flt beta = Beta(T);
     flt simga_total = 0.0;
     Array<Spin>& latticArray = lattice.get_raw_data();
+    uint seed = rng::rand_int_range(0, 4'000'000);
     #pragma omp parallel
     {
+    std::mt19937 rndmgen(seed + omp_get_thread_num());
+    std::normal_distribution<flt> gaussian(0.0, 1.0);
+    std::uniform_real_distribution<flt> uniform(0.0, 1.0);
+    std::uniform_int_distribution<int> disLx(0, Lx-1);
+    std::uniform_int_distribution<int> disLy(0, Ly-1);
+    std::uniform_int_distribution<int> disLz(0, Lz-1);
+
     u64 thread_totalSteps = totalSteps_omp;
     u64 thread_acceptedCount = acceptedCount_omp;
     flt thread_sigma = sigma_omp;
@@ -90,9 +101,9 @@ bool metropolis_omp(Lattice &lattice,
     for (u64 step = 0; step < maxSteps; ++step){
         ++thread_totalSteps;
         // Choose a random lattice site
-        int x = rng::rand_int_range(0, Lx);
-        int y = rng::rand_int_range(0, Ly);
-        int z = rng::rand_int_range(0, Lz);
+        int x = disLx(rndmgen);
+        int y = disLy(rndmgen);
+        int z = disLz(rndmgen);
         // Get the spin at the chosen site (cartesian)
         Spin spin;
         //#pragma omp atomic update
@@ -111,25 +122,43 @@ bool metropolis_omp(Lattice &lattice,
         // do the requested move
         switch (moveType)
         {
-            case MoveType::SpinFlip:
-                newSpin.spin_flip_step(); // Spin flip move (reflect the spin)
-                break;
-            case MoveType::Random:
-                newSpin.random_step(); // Random move (generate a random spin)
-                break;
-            case MoveType::SmallStep:
-                newSpin.small_step(0.1); // Small step move (small change around the current spin)
-                break;
-            case MoveType::Addaptive:
-                newSpin.adaptive_step(sigma_omp);
+            case MoveType::SpinFlip:{
+                newSpin = -newSpin;
                 break;
             }
+            case MoveType::Random:{
+                f32 nx = 2*uniform(rndmgen)+_eps_ -1;
+                f32 ny = 2*uniform(rndmgen)+_eps_ -1;
+                f32 nz = 2*uniform(rndmgen)+_eps_ -1;
+                Spin randomSpin{nx,ny,nz};
+                newSpin = randomSpin.normalized();
+                break;
+            }
+            case MoveType::SmallStep:{
+                f32 nx = gaussian(rndmgen);
+                f32 ny = gaussian(rndmgen);
+                f32 nz = gaussian(rndmgen);
+                Spin addSpin{nx,ny,nz};
+                newSpin += 0.1*addSpin;
+                newSpin.normalize();
+                break;
+            }
+            case MoveType::Addaptive:{
+                f32 nx = gaussian(rndmgen);
+                f32 ny = gaussian(rndmgen);
+                f32 nz = gaussian(rndmgen);
+                Spin addSpin{nx,ny,nz};
+                newSpin += thread_sigma*addSpin;
+                newSpin.normalize();
+                break;
+            }
+        }
         // Calculate energy difference
         flt deltaE = calculate_energy_diff_omp(lattice, x, y, z, spin,
                                             newSpin, J, h, k);
         
         // Acceptance condition
-        if (deltaE <= 0 || rng::rand_uniform() < exp(-deltaE * beta))
+        if (deltaE <= 0 || uniform(rndmgen) < exp(-deltaE * beta))
         { // Boltzmann constant k is
             // normalized with interaction strength J in this implementation
             // Accept the new configuration
