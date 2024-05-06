@@ -7,6 +7,8 @@
 #include <thread>
 
 
+
+
 flt data::read_flt(char *in)
 {
     flt valueF64 = 1;
@@ -297,14 +299,15 @@ bool data::store_data(const Array<Array<flt>> &data,
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file to write to:" << filename << endl;
-        return "";
+        return false;
     }
     for(u64 i = 0; i < rows; ++i){
         for(u64 j = 0; j < cols; ++j){
             outfile << data[j][i] << ' ';
         }
-        outfile << '\n';
+        outfile << endl;
     }
+    outfile.close();
     return true;
 }
 
@@ -326,6 +329,7 @@ bool data::store_data(const StaticArray<Array<flt>, I> &data,
         }
         outfile << '\n';
     }
+    outfile.close();
     return true;
 }
 
@@ -377,4 +381,70 @@ Array2D<flt> data::load_data(string const &filename){
 
     file.close();
     return columns;
+}
+std::ofstream& operator<<(std::ofstream& of, Spin const& v){
+    of << "{" << v[0] <<", " <<v[1] <<", " <<v[2] <<", " <<"}";
+    return of;
+}
+
+bool data::store_lattice(Lattice3d<Spin> const& lattice, 
+                    string const& filename){
+    // openfile
+    std::ofstream outfile(filename);
+    if (!outfile)
+    {
+        cerr << ERROR <<" couldnt open file to write to:"
+             << filename << endl;
+        return false;
+    }
+    uint Lx = lattice.Lx();
+    uint Ly = lattice.Ly();
+    uint Lz = lattice.Lz();
+
+    for(uint x = 0; x < Lx; ++x){
+        outfile << "{" << endl;
+        for(uint y = 0; y < Ly; ++y){
+            outfile << "{";
+            for(uint z = 0; z < Lz; ++z){
+                outfile << lattice(x,y,z) << endl;
+            }
+            outfile << "} " << endl;
+        }
+        outfile << "}" << endl;
+    }
+    outfile.close();
+    return true;
+}
+
+bool data::load_lattice(Lattice3d<Spin>& lattice, string const& filename) {
+    std::ifstream infile(filename);
+    if (!infile) {
+        std::cerr << "ERROR: Couldn't open file to read from: " << filename << std::endl;
+        return false;
+    }
+    uint Lx = lattice.Lx();
+    uint Ly = lattice.Ly();
+    uint Lz = lattice.Lz();
+
+    std::string line;
+    f32 spinX, spinY, spinZ;
+    char brace;
+
+    for(uint x = 0; x < Lx; ++x) {
+        std::getline(infile, line); // Skip the opening brace of each x layer
+        for(uint y = 0; y < Ly; ++y) {
+            std::getline(infile, line); // Read the entire y layer
+            std::istringstream iss(line);
+            iss >> brace; // Skip the opening brace of each y layer
+            for(uint z = 0; z < Lz; ++z) {
+                iss >> brace >> spinX >> brace >> spinY >> brace >> spinZ >> brace;
+                lattice(x, y, z) = Spin{spinX, spinY, spinZ};
+            }
+            std::getline(infile, line); // Skip the closing brace of each y layer
+        }
+        std::getline(infile, line); // Skip the closing brace of each x layer
+    }
+
+    infile.close();
+    return true;
 }

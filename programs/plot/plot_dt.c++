@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+5;
+const flt Ns_met = 1e+6;
 // end Time
-const flt Nmax_met = 1e+7;
+const flt Nmax_met = 5e+7;
 
 const flt Ns_wolff = 1e+2;
 // end Time
@@ -18,7 +18,7 @@ const flt Nmax_wolff = 1e+3;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
-const uint L = 64;
+const uint L = 16;
 // interaction strenth
 const flt J = 1.0;
 // h
@@ -32,52 +32,37 @@ int main(int mainArgCount, char **mainArgs)
     data::make_folder("data");
     Lattice lattice(L, L, L);
     Array<flt> Ts =
-    {0.001, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
+    {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
     3.0, 4.0, 5.0, 10, 100};
     for (flt T : Ts)
     {
         cout << "running for T = " << T << endl;
         string Tstr = "T_" + to_string(uint(T*1e3)) + "e-3/";
-        string Folder = "data" + Tstr;
+        string Folder = "data/" + Tstr;
         data::make_folder(Folder);
 
         //              --- adaptive step metropolis omp
         cout << "running adaptive step metropolis omp" << endl;
         rng::set_seed(seed);
         lattice.randomize();
+        restet_adaptive_omp();
         Array2D<flt> metro_omp_adapt = algo::ds::test_algorithm(
                 lattice, Ns_met, Nmax_met, T,
             J, h, k, algo::ds::metropolis_adaptive_omp);
         data::store_data(metro_omp_adapt,
-                        Folder + "metropolis_adaptive_omp");
+                        Folder + "/metropolis_adaptive_omp");
 
         //              --- adaptive step metropolis
         cout << "running adaptive step metropolis" << endl;
         rng::set_seed(seed);
         lattice.randomize();
+        restet_adaptive();
         Array2D<flt> metro_adapt = algo::ds::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
             J, h, k, algo::ds::metropolis_adaptive);
         data::store_data(metro_adapt,
-                        Folder + "metropolis_adaptive");
+                        Folder + "/metropolis_adaptive");
 
-        //              --- wolff
-        cout << "running wolff" << endl;
-        rng::set_seed(seed);
-        lattice.randomize();
-        Array2D<flt> wolff_data = algo::ds::test_algorithm(lattice, 
-                Ns_met, Nmax_met, T, J, h, k,
-                algo::ds::metropolis_smallStep);
-        data::store_data(wolff_data, Folder + "wolff");
-
-        //              --- wolff omp
-        cout << "running wolff omp" << endl;
-        rng::set_seed(seed);
-        lattice.randomize();
-        Array2D<flt> wolff_omp_data = algo::ds::test_algorithm(lattice, 
-                Ns_met, Nmax_met, T, J, h, k,
-                algo::ds::metropolis_smallStep);
-        data::store_data(wolff_data, Folder + "wolff_omp");
 
         //              --- plot data
 
@@ -86,14 +71,12 @@ int main(int mainArgCount, char **mainArgs)
         {
             plt::hold(true);
             auto p2 = plt::plot(metro_adapt[4],metro_adapt[1],"--s");
-            auto p3 = plt::plot(wolff_data[4], wolff_data[1], "--s");
             auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[1],"--s");
-            auto p6 = plt::plot(wolff_omp_data[4], wolff_omp_data[1], "--s");
             plt::hold(false);
-            auto l = plt::legend({"Adaptive Metropolis",
-                                  "Wolff",
-                                  "Adaptive Metropolis Omp",
-                                  "Wolff Omp"});
+            auto l = plt::legend({
+                                  "Adaptive Metropolis",
+                                  "Adaptive Metropolis Omp"
+                                  });
             
             l->location(plt::legend::general_alignment::bottomright);
             plt::xlabel("Time in s");
@@ -109,15 +92,12 @@ int main(int mainArgCount, char **mainArgs)
         {
             plt::hold(true);
             auto p2 = plt::plot(metro_adapt[4],metro_adapt[3],"--s");
-            auto p3 = plt::plot(wolff_data[4], wolff_data[3], "--s");
             auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[3],"--s");
-            auto p6 = plt::plot(wolff_omp_data[4], wolff_omp_data[3], "--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Adaptive Metropolis",
-                                  "Wolff",
-                                  "Adaptive Metropolis Omp",
-                                  "Wolff Omp"});
+                                  "Adaptive Metropolis Omp"
+                                  });
             
             l->location(plt::legend::general_alignment::topright);
             plt::xlabel("Time in s");
@@ -133,15 +113,12 @@ int main(int mainArgCount, char **mainArgs)
         {
             plt::hold(true);
             auto p2 = plt::plot(metro_adapt[4],metro_adapt[0],"--s");
-            auto p3 = plt::plot(wolff_data[4], wolff_data[0], "--s");
             auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[0],"--s");
-            auto p6 = plt::plot(wolff_omp_data[4], wolff_omp_data[0], "--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Adaptive Metropolis",
-                                  "Wolff",
-                                  "Adaptive Metropolis Omp",
-                                  "Wolff Omp"});
+                                  "Adaptive Metropolis Omp"
+                                  });
             
             l->location(plt::legend::general_alignment::topright);
             plt::xlabel("Time in s");

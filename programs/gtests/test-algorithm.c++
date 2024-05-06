@@ -8,8 +8,8 @@ const uint seed = 245;
 const flt  T = 0.0001;
 const flt J = 1.0;
 const uint L = 4;
-const uint Steps_wolff = 200;
-const uint Steps_met = 200'000;
+const uint Steps_wolff = 2'00;
+const uint Steps_met = 20'000;
 const flt testmag_wolff = 0.5;
 const flt testmag_met = 0.5;
 

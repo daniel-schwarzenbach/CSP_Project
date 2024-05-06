@@ -2,6 +2,7 @@
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
+#include <ctime>   // for time()
 
 u64 get_wolf_steps(flt const& T){
     flt T_lower = 1.3;
@@ -48,15 +49,21 @@ int main(int argc, char* argv[])
     int size = 1;
     MPI_Comm_size(comm, &size);
     measure::Timer programTimer; programTimer.start();
-    const uint Seed = 42 + rank;
+    // this is dumm and stupid!!!
+    const u64 FullSeed = static_cast<unsigned int>(time(0))*rank;
+    const uint Seed = 
+            static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
     // read input
     flt T = -1;
     u64 Neq = 0;
-    if (argc > 2) {
+    u64 Ns = 0;
+
+    if (argc > 3) {
         try {
             // Convert the first argument to a float
             T = data::read_flt(argv[1]);
             Neq = data::read_int(argv[2]);
+            Ns = data::read_int(argv[3]);
         } catch (const std::invalid_argument& e) {
             cerr << ERROR 
                  << "Invalid argument: please enter a valid "
@@ -71,7 +78,8 @@ int main(int argc, char* argv[])
         return 0;
     } 
     what_is(T);
-    what_is(Neq)
+    what_is(Neq);
+    what_is(Ns);
     // activate Loading bar fore a single core
     bool loading_bar = false;
     if (size == 1){

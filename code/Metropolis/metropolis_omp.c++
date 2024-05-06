@@ -9,7 +9,7 @@
 // We can specify the trial move which we want to use. The algorithm
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
-
+using std::min; using std::max;
 constexpr flt _eps_ = 1e-200;
 
 flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
@@ -61,6 +61,7 @@ flt sigma_omp = 100;
 u64 totalSteps_omp = 0;
 u64 acceptedCount_omp = 0;
 constexpr flt maxFactor_omp = 60;
+constexpr flt changerate = 0.9;
 
 void restet_adaptive_omp(){
     flt sigma_omp = 100;
@@ -97,9 +98,10 @@ bool metropolis_omp(Lattice &lattice,
     u64 thread_totalSteps = totalSteps_omp;
     u64 thread_acceptedCount = acceptedCount_omp;
     flt thread_sigma = sigma_omp;
+    // cout << INFO; what_is(thread_totalSteps);
+    // cout << INFO; what_is(thread_acceptedCount);
     #pragma omp for schedule (dynamic, 50)
     for (u64 step = 0; step < maxSteps; ++step){
-        ++thread_totalSteps;
         // Choose a random lattice site
         int x = disLx(rndmgen);
         int y = disLy(rndmgen);
@@ -118,12 +120,12 @@ bool metropolis_omp(Lattice &lattice,
         }
 
         // Propose spin change based on given trial move
-        Spin newSpin = spin;
+        Spin newSpin;
         // do the requested move
         switch (moveType)
         {
             case MoveType::SpinFlip:{
-                newSpin = -newSpin;
+                newSpin = -spin;
                 break;
             }
             case MoveType::Random:{
@@ -139,8 +141,7 @@ bool metropolis_omp(Lattice &lattice,
                 f32 ny = gaussian(rndmgen);
                 f32 nz = gaussian(rndmgen);
                 Spin addSpin{nx,ny,nz};
-                newSpin += 0.1*addSpin;
-                newSpin.normalize();
+                newSpin = (spin + 0.1*addSpin).normalized();
                 break;
             }
             case MoveType::Addaptive:{
@@ -148,11 +149,17 @@ bool metropolis_omp(Lattice &lattice,
                 f32 ny = gaussian(rndmgen);
                 f32 nz = gaussian(rndmgen);
                 Spin addSpin{nx,ny,nz};
-                newSpin += thread_sigma*addSpin;
-                newSpin.normalize();
+                newSpin = (spin + thread_sigma*addSpin).normalized();
+                ++thread_totalSteps;
                 break;
             }
+            
         }
+        // if (newSpin == spin){
+        //     cerr << ERROR << "fatal error" <<endl;
+        //     cout <<newSpin << " == " << spin << endl;
+
+        // }
         // Calculate energy difference
         flt deltaE = calculate_energy_diff_omp(lattice, x, y, z, spin,
                                             newSpin, J, h, k);
@@ -173,15 +180,19 @@ bool metropolis_omp(Lattice &lattice,
             }
 
             if(moveType == MoveType::Addaptive){
+                //thread_sigma /= chanerate;
                 ++thread_acceptedCount;
                 // Update acceptance rate
-                const flt R = acceptedCount_omp/(totalSteps_omp+1.0);
+                const flt R = thread_acceptedCount/(thread_totalSteps+1.0);
                 // Calculate update factor
-                const flt f = 0.5 / (1.0 - R + 1e-18);
+                const flt f = 0.5 / (1.0 - R + _eps_);
                 // Update sigma   
-                thread_sigma = std::min(maxFactor_omp,thread_sigma*f);
+                thread_sigma = min(maxFactor_omp,thread_sigma*f)+_eps_;
             }
         }
+        // else if(moveType == MoveType::Addaptive){
+        //     thread_sigma *= chanerate;
+        // }
 
         // Check if maximum time has been reached
         if (watch.time() >= maxTimeSeconds)
@@ -193,15 +204,18 @@ bool metropolis_omp(Lattice &lattice,
         }
     } // end for
     if(moveType == MoveType::Addaptive){
-        
-        #pragma omp critical  
+         
         {
+        #pragma omp atomic update 
         totalSteps_omp += thread_totalSteps;
+        #pragma omp atomic update
         acceptedCount_omp += thread_acceptedCount;
-        simga_total += thread_sigma;
+        if(omp_get_thread_num() == 0){
+            #pragma omp atomic write
+            sigma_omp = thread_sigma;
+        }
         } // end critical
     }
     } // end parrallel
-    sigma_omp = simga_total / omp_get_num_threads();
     return true;
 }

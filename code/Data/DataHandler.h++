@@ -71,6 +71,12 @@ namespace data
     extern template bool store_data<5>(
         const StaticArray<Array<flt>, 5> &,
         const string &);
+    
+    bool store_lattice(Lattice const& lattice, 
+                    string const& filename);
+
+    bool load_lattice(Lattice3d<Spin>& lattice, 
+                        string const& filename);
 };
 
 #endif // __DATAHANDLER_H__

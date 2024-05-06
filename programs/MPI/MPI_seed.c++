@@ -29,11 +29,12 @@ flt constexpr J = 1.0;
 const Spin h = Spin{0.0,0.0,0.0};
 const Spin k = Spin{0.0,0.0,0.0};
 
-constexpr uint L = 32;
+constexpr uint L = 8;
 constexpr uint Lx = L;
 constexpr uint Ly = L; 
 constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
+constexpr flt T_critical = 1.45;
 
 
 
@@ -48,7 +49,7 @@ int main(int argc, char* argv[])
     int size = 1;
     MPI_Comm_size(comm, &size);
     measure::Timer programTimer; programTimer.start();
-    const uint Seed = 42 + rank;
+    const uint Seed = 42332 + rank;
     // read input
     flt T = -1;
     if (argc > 1) {
@@ -68,7 +69,6 @@ int main(int argc, char* argv[])
         cerr << ERROR << "to few arguments";
         return 0;
     } 
-    what_is(T);
     // activate Loading bar fore a single core
     bool loading_bar = false;
     if (size == 1){
@@ -85,11 +85,11 @@ int main(int argc, char* argv[])
 
     
 
-    constexpr u64 Nmax_met = 5e+7;
+    constexpr u64 Nmax_met = 1e+11;
     const u64 Nmax_wolff = std::min(
         std::max(get_wolf_steps(T), 10'000UL), 10'000'000UL);
 
-    constexpr u64 Ns_met = 5e+4;
+    constexpr u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
     const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e3);
     what_is(Ns_wolff);
     what_is(Nmax_wolff);
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.45)
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
                         J, h, k, algo::ds::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
     }
 
 
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis adaptive ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.45)
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
         measure::Timer watch; watch.start();
         cout << rank <<" is running wolff ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.3)
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
