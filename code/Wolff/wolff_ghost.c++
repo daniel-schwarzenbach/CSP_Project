@@ -251,21 +251,7 @@ int wolff_ghost_algorithm(Lattice& lattice, flt beta, Spin H, Matrix3x3& ghost){
             Spin spin_x_r;
             spin_x_r = get_flipped_spin(spin_r, spin_x);
 
-            // if(!visited[(cx+1+Lx)%Lx][cy][cz]){ check_neighbor_ghost(lattice, (cx+1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-            // if(!visited[(cx-1+Lx)%Lx][cy][cz]){ check_neighbor_ghost(lattice, (cx-1+Lx)%Lx, cy, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-            // if(!visited[cx][(cx+1+Lx)%Ly][cz]){ check_neighbor_ghost(lattice, cx, (cx+1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-            // if(!visited[cx][(cx-1+Lx)%Ly][cz]){ check_neighbor_ghost(lattice, cx, (cx-1+Lx)%Ly, cz, spin_x, spin_r, visited, stack, cluster, beta); }
-            // if(!visited[cx][cy][(cz+1+Lx)%Lz]){ check_neighbor_ghost(lattice, cx, cy, (cz+1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
-            // if(!visited[cx][cy][(cz-1+Lx)%Lz]){ check_neighbor_ghost(lattice, cx, cy, (cz-1+Lx)%Lz, spin_x, spin_r, visited, stack, cluster, beta); }
-
-
-            // if(!visited[(cx+1+Lx)%Lx][cy][cz]){check_neighbor_ghost(lattice, (cx+1+Lx) % Lx, cy, cz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-            // if(!visited[(cx-1+Lx)%Lx][cy][cz]){check_neighbor_ghost(lattice, (cx-1+Lx) % Lx, cy, cz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-            // if(!visited[cx][(cy+1+Ly)%Ly][cz]){check_neighbor_ghost(lattice, cx, (cy+1+Ly) % Ly, cz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-            // if(!visited[cx][(cy-1+Ly)%Ly][cz]){check_neighbor_ghost(lattice, cx, (cy-1+Ly) % Ly, cz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-            // if(!visited[cx][cy][(cz+1+Lz)%Lz]){check_neighbor_ghost(lattice, cx, cy, (cz+1+Lz) % Lz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-            // if(!visited[cx][cy][(cz-1+Lz)%Lz]){check_neighbor_ghost(lattice, cx, cy, (cz-1+Lz) % Lz, spin_x, spin_x_r, spin_r, visited, stack, cluster, beta);}
-
+            //Check neighbors and add them to the stack if the bonds are activated. Add them to the cluster only if they are not there already
             check_neighbor_ghost(lattice, (cx+1+Lx) % Lx, cy, cz, spin_x, spin_x_r, spin_r, visited, stack, inCluster, beta);
             check_neighbor_ghost(lattice, (cx-1+Lx) % Lx, cy, cz, spin_x, spin_x_r, spin_r, visited, stack, inCluster, beta);
             check_neighbor_ghost(lattice, cx, (cy+1+Ly) % Ly, cz, spin_x, spin_x_r, spin_r, visited, stack, inCluster, beta);
