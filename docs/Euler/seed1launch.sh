@@ -10,6 +10,4 @@
 
 mpirun -bind-to core -map-by core -n 48 .././programs/HeisenbergMPI  0.01 
 mpirun -bind-to core -map-by core -n 48 .././programs/HeisenbergMPI  0.1
-mpirun -bind-to core -map-by core -n 48 .././programs/HeisenbergMPI  0.5
-mpirun -bind-to core -map-by core -n 48 .././programs/HeisenbergMPI  1
-mpirun -bind-to core -map-by core -n 48 .././programs/HeisenbergMPI  1.2
+
