@@ -9,6 +9,7 @@
 // We can specify the trial move which we want to use. The algorithm
 // stops when the max time OR the max number of steps, that are also
 // specified by the input, are reached.
+
 using std::min; using std::max;
 constexpr flt _eps_ = 1e-200;
 
@@ -141,7 +142,7 @@ bool metropolis_omp(Lattice &lattice,
             }
             case MoveType::SmallStep:{
                 constexpr flt openingAngle = 0.2;
-                flt theta = rng::rand_uniform_singed() * openingAngle;
+                flt theta = rng::rand_uniform_singed()*openingAngle;
                 flt phi = rng::rand_uniform() * _2pi_;
                 Vector3 randomPole;
                 randomPole << std::sin(theta) * std::cos(phi),
@@ -152,6 +153,7 @@ bool metropolis_omp(Lattice &lattice,
                         Eigen::Quaternion<f32>::FromTwoVectors(
                         northPole, spin);
                 newSpin = rotationToOriginal * randomPole;
+                newSpin.normalize();
                 break;
             }
             case MoveType::Addaptive:{
