@@ -85,8 +85,6 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/magnet/T_" + to_str(T) + ".png");
-            fig.reset();
-            plt::figure(false);
             plt::cla();
             
         }
@@ -110,9 +108,6 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/energy/T_" + to_str(T) + ".png");
-            plt::hold(false);
-            fig.reset();
-            plt::figure(false);
             plt::cla();
         }
 
@@ -135,9 +130,6 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Number of Steps");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/number_of_steps/" + to_str(T) + ".png");
-            plt::hold(false);
-            fig.reset();
-            plt::figure(false);
             plt::cla();
         }
         flt Speed_up = metro[3][metro[3].size()-1]/
