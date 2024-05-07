@@ -1,31 +1,34 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timer.h++>
-#include <Wolff/duplicate_functions.h++>
 #include <thread>
 
-// Function to activate bond depending on given probability
-bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta,
-                   Spin &spin_y)
-{
 
-    flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);
-    flt activate_prob;
-    flt active = 1.0 - std::exp(min(flt(cdot), 0.0));
+
+//Function to flip the spin
+inline void flip_spin(Spin& spin_r, Spin& spin_x){
+    flt cdot = spin_x | spin_r;
+    spin_x = spin_x - (2.0f * cdot)*spin_r;
+}
+
+bool activate_bond(flt const& J, Spin const& spin_x, Spin const& spin_r, 
+                    flt const& beta, Spin const& spin_y){
+    flt cdot = J *2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
+    flt active = 1.0 - std::exp(min(cdot, 0.0));
     flt p = rng::rand_uniform();
     return (p <= active);
 }
 
-int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
+
+int wolf_algorithm(Lattice &lattice, flt const& beta, flt const &J,
+                    Array<Spin>& spinArray)
 {
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
     int Lz = lattice.Lz();
 
     // Create vector that checks whether the site has been checked
-    Lattice3D<bool> visited =
-        Lattice3D<bool>::constant_lattice(Lx, Ly, Lz, false);
-    visited.set_boundary_conditions(
-        lattice.get_boundary_conditions());
+    Array<bool> visited(false,Lx*Ly*Lz + 1);
+    visited[Lx*Ly*Lz] = true;
 
     // Define stack for adding and removing lattice sites that are flipped, continue until it is empty (no new sites were added)
     Array<Index> stack(0);
@@ -42,42 +45,45 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     int sz = rng::rand_int_range(0, Lz);
 
     // Define spin_x to be flipped, first point of the cluster
-    Spin &spin_x = lattice(sx, sy, sz);
+    Spin& spin_x = lattice(sx, sy, sz);
 
     // Flip sigma_x and mark x
     flip_spin(spin_r, spin_x);
 
     // Add spin_x to stack & cluster, mark site as checked
-    // stack.push_back({x,y,z});
     stack.push_back({sx, sy, sz});
     cluster.push_back({sx, sy, sz});
-    visited.set(sx, sy, sz, true);
+    {
+    uint lid = lattice.get_raw_id(sx,sy,sz);
+    visited[lid] = true;
+    }
 
     // Iterate over nearest neighbors until stack is empty, i.e. no newly adjoined sites
+    int local_count = 3;
     Array<Index> stack_local = stack;
 #pragma omp parallel
     { // parallel
-        while (!stack_local.empty())
+        while (!stack_local.empty() || (local_count>0))
         {
             Index current;
             bool isEmpty;
-
-#pragma omp critical
+            // only one core at the time
+            #pragma omp critical
             {
-                isEmpty = stack.empty();
-                if (!isEmpty)
-                {
-                    current = stack.back();
-                    stack.pop_back();
-                }
+            isEmpty = stack.empty();
+            if (!isEmpty)
+            {
+                current = stack.back();
+                stack.pop_back();
             }
+            } // end critical
             if (isEmpty)
             {
                 // wait
                 std::this_thread::sleep_for(
-                    std::chrono::microseconds(10));
-// update local stack
-#pragma omp critical
+                    std::chrono::microseconds(1));
+                --local_count;
+                // updata the steck and
                 stack_local = stack;
                 continue; // try again
             }
@@ -86,33 +92,60 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
             int y = current[1];
             int z = current[2];
 
-// Mark as visited
-#pragma omp critical
-            visited.set(current, true);
+            uint lid = lattice.get_raw_id(current);
+            Spin spin_y;
+            {
+            #pragma omp atomic read
+            spin_y[0] = spinArray[lid][0];
+            #pragma omp atomic read
+            spin_y[1] = spinArray[lid][1];
+            #pragma omp atomic read
+            spin_y[2] = spinArray[lid][2];
+            }
             Array<Index> neighbors = {
-                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
+                {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
             for (Index neighbor : neighbors)
             {
                 bool wasVisited;
-#pragma omp critical
-                wasVisited = visited.get(neighbor);
+                uint nid = lattice.get_raw_id(neighbor);
+                {
+                wasVisited = visited[nid];
+                }
                 if (!wasVisited)
                 {
-                    Spin spin_y;
-#pragma omp critical
-                    spin_y = lattice(neighbor); // Define spin sigma_y
+                    Spin spin_neighbor;
+                    {
+                    #pragma omp atomic read
+                    spin_neighbor[0] = spinArray[nid][0];
+                    #pragma omp atomic read
+                    spin_neighbor[1] = spinArray[nid][1];
+                    #pragma omp atomic read
+                    spin_neighbor[2] = spinArray[nid][2];
+                    }
 
                     // If Bond is activated...
-                    if (activate_bond(J, spin_x, spin_r, beta, spin_y))
+                    if (activate_bond(J, spin_x, spin_r, beta,spin_y))
                     {
-#pragma omp critical
+
+                        flip_spin(spin_r, spin_neighbor);
                         {
-                            flip_spin(spin_r, lattice(neighbor)); //...flip spin
-                            stack.push_back(neighbor);            // ...add to stack
-                            cluster.push_back(neighbor);          // ...add to cluster (mark y)
-                            visited.set(neighbor, true);          // Mark as visited
-                            stack_local = stack;
+                        #pragma omp atomic write
+                        spinArray[nid][0] = spin_neighbor[0] ;
+                        #pragma omp atomic write
+                        spinArray[nid][1] = spin_neighbor[1];
+                        #pragma omp atomic write
+                        spinArray[nid][2] = spin_neighbor[2];
                         }
+
+                        #pragma omp critical
+                        stack.push_back(neighbor);            // ...add to stack
+                        #pragma omp critical
+                        cluster.push_back(neighbor);          // ...add to cluster (mark y)
+                        {
+                        visited[nid] = true;
+                        };
+                        stack_local = stack;
                     }
                 }
             }
@@ -146,13 +179,13 @@ flt wolff_omp(Lattice &lattice, flt const &T, flt const &J,
 
     flt beta = Beta(T);
     measure::Timer watch;
-
+    Array<Spin>& spinArray = lattice.get_raw_data();
     Array<int> clusters;
     u64 nRuns = 0;
 
-    for (u64 i = 0; i <= MaxSteps; ++i)
+    for (; nRuns <= MaxSteps; ++nRuns)
     {
-        uint clusterSize = wolf_algorithm(lattice, beta, J);
+        uint clusterSize = wolf_algorithm(lattice, beta, J, spinArray);
         if (clusterSize == -1)
         {
             return false;
@@ -160,7 +193,6 @@ flt wolff_omp(Lattice &lattice, flt const &T, flt const &J,
         }
         clusters.push_back(clusterSize);
 
-        ++nRuns;
         // Check if maximum time has been reached
         if (watch.time() >= MaxTime)
         {

@@ -42,19 +42,34 @@ bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta, Spin& spin_y){
 //     return (p <= active);
 // }
 
-void check_neighbor(Lattice& lattice, int nx, int ny, int nz, 
-                    Spin& spin_x, Spin& spin_r, 
-                    Array3D<bool>& visited, 
-                    Array<Index>& stack, Array<Index>& cluster, 
-                    flt beta){
-    Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
+// void check_neighbor(Lattice& lattice, int nx, int ny, int nz, 
+//                     Spin& spin_x, Spin& spin_r, 
+//                     Array3D<bool>& visited, 
+//                     Array<Index>& stack, Array<Index>& cluster, 
+//                     flt beta){
+//     Spin& spin_y = lattice(nx,ny,nz); //Define spin sigma_y
 
+//     //If Bond is activated...
+//     if (activate_bond(spin_x, spin_r, beta, spin_y)){
+//         flip_spin(spin_r, spin_y); //...flip spin
+//         stack.push_back({nx,ny,nz}); // ...add to stack 
+//         cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
+//         visited[nx][ny][nz] = true; //Mark as visited
+//     }
+// }
+
+void check_neighbor(Lattice& lattice, Index ind, 
+                    Spin& spin_x, Spin& spin_r, 
+                    Lattice3D<bool>& visited, 
+                    Array<Index>& stack, Array<Index>& cluster, 
+                    flt const& beta){
+    Spin& spin_y = lattice(ind); //Define spin sigma_y
     //If Bond is activated...
     if (activate_bond(spin_x, spin_r, beta, spin_y)){
         flip_spin(spin_r, spin_y); //...flip spin
-        stack.push_back({nx,ny,nz}); // ...add to stack 
-        cluster.push_back({nx,ny,nz}); // ...add to cluster (mark y)
-        visited[nx][ny][nz] = true; //Mark as visited
+        stack.push_back(ind); // ...add to stack 
+        cluster.push_back(ind); // ...add to cluster (mark y)
+        visited.set(ind,true); //Mark as visited
     }
 }
 

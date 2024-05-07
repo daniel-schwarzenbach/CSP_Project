@@ -48,5 +48,6 @@ TEST(Algorithm, test_wolff){
     wolff(
             lattice,T,J,_inf_,Steps_wolff,{0,0,0});
     flt mag = measure::get_magnetization(lattice).norm();
+    what_is(mag);
     EXPECT_TRUE(mag > testmag_wolff);
 }
