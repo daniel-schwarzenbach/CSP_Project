@@ -56,13 +56,11 @@ int main(int argc, char* argv[])
             static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
     // read input
     flt T = -1;
-    string latticefile;
 
-    if (argc > 3) {
+    if (argc > 1) {
         try {
             // Convert the first argument to a float
             T = data::read_flt(argv[1]);
-            latticefile = argv[2];
         } catch (const std::invalid_argument& e) {
             cerr << ERROR 
                  << "Invalid argument: please enter a valid "
@@ -75,22 +73,17 @@ int main(int argc, char* argv[])
     } else {
         cerr << ERROR << "to few arguments";
         return 0;
-    } 
+    }
+    
     what_is(T);
-    what_is(Lattice3D)
     // activate Loading bar fore a single core
     bool loading_bar = false;
     if (size == 1){
         loading_bar = true;
     }
 
-    //          --- Load lattice
+    //          --- init lattice
     Lattice lattice(Lx,Ly,Lz);
-    if(!data::load_lattice(lattice, latticefile)){
-        cout << "Error: couldnt read lattice" << endl;
-    } else{
-        cout << "Lattice Successfully loaded " << endl;
-    }
 
     //      --- set Filenames
     string foldername = "T_" + to_string(uint(T*1000)) + "e-3";
@@ -100,14 +93,13 @@ int main(int argc, char* argv[])
     string metropolisAdaptFile = foldername + "/MetropolisAdaptive_";
     string wolffFile = foldername + "/Wolff_";
 
-    u64 Nmax_met = 1e+9;
-    if(T_low <= T   &&  T_high >= T){
-        Nmax_met = 1e+10;
-    }
-    const u64 Nmax_wolff = 1e+8;
 
-    const u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
-    const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e3);
+
+    const u64 Nmax_met = 1e+8;
+    const u64 Nmax_wolff = 1e6;
+
+    const u64 Ns_met = 10'000;
+    const u64 Ns_wolff = 100;
 
 
 
@@ -115,7 +107,13 @@ int main(int argc, char* argv[])
     {
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
-        rng::set_seed(Seed);
+        string latticefile = ".././input/" + metropolisFile 
+                + "Lattice_" + to_string(rank);
+        what_is(latticefile);
+        if(!data::load_lattice(lattice, latticefile)){
+            cerr << "fatal error: coulndt read: " << latticefile;
+            return 0;
+        }
         
         cout << "T = " << T << endl;
         Array2D<flt> data = 
@@ -129,46 +127,48 @@ int main(int argc, char* argv[])
 
 
 //         //      --- Metropolis Adaptive
-//     {   
-//         measure::Timer watch; watch.start();
-//         cout << rank <<" is running metropolis adaptive ..."<< endl;
-//         rng::set_seed(Seed);
-//         if(T > 1.45)
-//             lattice.randomize();
-//         else
-//             lattice.set_constant(Spin{0,0,1});
-
+    {   
+        measure::Timer watch; watch.start();
+        string latticefile = ".././input/" + metropolisAdaptFile 
+                + "Lattice_" + to_string(rank);
+        what_is(latticefile);
+        if(!data::load_lattice(lattice, latticefile)){
+            cerr << "fatal error: coulndt read: " << latticefile;
+            return 0;
+        }
     
-//         cout << "T = " << T << endl;
-//         Array2D<flt> data = 
-//                 algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-//                         J, h, k, algo::ds::metropolis_adaptive,
-//                         loading_bar);
-//         data::store_data(data,metropolisAdaptFile + to_string(rank));
-//         cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
-//     }
+        cout << "T = " << T << endl;
+        Array2D<flt> data = 
+                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, algo::ds::metropolis_adaptive,
+                        loading_bar);
+        data::store_data(data,metropolisAdaptFile + to_string(rank));
+        cout<<"finished metropolis adaptive in: "
+            <<watch.time()<<endl<<endl;
+    }
 
 
 
-// //          --- Wolff
-//    {
-//         measure::Timer watch; watch.start();
-//         cout << rank <<" is running wolff ..."<< endl;
-//         rng::set_seed(Seed);
-//         if(T > 1.3)
-//             lattice.randomize();
-//         else
-//             lattice.set_constant(Spin{0,0,1});
+//          --- Wolff
+   {
+        measure::Timer watch; watch.start();
+        cout << rank <<" is running wolff ..."<< endl;
+        string latticefile = ".././input/" + wolffFile 
+                + "Lattice_" + to_string(rank);
+        what_is(latticefile);
+        if(!data::load_lattice(lattice, latticefile)){
+            cerr << "fatal error: coulndt read: " << latticefile;
+            return 0;
+        }
 
-    
-//         cout << "T = " << T << endl;
-//         Array2D<flt> data = 
-//                 algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-//                         J, h, k, algo::ds::wolff_, loading_bar);
-//         data::store_data(data,wolffFile + to_string(rank));
-//         cout << "finished wolff in: " << watch.time() << endl << endl;
-//     }
-//     cout << rank << " has finished the calculations" << endl;
+        cout << "T = " << T << endl;
+        Array2D<flt> data = 
+                algo::ds::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
+                        J, h, k, algo::ds::wolff_, loading_bar);
+        data::store_data(data,wolffFile + to_string(rank));
+        cout << "finished wolff in: " << watch.time() << endl << endl;
+    }
+    cout << rank << " has finished the calculations" << endl;
 
     what_is(programTimer.time());
     MPI_Finalize();
