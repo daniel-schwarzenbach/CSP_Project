@@ -1,57 +1,28 @@
-# Heisenberg Model in 3D
-### Computational Statistical Physics
-Authors: Constança Tropa, Mateo Cárdenes Wuttig, Justus Grabowsky, Daniel Schwarzenbach
+# Table of contents
+ 1. Introduction
+ 2. Installation
+ 3. Structure of the code
+ 4. Algorithms
+    - Metropolis
+    - Adaptive Metropolis
+    - Wolff Algorithm
+ 5. Results
+ 6. Contributions
 
-This it the github repository for our implementation of the Metropolis and Wolff algorithms to simulate the 3D Heisenberg model:
-$H_{\text{Heisenberg}} = - J \sum_{\langle i,j \rangle} \vec{\sigma}_i \cdot \vec{\sigma}_j - \vec{h} \cdot \sum_i \vec{\sigma}_i$
+# Introduction
 
-A detallied documentation of our project can be found in the final report (report.pdf). In the following, we outline the general structure of our code.
+This repository contains code to simulate the 3D Heisenberg model using
+different algorithms. The 3D Heisenberg model is a lattice model that
+is used to understand the behavior of magnetic materials under various
+conditions. The three algorithms implemented for the simulation are the Wolff
+algorithm, the standard Metropolis algorithm and an adaptive version
+of the Metropolis algorithm.
 
-## Structure
-
-### Code
-
-Our main code is inside the folder Code
-
-- Base.h++: defines types and  includes most important files
-- RNG.h++: a centralized random number generator for the whole program
-- Eigen.h++: includes the linalg library Eigen
-- Spin.h++: defines our Spins
-- Lattice.h++: defines the 3D Lattice
-- Heisenberg.h++: wraps upp all headers in one centralized header
-- Wolff / : wolff algorithm
-    - wolff.h++: defines the wolff algorithms
-- Metropolis / : metropolis algorithm
-    - metropolis.h++: defines the metropolis algorithms
-    - energy_diff.h++: calculates differences in energy of two Spins
-- Measure / : contains various measure functions
-    - Timer.h++: defines a simple and easy to use stopwatch
-    - Observables.h++: defines function to measure the Lattice
-    - LoadingBar.h++: implements a small Loading bar for simulations
-- Data / : for evaluating, storing, loading data
-    - DataHandler.h++: store and load data
-    - MPI_Helper.h++: slices up data for each core
-    - Plot.h++: includes usefull ploting functions for the lattice
-- Simulation / : wraps up the algorithms for testing
-    - Simulation.h++: defines universal function lambdas and test_functions
-
-### programms
-
-contains various programs for the Heisenberg3D modell
-
-### buildscripts
-
-contains various build scripts for easy build of the programm
-
-### libraries
-
-- Mathplot++ : C++ ploting
-
-### docs
-
-- includes Euler launch scripts
-
-and other documents
+In this README file we give instructions for the installation of the
+required libraries, provied an overview over the code, describe the
+core difference between the three algorithms implemented and give a 
+brief overview over the results that can be obtained using our code. 
+Finally we list the contributions.
 
 # Installation
 
@@ -123,3 +94,74 @@ Is auto installed through CMake
 [Documentation](https://alandefreitas.github.io/matplotplusplus/)
 
 [Github-Matplot++](https://github.com/alandefreitas/matplotplusplus)
+
+
+# Structure of the code 
+
+The main part of our implementation can be found in the folder 'code'.
+The different folders contain the following:
+
+
+- Data / : for evaluating, storing, loading data
+    - DataHandler.h++: store and load data
+    - MPI_Helper.h++: slices up data for each core
+    - Plot.h++: includes plotting functions for the lattice
+- Measure: contains various measure functions
+    - Timer.h++: defines a simple and easy to use stopwatch
+    - Observables.h++: defines functions to measure the Lattice
+        1. get::energy: calculates energy of the current lattice configuration
+        2. get::magnetisation: calculates magnetization of the current lattice configuration
+    - LoadingBar.h++: implements a Loading bar to track progressof simulations
+- Metropolis:
+    - metropolis.h++: implements the standard metroplis algorithm
+    - adaptive_metropolis.h++: implements the adaptive variation of the metroplis algorithm
+    - energy_diff.h++: calculates the energy difference between initial and proposed configuration
+- Wolff / : wolff algorithm
+    - wolff.h++: defines the Wolff algorithm
+- Base.h++: types and includes of most important files
+- Eigen.h++: includes 'Eigen' for linear algebra operations
+- Heisenberg.h++: wraps up all headers in one centralized header
+- Lattice.h++: defines 3D lattice class of the Heisenberg model 
+- RNG.h++: standardized random number generator used in the whole repository
+- Spin.h++: defines our spins and the member functions
+- docs: includes Euler launch scripts
+- libraries: matplotplusplus and others
+- contains various programs for the Heisenberg3D modell
+
+# Algorithms
+
+## Metropolis
+
+The Metropolis algorithm explores the phase space of the system by proposing
+spin flips, based on a specified trial move, and accepts them based on the
+energy difference between the two configurations. We implemented three
+different trial moves: the spin flip, the small step and the random step, which
+are member functions of the spin class. The implementation allows applying an 
+external magnetic field as well as a magnetic anisotropy. More information
+about the algorithm can be found [here](https://www.aliquote.org/pub/metropolis-et-al-1953.pdf).
+
+## Adaptive Metropolis
+
+The adaptive Metropolis is an extension of the standard Metropolis algorithm,
+that is based on a different trial move, with an adaptive elememt. This 
+enhances the sampling efficieny and keeps the acceptance rate close to
+fifty percent. As for the standard Metropolis, the implementation allows applying an 
+external magnetic field as well as a magnetic anisotropy. A detailed description can be found 
+[here](https://iopscience.iop.org/article/10.1088/1361-648X/aaf852/meta).
+
+## Wolff
+
+The Wolff algorithm is a cluster update algorithm, that flips entire cluster
+contrary to the Metropolis algorithm, which flips individual spins. The 
+cluster is build succesively from a randomly chosen site and flipped at
+the end of each step. This approach accelerates the exploration of the 
+phase space, especially near critical points, making it ideal for studying
+phase transitions. More information can be found [here](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.62.361).
+
+# Results
+
+
+
+# Contributions
+
+Authors: Constança Tropa, Mateo Cárdenes Wuttig, Justus Grabowsky, Daniel Schwarzenbach
