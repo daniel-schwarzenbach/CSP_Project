@@ -11,7 +11,7 @@
 
 # Introduction
 
-This repository contains code to simulate the 3D Heisenberg model using
+This repository contains the code to simulate the 3D Heisenberg model using
 different algorithms. The 3D Heisenberg model is a lattice model that
 is used to understand the behavior of magnetic materials under various
 conditions. The three algorithms implemented for the simulation are the Wolff
@@ -19,7 +19,7 @@ algorithm, the standard Metropolis algorithm and an adaptive version
 of the Metropolis algorithm.
 
 In this README file we give instructions for the installation of the
-required libraries, provied an overview over the code, describe the
+required libraries, provide an overview over the code, describe the
 core difference between the three algorithms implemented and give a 
 brief overview over the results that can be obtained using our code. 
 Finally we list the contributions.
@@ -160,8 +160,14 @@ phase transitions. More information can be found [here](https://journals.aps.org
 
 # Results
 
-
+The code can be used to demonstrate that all algorithms guide an intial spin
+configuration towards thermal equilibrium. Notably, for all algorithms,
+the value of the observables at equilibirum agree. Simulations show 
+a clear phase transition from a magnetized phase at low temperatures to 
+a demagnetized phase at high temperatures and the critical exponents 
+can be calculated. Additionally, the effect of an external magnetic
+field and spatial anisotropies can be observed.
 
 # Contributions
 
-Authors: Constança Tropa, Mateo Cárdenes Wuttig, Justus Grabowsky, Daniel Schwarzenbach
+M.C.W. implemented the observables, J.G. implemented the normal and adaptive Metropolis algorithm, C.T. implemented the Wolff algorithm, D.S. and J.G. implemented the lattice and spin classes. J.G. and C.T. implemented the data calculation. D.S. set up and managed the git-repository. M.C.W., J.G. and C.T. planned the calculations, analysed the data, and created the figures. J.G. and C.T. calculated the linear and non-linear correlation times, determined the critical exponents, and measured the algorithmic performance. D.S. assigned calculations on the EULER cluster. M.C.W. drafted and wrote the report with input from all authors. All authors contributed equally to the theory and final presentations.
