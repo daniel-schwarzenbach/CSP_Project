@@ -22,78 +22,7 @@ In this README file we give instructions for the installation of the
 required libraries, provide an overview over the code, describe the
 core difference between the three algorithms implemented and give a 
 brief overview over the results that can be obtained using our code. 
-Finally we list the contributions.
-
-# Installation
-
-## Mac-Os
-
-First u need to install [Homebrew](https://docs.brew.sh/Installation)
-
-install GCC 11 for c++23
-```bash
-brew install gcc@11 --without-multilib
-brew link gcc@11 --force
-```
-If you’ve previously installed GCC using Homebrew, you can reinstall it with:
-```bash
-brew reinstall gcc@11 --without-multilib
-```
-
-install cmake
-```bash
-brew install cmake
-```
-
-install eigen
-```bash
-brew install eigen
-```
-
-install openmpi
-```bash
-brew install openmpi --build-from-source --cc=gcc-11
-```
-
-## Linux
-
-install GCC 11 for c++23
-```bash
-sudo apt-get update
-sudo apt-get install g++-11
-```
-install cmake
-```bash
-brew install cmake
-```
-
-install openmpi on **Debian**
-```bash
-sudo apt-get install openmpi-bin libopenmpi-dev
-```
-
-install openmpi on **other Linux dirtros**
-- Download the Open MPI source code from the main Open MPI website.
-```bash
-# Extract the tarball:
-tar xf openmpi-<version>.tar.bz2
-cd openmpi-<version>
-# Configure and build Open MPI
-# Replace <path> with your desired installation directory.
-./configure --prefix=<path> [ ...options...]
-make [-j N] all
-# Install Open MPI:
-sudo make install
-
-```
-
-## Matplot++-Library
-
-Is auto installed through CMake
-
-[Documentation](https://alandefreitas.github.io/matplotplusplus/)
-
-[Github-Matplot++](https://github.com/alandefreitas/matplotplusplus)
+Finally, we list the contributions.
 
 
 # Structure of the code 
@@ -168,6 +97,81 @@ a demagnetized phase at high temperatures and the critical exponents
 can be calculated. Additionally, the effect of an external magnetic
 field and spatial anisotropies can be observed.
 
+![plot1](Magnetisation.png)
+
+
 # Contributions
 
 M.C.W. implemented the observables, J.G. implemented the normal and adaptive Metropolis algorithm, C.T. implemented the Wolff algorithm, D.S. and J.G. implemented the lattice and spin classes. J.G. and C.T. implemented the data calculation. D.S. set up and managed the git-repository. M.C.W., J.G. and C.T. planned the calculations, analysed the data, and created the figures. J.G. and C.T. calculated the linear and non-linear correlation times, determined the critical exponents, and measured the algorithmic performance. D.S. assigned calculations on the EULER cluster. M.C.W. drafted and wrote the report with input from all authors. All authors contributed equally to the theory and final presentations.
+
+# Installation
+
+## Mac-Os
+
+First u need to install [Homebrew](https://docs.brew.sh/Installation)
+
+install GCC 11 for c++23
+```bash
+brew install gcc@11 --without-multilib
+brew link gcc@11 --force
+```
+If you’ve previously installed GCC using Homebrew, you can reinstall it with:
+```bash
+brew reinstall gcc@11 --without-multilib
+```
+
+install cmake
+```bash
+brew install cmake
+```
+
+install eigen
+```bash
+brew install eigen
+```
+
+install openmpi
+```bash
+brew install openmpi --build-from-source --cc=gcc-11
+```
+
+## Linux
+
+install GCC 11 for c++23
+```bash
+sudo apt-get update
+sudo apt-get install g++-11
+```
+install cmake
+```bash
+brew install cmake
+```
+
+install openmpi on **Debian**
+```bash
+sudo apt-get install openmpi-bin libopenmpi-dev
+```
+
+install openmpi on **other Linux dirtros**
+- Download the Open MPI source code from the main Open MPI website.
+```bash
+# Extract the tarball:
+tar xf openmpi-<version>.tar.bz2
+cd openmpi-<version>
+# Configure and build Open MPI
+# Replace <path> with your desired installation directory.
+./configure --prefix=<path> [ ...options...]
+make [-j N] all
+# Install Open MPI:
+sudo make install
+
+```
+
+## Matplot++-Library
+
+Is auto installed through CMake
+
+[Documentation](https://alandefreitas.github.io/matplotplusplus/)
+
+[Github-Matplot++](https://github.com/alandefreitas/matplotplusplus)
+
