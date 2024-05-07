@@ -12,6 +12,7 @@ using Matrix = Eigen::Matrix<f32, Eigen::Dynamic,
 
 // represents an ℝ^3x3 matrix
 using Matrix3x3 = Eigen::Matrix<f32, 3, 3>;
+
 // represents an ℝ^N vector
 using Vector = Eigen::Matrix<f32, Eigen::Dynamic, 1>;
 

@@ -27,12 +27,10 @@ using Lattice = Lattice3D<Spin>;
 #include <omp.h>
 #else                 // NOT_WITH_OPENMP
 
+// definitions if no omp so that the code still compiles
 uint omp_get_num_threads();
 void omp_set_num_threads(int);
-#define PARALLEL_FOR  // theoretical parallel
-#define REDUCTION_SUM // theretical reduction
-#define ATOMIC        // theoretical atomic
-#define CRITICAL      // theoretical critical
+uint omp_get_thread_num();
 
 #endif // WITH_OPENMP
 
@@ -93,10 +91,12 @@ Array<U> convert_array(Array<T> const &array){
 /*
 - alternative to to_string
 - only gives digits without zeros after the comma
-
+1.200000 -> 1.2
 */
 string to_str(flt const &value);
 
+
+// template defitions
 extern template f32 mean<f32>(Array<f32> const &);
 extern template f64 mean<f64>(Array<f64> const &);
 extern template f32 variance<f32>(Array<f32> const &);
