@@ -12,11 +12,11 @@
 using std::min; using std::max;
 constexpr flt _eps_ = 1e-200;
 
-flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
+inline flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
                         int const& y,int const& z, 
                         Spin const& oldSpin, Spin const& newSpin, 
-                        flt const& J, Spin const& h, Spin const& k){
-    const Array<Spin>& latticeArray = lattice.get_raw_data();
+                        flt const& J, Spin const& h, Spin const& k,
+                        const Array<Spin>& spinArray){
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
@@ -37,11 +37,11 @@ flt calculate_energy_diff_omp(Lattice& lattice, int  const& x,
         {
         uint lid = lattice.get_raw_id(neighbor);
         #pragma omp atomic read
-        spin[0] = latticeArray[lid][0];
+        spin[0] = spinArray[lid][0];
         #pragma omp atomic read
-        spin[1] = latticeArray[lid][1];
+        spin[1] = spinArray[lid][1];
         #pragma omp atomic read
-        spin[2] = latticeArray[lid][2];
+        spin[2] = spinArray[lid][2];
         }
 
         // Calcualte and add energies
@@ -84,7 +84,7 @@ bool metropolis_omp(Lattice &lattice,
     const uint Lz = lattice.Lz();
     const flt beta = Beta(T);
     flt simga_total = 0.0;
-    Array<Spin>& latticArray = lattice.get_raw_data();
+    Array<Spin>& spinArray = lattice.get_raw_data();
     uint seed = rng::rand_int_range(0, 4'000'000);
     #pragma omp parallel
     {
@@ -112,12 +112,13 @@ bool metropolis_omp(Lattice &lattice,
         //#pragma omp atomic update
         {
         uint lid = lattice.get_raw_id(x,y,z);
+        // reads in spin is only paratially thread safe
         #pragma omp atomic read
-        spin[0] = latticArray[lid][0];
+        spin[0] = spinArray[lid][0];
         #pragma omp atomic read
-        spin[1] = latticArray[lid][1];
+        spin[1] = spinArray[lid][1];
         #pragma omp atomic read
-        spin[2] = latticArray[lid][2];
+        spin[2] = spinArray[lid][2];
         }
 
         // Propose spin change based on given trial move
@@ -170,7 +171,8 @@ bool metropolis_omp(Lattice &lattice,
         // }
         // Calculate energy difference
         flt deltaE = calculate_energy_diff_omp(lattice, x, y, z, spin,
-                                            newSpin, J, h, k);
+                                            newSpin, J, h, k, 
+                                            spinArray);
         
         // Acceptance condition
         if (deltaE <= 0 || uniform(rndmgen) < exp(-deltaE * beta))
@@ -179,14 +181,13 @@ bool metropolis_omp(Lattice &lattice,
             // Accept the new configuration
             {
             uint lid = lattice.get_raw_id(x,y,z);
+            // reads in newSpin is only paratially thread safe
             #pragma omp atomic write
-            latticArray[lid][0] = newSpin[0];
+            spinArray[lid][0] = newSpin[0];
             #pragma omp atomic write
-            latticArray[lid][1] = newSpin[1];
+            spinArray[lid][1] = newSpin[1];
             #pragma omp atomic write
-            latticArray[lid][2] = newSpin[2];
-            // #pragma omp critical
-            // latticArray[lid] = newSpin;
+            spinArray[lid][2] = newSpin[2];
             }
 
             if(moveType == MoveType::Addaptive){
@@ -218,6 +219,7 @@ bool metropolis_omp(Lattice &lattice,
          
         {
         if(omp_get_thread_num() == 0){
+    
         #pragma omp atomic write
         totalSteps_omp = thread_totalSteps;
         #pragma omp atomic write
