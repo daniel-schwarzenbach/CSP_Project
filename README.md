@@ -98,13 +98,16 @@ can be calculated. Additionally, the effect of an external magnetic
 field and spatial anisotropies can be observed.
 
 In the following plot, we can observe a phase transition as shown by the order parameter $M$ for $L = 8$. The data was calculated using the Metropolis algorithm.
-![plot1](Magnetisation.png)
+
+![plot1](./docs/plots/Magnetisation.png)
 
 The time per algorithm step is constant for the Metropolis algorithm, as expected...
-![plot2](Time_per_step.png)
+
+![plot2](./docs/plots/Time_per_step.png)
 
 ... however, for the Monte Carlo steps, we observe an increase over several orders of magnitude. This is known as the critical slowing down of the dynamics:
-![plot3](Time_per_MC.png)
+
+![plot3](./docs/plots/Time_per_MC.png)
 
 # Contributions
 
@@ -176,6 +179,8 @@ sudo make install
 ## Matplot++-Library
 
 Is auto installed through CMake
+
+![Lattice](./docs/plots/Lattice_99.png)
 
 [Documentation](https://alandefreitas.github.io/matplotplusplus/)
 
