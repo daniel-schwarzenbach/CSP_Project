@@ -1,3 +1,7 @@
+# Heisenberg Model in 3d
+### Computational Statistical Physics
+Mateo C\'{a}rdenes Wuttig, Justus Grabowsky, Daniel Schwarzenbach, Constan\c{c}a Tropa
+
 # CSP Project FS24
 
 ### To Do
