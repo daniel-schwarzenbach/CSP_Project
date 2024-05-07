@@ -97,7 +97,7 @@ a demagnetized phase at high temperatures and the critical exponents
 can be calculated. Additionally, the effect of an external magnetic
 field and spatial anisotropies can be observed.
 
-![plot1](Magnetisation.pdf)
+![plot1](Magnetisation.png)
 
 
 # Contributions
