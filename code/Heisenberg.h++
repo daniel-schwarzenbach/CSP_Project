@@ -64,8 +64,31 @@ template <typename Float>
 Float variance(Array<Float> const &array);
 
 /*
+converts t -> u
+
+/ @brief
+/ @param t: to convert from
+/ @param u: to convert to
+*/
+template <typename T, typename U>
+void convert_types(T const& t, U& u){
+    u = t;
+}
+
+
+template <typename T, typename U>
+Array<U> convert_array(Array<T> const &array){
+    Adress size = array.size();
+    Array<U> out(size);
+    for (Adress i = 0; i < size; ++i){
+        convert_types(array[i], out[i]);
+    }
+    return out;
+}
+
+/*
 - alternative to to_string
-- only gives 3 digits after the comma and removes zeros
+- only gives digits without zeros after the comma
 
 */
 string to_str(flt const &value);
