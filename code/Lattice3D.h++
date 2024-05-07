@@ -100,6 +100,8 @@ public:
     uint Ly() const;
     // size of the lattice in z-direction
     uint Lz() const;
+    // return raw data
+    Array<bool> &get_raw_data();
     // return raw data id
     uint get_raw_id(int const &x, int const &y, int const &z) const;
     // get boundary condition

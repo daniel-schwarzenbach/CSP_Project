@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
     const u64 Nmax_wolff = 1e+8;
 
     const u64 Ns_met = ceil(flt(Nmax_met) / 1e3);
-    const u64 Ns_wolff = ceil(flt(Nmax_met) / 1e3);
+    const u64 Ns_wolff = ceil(flt(Nmax_wolff) / 1e3);
 
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);

@@ -496,6 +496,7 @@ bool data::load_lattice(Lattice3D<Spin> &lattice, string const &filename)
             std::getline(infile, line); // Skip }
         }
         std::getline(infile, line); // Skip }
+        
     }
 
     infile.close();

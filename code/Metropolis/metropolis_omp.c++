@@ -88,6 +88,7 @@ bool metropolis_omp(Lattice &lattice,
     uint seed = rng::rand_int_range(0, 4'000'000);
     #pragma omp parallel
     {
+    // init random number generator
     std::mt19937 rndmgen(seed + omp_get_thread_num());
     std::normal_distribution<flt> gaussian(0.0, 1.0);
     std::uniform_real_distribution<flt> uniform(0.0, 1.0);

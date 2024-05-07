@@ -263,6 +263,11 @@ uint Lattice3D<bool>::get_raw_id(int const &x, int const &y,
     return get_id(x,y,z, Lx_,Ly_,Lz_,bc,fullSize);
 }
 
+// return raw data
+Array<bool> &Lattice3D<bool>::get_raw_data(){
+    return data;
+}
+
 // size of the lattice in x-direction
 uint Lattice3D<bool>::Lx() const { return Lx_; }
 // size of the lattice in y-direction
