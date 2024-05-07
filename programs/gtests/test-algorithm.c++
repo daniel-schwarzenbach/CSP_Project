@@ -26,21 +26,21 @@ TEST(Algorithm, test_metropolis_omp){
 TEST(Algorithm, test_metropolis){
     rng::set_seed(seed);
     Lattice lattice = Lattice::random_lattice(4,4,4);
+    metropolis(
+            lattice,T,J,_inf_,Steps_met,{0,0,0},{0,0,0});
+    flt mag = measure::get_magnetization(lattice).norm();
+    EXPECT_TRUE(mag > testmag_met);
+}
+
+TEST(Algorithm, test_metropolis_adaptive){
+    rng::set_seed(seed);
+    Lattice lattice = Lattice::random_lattice(4,4,4);
     adaptive_metropolis(
             lattice,T,J,_inf_,Steps_met,{0,0,0},{0,0,0},
             60);
     flt mag = measure::get_magnetization(lattice).norm();
     EXPECT_TRUE(mag > testmag_met);
 }
-
-// TEST(Algorithm, test_wolff_omp){
-//     rng::set_seed(seed);
-//     Lattice lattice = Lattice::random_lattice(4,4,4);
-//     wolff_omp(
-//             lattice,T,J,_inf_,Steps_wolff);
-//     flt mag = measure::get_magnetization(lattice).norm();
-//     EXPECT_TRUE(mag > testmag_wolff);
-// }
 
 TEST(Algorithm, test_wolff){
     rng::set_seed(seed);

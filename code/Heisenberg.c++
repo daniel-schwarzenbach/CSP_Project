@@ -1,10 +1,14 @@
 #include <Heisenberg.h++>
+
+
+
+
 /*
 Definition of thermodynamic beta
 
 / @param T: temperature in K
 */
-flt Beta(flt T)
+flt Beta(flt const& T)
 {
     return 1. / (_kB_ * T);
 };

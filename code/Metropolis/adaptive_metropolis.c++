@@ -44,7 +44,7 @@ void restet_adaptive(){
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool adaptive_metropolis(   Lattice &lattice,
+bool adaptive_metropolis(   Lattice3D<Spin> &lattice,
                             flt const& T /*temperature*/,
                             flt const& J /*interaction Strength*/,
                             flt const& maxTimeSeconds,

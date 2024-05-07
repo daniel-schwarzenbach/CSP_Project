@@ -23,7 +23,7 @@
 // Output:
 //      Returns true when the algorithm has finished running. The lattice
 //      is modified throughout the runtime of the algorithm.
-bool metropolis(Lattice &lattice,
+bool metropolis(Lattice3D<Spin> &lattice,
                 flt const& T /*temperature*/,
                 flt const& J /*interaction Strength*/,
                 flt const& maxTimeSeconds,

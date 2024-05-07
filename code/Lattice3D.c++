@@ -1,22 +1,24 @@
 #include <Lattice3D.h++>
 
-
-// A function that finds out if a uint is a power of 2 and if it isn't 
+// A function that finds out if a uint is a power of 2 and if it isn't
 // returns the next lower power of two
-inline uint power_of_2_or_lower(uint n) {
+inline uint power_of_2_or_lower(uint n)
+{
     // Check if the number is zero
-    if (n == 0) {
+    if (n == 0)
+    {
         // Return zero
         return 0;
     }
-    // Check if the number is a power of 2 by using the bitwise AND 
+    // Check if the number is a power of 2 by using the bitwise AND
     // operation
     // If n & (n - 1) is zero, then n has a single set bit
-    if ((n & (n - 1)) == 0) {
+    if ((n & (n - 1)) == 0)
+    {
         // Return the number itself
         return n;
     }
-    // If the number is not a power of 2, clear the rightmost set bit 
+    // If the number is not a power of 2, clear the rightmost set bit
     // by using the bitwise AND operation
     // This will give us the next lower power of 2
     return n & (n - 1);
@@ -32,7 +34,8 @@ mathematical correct modulo
 */
 inline uint modulo(int const &i, uint u)
 {
-    return (i % static_cast<int>(u) + static_cast<int>(u)) % static_cast<int>(u);
+    return (i % static_cast<int>(u) + static_cast<int>(u)) 
+            % static_cast<int>(u);
 }
 
 /*
@@ -48,19 +51,20 @@ function to access the undelying Lattice Vector
 / @param bc: Boundary condition
 / @return id for data array
 */
-inline uint get_id(int const& x, int const& y, int const& z, 
-                  uint const& Lx, uint const&  Ly, uint const& Lz,
-                  BC const& bc, u64 const& fullSize) {
+inline uint get_id(int const &x, int const &y, int const &z,
+                   uint const &Lx, uint const &Ly, uint const &Lz,
+                   BC const &bc, u64 const &fullSize)
+{
     if (x >= 0 && x < Lx &&
         y >= 0 && y < Ly &&
         z >= 0 && z < Lz)
     {
-        return x*Ly*Lz  +  y*Lz  +  z;
+        return x * Ly * Lz + y * Lz + z;
     }
     // else
     switch (bc)
     {
-    case BC::_0:
+    case BC::Dirichlet:
         return fullSize;
     default:
         // uint x_ = modulo(x, Lx);
@@ -70,11 +74,12 @@ inline uint get_id(int const& x, int const& y, int const& z,
         uint x_ = x & (Lx - 1);
         uint y_ = y & (Ly - 1);
         uint z_ = z & (Lz - 1);
-        return x_*Ly*Lz  +  y_*Lz  +  z_;
-        
+        return x_ * Ly * Lz + y_ * Lz + z_;
     }
 }
 
+
+//========================= Lattic3D =================================
 
 // return raw data
 template <typename T>
@@ -87,14 +92,14 @@ template <typename T>
 uint Lattice3D<T>::get_raw_id(
     int const &x, int const &y, int const &z) const
 {
-    return get_id(x,y,z,Lx_,Ly_,Lz_,bc,fullSize);
+    return get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize);
 }
 
 // return raw data id
 template <typename T>
 uint Lattice3D<T>::get_raw_id(Index const &index) const
 {
-    return get_id(index[0],index[1],index[2],Lx_,Ly_,Lz_,bc,fullSize);
+    return get_id(index[0], index[1], index[2], Lx_, Ly_, Lz_, bc, fullSize);
 }
 
 // size of the lattice in x-direction
@@ -111,7 +116,7 @@ uint Lattice3D<T>::Lz() const { return Lz_; }
 template <typename T>
 BC Lattice3D<T>::get_boundary_conditions() const { return bc; }
 
-// set value of the BC::_0
+// set value of the BC::Dirichlet
 template <typename T>
 void Lattice3D<T>::set_zero_element(T const &zero)
 {
@@ -125,27 +130,26 @@ void Lattice3D<T>::set_boundary_conditions(BC bc_) { bc = bc_; }
 template <typename T>
 T Lattice3D<T>::operator()(int x, int y, int z) const
 {
-    return data.at(get_id(x,y,z,Lx_,Ly_,Lz_,bc,fullSize));
+    return data.at(get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize));
 }
 
 template <typename T>
 T &Lattice3D<T>::operator()(Index const &id)
 {
-    return data.at(get_id(id[0],id[1],id[2],Lx_,Ly_,Lz_,bc,fullSize));
+    return data.at(get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, fullSize));
 }
 
 template <typename T>
 T Lattice3D<T>::operator()(Index const &id) const
 {
-    return data.at(get_id(id[0],id[1],id[2],Lx_,Ly_,Lz_,bc,fullSize));
+    return data.at(get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, fullSize));
 }
 
 template <typename T>
 T &Lattice3D<T>::operator()(int x, int y, int z)
 {
-    return data.at(get_id(x,y,z,Lx_,Ly_,Lz_,bc,fullSize));
+    return data.at(get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize));
 }
-
 
 template <typename T>
 Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
@@ -155,11 +159,12 @@ Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
     Lx_ = power_of_2_or_lower(Lx);
     Ly_ = power_of_2_or_lower(Ly);
     Lz_ = power_of_2_or_lower(Lz);
-    if(Lx_ != Lx || Lx_ != Lx || Lx_ != Lx){
-        cout << WARNING << " lattice has been set to 2ˣ :" 
+    if (Lx_ != Lx || Lx_ != Lx || Lx_ != Lx)
+    {
+        cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
-    fullSize = Lx_*Ly_*Lz_;
+    fullSize = Lx_ * Ly_ * Lz_;
     data.resize(fullSize + 1);
     data[fullSize] = 0;
     data.shrink_to_fit();
@@ -236,7 +241,6 @@ Lattice3D<T> Lattice3D<T>::random_lattice(uint Lx, uint Ly, uint Lz)
 
 
 
-
 //========================= Lattic3D<bool>===========================
 
 Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
@@ -246,25 +250,27 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
     Lx_ = power_of_2_or_lower(Lx);
     Ly_ = power_of_2_or_lower(Ly);
     Lz_ = power_of_2_or_lower(Lz);
-    if(Lx_ != Lx || Lx_ != Lx || Lx_ != Lx){
-        cout << WARNING << " lattice has been set to 2ˣ :" 
+    if (Lx_ != Lx || Lx_ != Lx || Lx_ != Lx)
+    {
+        cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
-    fullSize = Lx_*Ly_*Lz_;
+    fullSize = Lx_ * Ly_ * Lz_;
     data.resize(fullSize + 1);
     data[fullSize] = true;
     data.shrink_to_fit();
 }
 
 // return raw data id
-uint Lattice3D<bool>::get_raw_id(int const &x, int const &y, 
-                                int const &z) const
+uint Lattice3D<bool>::get_raw_id(int const &x, int const &y,
+                                 int const &z) const
 {
-    return get_id(x,y,z, Lx_,Ly_,Lz_,bc,fullSize);
+    return get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize);
 }
 
 // return raw data
-Array<bool> &Lattice3D<bool>::get_raw_data(){
+Array<bool> &Lattice3D<bool>::get_raw_data()
+{
     return data;
 }
 
@@ -277,7 +283,7 @@ uint Lattice3D<bool>::Lz() const { return Lz_; }
 
 BC Lattice3D<bool>::get_boundary_conditions() const { return bc; }
 
-// set value of the BC::_0
+// set value of the BC::Dirichlet
 void Lattice3D<bool>::set_zero_element(bool const &zero)
 {
     data[fullSize] = zero;
@@ -289,23 +295,25 @@ void Lattice3D<bool>::set_boundary_conditions(BC bc_) { bc = bc_; }
 void Lattice3D<bool>::set(int const &x, int const &y, int const &z,
                           bool const &v)
 {
-    data[get_id(x,y,z, Lx_,Ly_,Lz_,bc,fullSize)] = v;
+    data[get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize)] = v;
 }
 
 void Lattice3D<bool>::set(Index const &id, bool const &v)
 {
-    data[get_id(id[0], id[1], id[2],Lx_,Ly_,Lz_,bc,fullSize)] = v;
+    data[get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, fullSize)] 
+            = v;
 }
 
-bool Lattice3D<bool>::get(int const &x, int const &y, int const &z) 
-        const
+bool Lattice3D<bool>::get(int const &x, int const &y, int const &z)
+    const
 {
-    return data[get_id(x,y,z, Lx_,Ly_,Lz_,bc,fullSize)];
+    return data[get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize)];
 }
 
 bool Lattice3D<bool>::get(Index const &id) const
 {
-    return data[get_id(id[0], id[1], id[2],Lx_,Ly_,Lz_,bc,fullSize)];
+    return data[get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, 
+            fullSize)];
 }
 
 bool Lattice3D<bool>::randomize()
@@ -373,5 +381,7 @@ Lattice3D<bool> Lattice3D<bool>::random_lattice(uint Lx, uint Ly, uint Lz)
     return lattice;
 }
 
+
+// predefine lattices
 template class Lattice3D<Spin>;
 template class Lattice3D<bool>;

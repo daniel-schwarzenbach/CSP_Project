@@ -25,30 +25,6 @@
         },
         {
             "type": "shell",
-            "label": "build-ippl",
-
-            "linux" :{
-                "command": "${workspaceFolder}/buildscripts/build-unix-ippl.sh"
-            },
-            "osx" :{
-                "command": "${workspaceFolder}/buildscripts/build-unix-ippl.sh"
-            },
-            "presentation": {
-                "reveal": "always"
-            },
-            "options" :{
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher":[
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
             "label": "build-euler",
 
             "linux" :{

@@ -16,11 +16,12 @@ mathematical correct modulo
 */
 inline uint modulo(int const &i, uint u);
 
-// Lattice Container
 /*
-
-
-T value = lattice<T>(x,y,z)
+Lattice container 
+Lx,Ly,Lz have to be powers of 2!
+- with acces operator: (x,y,z), ({x,y,z})
+- with boundry conditions: set_boundry_conditions() / get_...
+- Lx(), Ly(), Lz() // size of the lattice
 
 */
 template <class T>
@@ -30,7 +31,8 @@ private:
     // datavector
     Array<T> data;
     // dimentions of the lattic
-    uint Lx_, Ly_, Lz_; u64 fullSize;
+    uint Lx_, Ly_, Lz_;
+    u64 fullSize;
     // boundary condition
     BC bc = BC::Periodic;
 
@@ -49,7 +51,7 @@ public:
     uint Lz() const;
     // get boundary condition
     BC get_boundary_conditions() const;
-    // set value of the BC::_0
+    // set value of the BC::Dirichlet
     void set_zero_element(T const &zero);
     // set the desired boundary condition
     void set_boundary_conditions(BC bc);
@@ -66,30 +68,38 @@ public:
     // copy constructor
     Lattice3D(Lattice3D &other) = default;
     Lattice3D(Lattice3D const &other) = default;
-
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
+    // sets the entive Lattice constant
     bool set_constant(T const &value);
-
+    // returns a constatnt Lattice
     static Lattice3D constant_lattice(uint Lx, uint Ly, uint Lz,
                                       T const &value);
-
     // randomizes the Lattice, same effect as Lattice::random_lattice
     static Lattice3D random_lattice(uint Lx, uint Ly, uint Lz);
-
     // size of the entire lattice
     uint get_total_size() const;
 };
 
+
+/*
+special Lattice container for boolean values
+Lx,Ly,Lz have to be powers of 2!
+- with acces operator: get(x,y,z), get({x,y,z})
+- with change operator: set(x,y,z,value), set({x,y,z},value)
+- with boundry conditions: set_boundry_conditions() / get_...
+- Lx(), Ly(), Lz() // size of the lattice
+
+*/
 template <>
 class Lattice3D<bool>
 {
-
 private:
     // datavector
     Array<bool> data;
     // dimentions of the lattic
-    uint Lx_, Ly_, Lz_; u64 fullSize;
+    uint Lx_, Ly_, Lz_;
+    u64 fullSize;
     // boundary condition
     BC bc = BC::Periodic;
 
@@ -106,7 +116,7 @@ public:
     uint get_raw_id(int const &x, int const &y, int const &z) const;
     // get boundary condition
     BC get_boundary_conditions() const;
-    // set value of the BC::_0
+    // set value of the BC::Dirichlet
     void set_zero_element(bool const &zero);
     // set the desired boundary condition
     void set_boundary_conditions(BC bc);

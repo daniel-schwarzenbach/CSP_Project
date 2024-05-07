@@ -44,6 +44,8 @@ namespace rng
     */
     int rand_int_range(int a, int b);
 
+
+    // templated random function: important for Lattice initialization
     template <class T>
     static T get_random() { return T(100 * rand_uniform()); }
 

@@ -3,7 +3,7 @@
 #include <numeric>
 #include <algorithm>
 
-Vector3 measure::get_magnetization(const Lattice &lattice)
+Vector3 measure::get_magnetization(const Lattice3D<Spin> &lattice)
 {
 
     // Define the magnetization as a vector
@@ -31,8 +31,9 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
     return {f32(sx/N), f32(sy/N), f32(sz/N)};
 }
 
-flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec, 
-        flt const& J, Vector3 const& k_vec)
+flt measure::get_energy(const Lattice3D<Spin> &lattice, 
+                        Vector3 const& h_vec, 
+                        flt const& J, Vector3 const& k_vec)
 {
 
     /*
@@ -141,7 +142,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
             anisotropy_energy);
 }
 
-flt measure::get_scalar_average(Lattice const &lattice, 
+flt measure::get_scalar_average(Lattice3D<Spin> const &lattice, 
                                 Vector3 const &vec)
 {
     uint Lx = lattice.Lx();
@@ -162,8 +163,8 @@ flt measure::get_scalar_average(Lattice const &lattice,
     return scalarAverage / (Lx*Ly*Lx);
 }
 
-flt measure::get_correlation(Lattice const &start, 
-                                  Lattice const &next)
+flt measure::get_correlation(Lattice3D<Spin> const &start, 
+                                  Lattice3D<Spin> const &next)
 {
     uint Lx = start.Lx();
     uint Ly = start.Ly();

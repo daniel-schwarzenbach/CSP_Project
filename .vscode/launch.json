@@ -5,15 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "build-ippl",
-            "miDebuggerPath": "/usr/bin/gdb",
-            "name": "Linux-ippl",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/HeisenbergIppl",
-            "cwd": "${workspaceFolder}/build",
-        },
-        {
             "preLaunchTask": "build-mpi",
             "miDebuggerPath": "/usr/bin/gdb",
             "name": "Linux-MPI",

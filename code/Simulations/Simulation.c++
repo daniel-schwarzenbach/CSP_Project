@@ -1,11 +1,11 @@
-#include <Algorithm/Algorithm.h++>
+#include <Simulations/Simulation.h++>
 
-Array2D<flt> algo::dt::test_algorithm(
-    Lattice &lattice,
+Array2D<flt> sim::dt::test_algorithm(
+    Lattice3D<Spin> &lattice,
     flt const &dt, flt const &t_end, flt const &T, flt const &J,
-    algo::dt::Algorithm const &algo, bool loadingBar)
+    sim::dt::Algorithm const &algo, bool loadingBar)
 {
-    Vector3 z = {0,0,1};
+    Vector3 z = {0, 0, 1};
     uint maxSize = ceil(flt(t_end) / flt(dt));
     Array<flt> Time(0);
     Time.reserve(maxSize);
@@ -20,14 +20,15 @@ Array2D<flt> algo::dt::test_algorithm(
     flt t_elapsed = 0;
     while (t_elapsed < t_end)
     {
-        if(loadingBar)
+        if (loadingBar)
             lbar.update(t_elapsed / t_end * 100.0);
         Vector3 magnVec = measure::get_magnetization(lattice);
         Time.push_back(t_elapsed);
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
         E.push_back(measure::get_energy(lattice));
-        measure::Timer watch; watch.start();
+        measure::Timer watch;
+        watch.start();
         algo(lattice, dt, T, J);
         watch.stop();
         t_elapsed += watch.time();
@@ -41,14 +42,16 @@ Array2D<flt> algo::dt::test_algorithm(
     return {Time, M, M_z, E};
 }
 
-Array2D<flt> algo::ds::test_algorithm(
-    Lattice &lattice,
-    uint const &ds, u64 const &numSteps,flt const &T,flt const &J,
-    Spin const& h, Spin const& k,
-    algo::ds::Algorithm const &algorithmus, bool loadingBar)
+Array2D<flt> sim::ns::test_algorithm(
+    Lattice3D<Spin> &lattice,
+    uint const &ns, u64 const &numSteps, flt const &T,
+    flt const &J,
+    Spin const &h, Spin const &k,
+    Algorithm const &algorithmus,
+    bool const &loadingBar)
 {
-    Vector3 z = {0,0,1};
-    uint maxSize = ceil(flt(numSteps) / flt(ds));
+    Vector3 z = {0, 0, 1};
+    uint maxSize = ceil(flt(numSteps) / flt(ns));
     Array<flt> Time(0);
     Time.reserve(0);
     Array<flt> Step(0);
@@ -65,21 +68,22 @@ Array2D<flt> algo::ds::test_algorithm(
     flt t_elapsed = 0;
     while (step < numSteps)
     {
-        if(loadingBar)
+        if (loadingBar)
             lbar.update(flt(step) / flt(numSteps) * 100.0);
-        
+
         Vector3 magnVec = measure::get_magnetization(lattice);
         Step.push_back(step);
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
         E.push_back(measure::get_energy(lattice));
         Time.push_back(t_elapsed);
-        measure::Timer timer; timer.start();
-        algorithmus(lattice, ds, T, J, h, k);
+        measure::Timer timer;
+        timer.start();
+        algorithmus(lattice, ns, T, J, h, k);
         timer.stop();
         t_elapsed += timer.time();
-        
-        step += ds;
+
+        step += ns;
     }
 
     Step.push_back(step);

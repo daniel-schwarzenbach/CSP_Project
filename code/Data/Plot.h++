@@ -10,11 +10,11 @@
 namespace data
 {
 
-    bool plot_lattice_slice(Lattice &lattice, int z = 0,
+    bool plot_lattice_slice(Lattice3D<Spin> &lattice, int z = 0,
                             string filename = "");
 
     // plots a quiver for
-    bool plot_lattice(Lattice &lattice,
+    bool plot_lattice(Lattice3D<Spin> &lattice,
                       string filename = "");
 
     /*

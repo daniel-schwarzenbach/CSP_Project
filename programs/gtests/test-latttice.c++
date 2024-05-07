@@ -3,6 +3,8 @@
 
 constexpr flt _eps_ = 1e-3;
 
+using Lattice = Lattice3D<Spin>;
+
 bool operator!=(Spin const &a, Spin const &b)
 {
     if (abs(a.phi() - b.phi()) < _eps_ &&
@@ -105,7 +107,7 @@ TEST(LatticeTests, Lattice_Dirichlet_)
     uint L = 8;
     rng::set_seed(89);
     Lattice lattice = Lattice::random_lattice(L, L, L);
-    lattice.set_boundary_conditions(BC::_0);
+    lattice.set_boundary_conditions(BC::Dirichlet);
     Spin zero{0, 0, 0};
     EXPECT_TRUE(zero == lattice(0, 0, -1));
     what_is(lattice(0, 0, -1));
@@ -147,7 +149,7 @@ TEST(LatticeTests, Lattice3d_bool_dirichlet)
     uint L = 4;
     rng::set_seed(89);
     Lattice3D<bool> lattice = Lattice3D<bool>::constant_lattice(L, L, L, false);
-    lattice.set_boundary_conditions(BC::_0);
+    lattice.set_boundary_conditions(BC::Dirichlet);
     EXPECT_TRUE(lattice.get(0, 0, -1) == true);
     EXPECT_TRUE(lattice.get(0, 0, 4) == true);
     EXPECT_TRUE(lattice.get(1, 1, 1) == false);

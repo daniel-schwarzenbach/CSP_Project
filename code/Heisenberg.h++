@@ -1,27 +1,30 @@
 #ifndef __HEISENBERG_H__
 #define __HEISENBERG_H__
+/*
+    includes all important files for the algorithms and adds important
+    definitions
+*/
 
 #include <Base.h++>
 #include <Spin.h++>
 #include <Lattice3D.h++>
 
-
-
-
 extern template class Lattice3D<Spin>;
 extern template class Lattice3D<bool>;
+
 /*
-Lattice class
-- with acces operator: (x,y,z)
-- with boundry conditions: set_boundry_conditions()
+Lattice that contains Spins: aka. Lattice3D<Spin>
+Lx,Ly,Lz have to be powers of 2!
+- with acces operator: (x,y,z), ({x,y,z})
+- with boundry conditions: set_boundry_conditions() / get_...
 - Lx(), Ly(), Lz() // size of the lattice
 */
 using Lattice = Lattice3D<Spin>;
 
-#ifdef WITH_OPENMP
 
+
+#ifdef WITH_OPENMP // definition given by cmake
 #include <omp.h>
-
 #else                 // NOT_WITH_OPENMP
 
 uint omp_get_num_threads();
@@ -34,7 +37,8 @@ void omp_set_num_threads(int);
 #endif // WITH_OPENMP
 
 // boltzmann constant
-static constexpr flt _kB_ = 1.0; // 1.38064852e-23;
+// normalized with J s.t. J / _kB_ = 1
+static constexpr flt _kB_ = 1.0; 
 
 /*
 Definition of thermodynamic beta
@@ -42,7 +46,7 @@ Definition of thermodynamic beta
 / @param T: temperature
 / @return 1 / (T * _kB_)
 */
-flt Beta(flt T);
+flt Beta(flt const& T);
 
 /*
 calculate the mean value of a vector
@@ -64,7 +68,7 @@ template <typename Float>
 Float variance(Array<Float> const &array);
 
 /*
-converts t -> u
+converts t -> u : important for generic convert_array
 
 / @brief
 / @param t: to convert from

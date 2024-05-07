@@ -71,9 +71,20 @@ namespace data
         const StaticArray<Array<flt>, 5> &,
         const string &);
 
-    bool store_lattice(Lattice const &lattice,
+    /*
+    stores the entire lattice in a file that is readable with
+    load_lattice
+    / @param lattice: the lattice you want to store
+    / @param filenam: the file that you want to read in
+    / @return returns if the process succeds
+    */
+    bool store_lattice(Lattice3D<Spin> const &lattice,
                        string const &filename);
 
+    /*
+    stores the entire lattice in a file that is readable with
+    load_lattice
+    */
     bool load_lattice(Lattice3D<Spin> &lattice,
                       string const &filename);
 };

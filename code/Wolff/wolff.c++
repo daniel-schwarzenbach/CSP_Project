@@ -1,10 +1,37 @@
 #include <Wolff/wolff.h++>
 #include <Measure/Timer.h++>
-#include <Wolff/duplicate_functions.h++>
+
+//Function to flip the spin
+void flip_spin(Spin& spin_r, Spin& spin_x){
+    flt cdot = spin_x | spin_r;
+    spin_x = spin_x - (2.0f * cdot)*spin_r;
+}
+
+bool activate_bond( Spin& spin_x, Spin& spin_r, flt beta,Spin& spin_y){
+    flt cdot = 2 * beta * (spin_r | spin_x) * (spin_r | spin_y);
+    flt active = 1.0 - std::exp(min(cdot, 0.0));
+    flt p = rng::rand_uniform();
+    return (p <= active);
+}
 
 
 
-int wolf_algorithm(Lattice& lattice, flt const& beta){
+void check_neighbor(Lattice3D<Spin>& lattice, Index ind, 
+                    Spin& spin_x, Spin& spin_r, 
+                    Lattice3D<bool>& visited, 
+                    Array<Index>& stack, Array<Index>& cluster, 
+                    flt const& beta){
+    Spin& spin_y = lattice(ind); //Define spin sigma_y
+    //If Bond is activated...
+    if (activate_bond(spin_x, spin_r, beta, spin_y)){
+        flip_spin(spin_r, spin_y); //...flip spin
+        stack.push_back(ind); // ...add to stack 
+        cluster.push_back(ind); // ...add to cluster (mark y)
+        visited.set(ind,true); //Mark as visited
+    }
+}
+
+int wolf_algorithm(Lattice3D<Spin>& lattice, flt const& beta){
 
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
@@ -90,7 +117,7 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff(Lattice &lattice, flt const& T, flt const& J, 
+flt wolff(Lattice3D<Spin> &lattice, flt const& T, flt const& J, 
           flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
 
     flt beta = Beta(T);

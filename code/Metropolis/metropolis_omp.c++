@@ -13,11 +13,13 @@
 using std::min; using std::max;
 constexpr flt _eps_ = 1e-200;
 
-inline flt calculate_energy_diff_omp(Lattice& lattice, int  const& x, 
-                        int const& y,int const& z, 
-                        Spin const& oldSpin, Spin const& newSpin, 
-                        flt const& J, Spin const& h, Spin const& k,
-                        const Array<Spin>& spinArray){
+inline flt calculate_energy_diff_omp(Lattice3D<Spin>& lattice, 
+        int  const& x, 
+        int const& y,int const& z, 
+        Spin const& oldSpin, Spin const& newSpin, 
+        flt const& J, Spin const& h, Spin const& k,
+        const Array<Spin>& spinArray)
+{
     // Get dimensions of the lattice
     int Lx = lattice.Lx();
     int Ly = lattice.Ly();
@@ -70,7 +72,7 @@ void restet_adaptive_omp(){
     u64 acceptedCount_omp = 0;
 }
 
-bool metropolis_omp(Lattice &lattice,
+bool metropolis_omp(Lattice3D<Spin> &lattice,
                     flt const& T /*temperature*/,
                     flt const& J /*interaction Strength*/,
                     flt const& maxTimeSeconds,

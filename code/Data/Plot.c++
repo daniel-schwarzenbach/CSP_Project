@@ -6,6 +6,7 @@
 namespace plt = matplot;
 using std::to_string;
 
+// rainbow color map
 static Array<Array<double>> rainbow_dark{
     {0.0, 0.0, 0.9},
     {0.0, 0.6, 0.6},
@@ -15,6 +16,7 @@ static Array<Array<double>> rainbow_dark{
     {0.6, 0.0, 0.6},
     {0.0, 0.0, 0.9}};
 
+//
 static Array<Array<double>> heat{
     {0.6, 0.0, 0.0},
     {0.8, 0.0, 0.0},
@@ -34,7 +36,7 @@ static Array<Array<double>> heat{
     {0.0, 0.4, 0.7},
     {0.0, 0.0, 0.6}};
 
-Array<Array<f32>> lattice_slice(Lattice &lattice, uint z)
+Array2D<f32> lattice_slice(Lattice3D<Spin> &lattice, uint z)
 {
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
@@ -51,7 +53,7 @@ Array<Array<f32>> lattice_slice(Lattice &lattice, uint z)
     return latticeSlice;
 }
 
-StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
+StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
 {
     // get lattice size
     uint Lx = lattice.Lx();
@@ -111,7 +113,8 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice &lattice)
     
 }
 
-bool data::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
+bool data::plot_lattice_slice(  Lattice3D<Spin> &lattice, int z, 
+                                string filename)
 {
 
     Array<Array<f32>> latticeSlice = lattice_slice(lattice, z);
@@ -133,7 +136,8 @@ bool data::plot_lattice_slice(Lattice &lattice, int z, std::string filename)
     return 0;
 }
 
-bool data::plot_lattice(Lattice &lattice, std::string filename)
+bool data::plot_lattice(Lattice3D<Spin> &lattice, 
+                        std::string filename)
 {
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
     // calculates average
