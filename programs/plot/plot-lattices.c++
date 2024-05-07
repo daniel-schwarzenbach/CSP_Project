@@ -21,14 +21,15 @@ int main(int mainArgCount, char **mainArgs)
     Lattice3D<Spin> lattice(L, L, L);
     lattice.randomize();
     
-    const u64 Ns = 100;
-    const u64 Nmax = 10'000;
+    const u64 Ns = 1'000;
+    const u64 Nmax = 100'000;
     uint it = 0;
     for (u64 i = 0; i < Nmax; i+=Ns)
     {
         metropolis_omp(lattice,T,J,_inf_,Ns);
-        data::plot_lattice(lattice,"plot/Lattice_" + to_string(0)
+        data::plot_lattice(lattice,"plot/Lattice_" + to_string(it)
                 + ".png");
+        ++it;
     }
     return 0;
 }

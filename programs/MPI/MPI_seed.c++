@@ -1,4 +1,4 @@
-#include <Algorithm/Algorithm.h++>
+#include <Simulations/Simulation.h++>
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>

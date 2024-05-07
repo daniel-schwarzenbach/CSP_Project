@@ -1,4 +1,4 @@
-#include <Algorithm/Algorithm.h++>
+#include <Simulations/Simulation.h++>
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
     
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                sim::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
                         J, h, k, sim::ns::metropolis_adaptive,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile + to_string(rank));
@@ -147,11 +147,10 @@ int main(int argc, char* argv[])
         
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
                         J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: "<<watch.time()<<endl< endl;
     }
 
 
@@ -169,8 +168,8 @@ int main(int argc, char* argv[])
     
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive_omp,
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_adaptive_omp,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile_omp + to_string(rank));
         cout << "finished metropolis adaptive omp in: " << watch.time() <<endl << endl;
@@ -188,8 +187,8 @@ int main(int argc, char* argv[])
         
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep_omp, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep_omp, 
                         loading_bar);
         data::store_data(data,metropolisFile_omp+to_string(rank));
         cout << "finished metropolis omp in: " << watch.time() <<endl << endl;

@@ -1,31 +1,9 @@
-#include <Algorithm/Algorithm.h++>
+#include <Simulations/Simulation.h++>
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
 #include <ctime> // for time()
 
-u64 get_wolf_steps(flt const &T)
-{
-    flt T_lower = 1.3;
-    flt T_upper = 1.6;
-    flt N_t0 = 1e4;
-    flt N_tinf = 1e+6;
-    flt T_inf = 100;
-    flt T_0 = 0.01;
-    flt N_tc = 1e+8;
-
-    if (T <= T_lower)
-        return u64((N_t0 + (T - T_0) * (N_tc - N_t0)) / (T_lower - T_0));
-    else if (T >= T_upper)
-        return u64((N_tc + (T_upper - T) * (N_tc - N_tinf)) / (T_inf - T_upper));
-    else if (T_lower <= T <= T_upper)
-        return u64(N_tc);
-    else
-    {
-        cerr << "invalid temperature" << endl;
-        return 1e-4;
-    }
-}
 
 flt constexpr J = 1.0;
 
@@ -52,7 +30,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(comm, &size);
     measure::Timer programTimer;
     programTimer.start();
-    // this is dumm and stupid!!!
+    // get a random seed for each node
     const u64 FullSeed = static_cast<unsigned int>(time(0)) * rank;
     const uint Seed =
         static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
@@ -115,7 +93,8 @@ int main(int argc, char *argv[])
         measure::Timer watch;
         watch.start();
         cout << rank << " is running metropolis ..." << endl;
-        string latticefile = ".././input/" + metropolisFile + "Lattice_" + to_string(rank);
+        string latticefile = ".././input/" + metropolisFile + 
+                "Lattice_" + to_string(rank);
         what_is(latticefile);
         if (!data::load_lattice(lattice, latticefile))
         {
@@ -126,7 +105,8 @@ int main(int argc, char *argv[])
         cout << "T = " << T << endl;
         Array2D<flt> data =
             sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                                    J, h, k, sim::ns::metropolis_smallStep,
+                                    J, h, k, 
+                                    sim::ns::metropolis_smallStep,
                                     loading_bar);
         data::store_data(data, metropolisFile + to_string(rank));
         cout << "finished metropolis in: " << watch.time() << endl
@@ -137,7 +117,8 @@ int main(int argc, char *argv[])
     {
         measure::Timer watch;
         watch.start();
-        string latticefile = ".././input/" + metropolisAdaptFile + "Lattice_" + to_string(rank);
+        string latticefile = ".././input/" + metropolisAdaptFile + 
+                "Lattice_" + to_string(rank);
         what_is(latticefile);
         if (!data::load_lattice(lattice, latticefile))
         {
@@ -148,7 +129,8 @@ int main(int argc, char *argv[])
         cout << "T = " << T << endl;
         Array2D<flt> data =
             sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                                    J, h, k, sim::ns::metropolis_adaptive,
+                                    J, h, k, 
+                                    sim::ns::metropolis_adaptive,
                                     loading_bar);
         data::store_data(data, metropolisAdaptFile + to_string(rank));
         cout << "finished metropolis adaptive in: "
@@ -161,7 +143,8 @@ int main(int argc, char *argv[])
         measure::Timer watch;
         watch.start();
         cout << rank << " is running wolff ..." << endl;
-        string latticefile = ".././input/" + wolffFile + "Lattice_" + to_string(rank);
+        string latticefile = ".././input/" + wolffFile 
+                + "Lattice_" + to_string(rank);
         what_is(latticefile);
         if (!data::load_lattice(lattice, latticefile))
         {
@@ -172,7 +155,8 @@ int main(int argc, char *argv[])
         cout << "T = " << T << endl;
         Array2D<flt> data =
             sim::ns::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-                                    J, h, k, sim::ns::wolff_, loading_bar);
+                                    J, h, k, sim::ns::wolff_, 
+                                    loading_bar);
         data::store_data(data, wolffFile + to_string(rank));
         cout << "finished wolff in: " << watch.time() << endl
              << endl;
