@@ -3,40 +3,26 @@
 
 #include <Base.h++>
 #include <Spin.h++>
-#include <Eigen.h++>
+#include <Lattice3D.h++>
 
-/*
-Spin class
-- with scalar product: |
-- with standard product: *
-- with addition operator: +
-- with subtraction operator: -
-- with normalization: normalize()
-- with output operator: <<
-- with compareration operator: ==
-- with assignment operator: =
-*/
-using Spin = SpinVector;
-#include <Lattice3d.h++>
 
-extern template class Lattice3d<SpinVector>;
-extern template class Lattice3d<bool>;
+
+
+extern template class Lattice3D<Spin>;
+extern template class Lattice3D<bool>;
 /*
 Lattice class
 - with acces operator: (x,y,z)
 - with boundry conditions: set_boundry_conditions()
 - Lx(), Ly(), Lz() // size of the lattice
-- comunicate_ghost_cells() // does nothing in Serial
 */
-using Lattice = Lattice3d<Spin>;
-
+using Lattice = Lattice3D<Spin>;
 
 #ifdef WITH_OPENMP
 
 #include <omp.h>
 
-
-#else // NOT_WITH_OPENMP
+#else                 // NOT_WITH_OPENMP
 
 uint omp_get_num_threads();
 void omp_set_num_threads(int);
@@ -46,9 +32,6 @@ void omp_set_num_threads(int);
 #define CRITICAL      // theoretical critical
 
 #endif // WITH_OPENMP
-
-
-
 
 // boltzmann constant
 static constexpr flt _kB_ = 1.0; // 1.38064852e-23;
@@ -69,7 +52,7 @@ calculate the mean value of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-Float mean(Array<Float> const& array);
+Float mean(Array<Float> const &array);
 /*
 calculate the variance of a vector
 
@@ -78,19 +61,18 @@ calculate the variance of a vector
 / @return mean value of the vector: m = 1/m.size() * ∑ m[i]
 */
 template <typename Float>
-Float variance(Array<Float> const& array);
+Float variance(Array<Float> const &array);
 
 /*
 - alternative to to_string
 - only gives 3 digits after the comma and removes zeros
 
 */
-string to_str(flt const& value);
+string to_str(flt const &value);
 
-extern template f32 mean<f32>(Array<f32> const&);
-extern template f64 mean<f64>(Array<f64> const&);
-extern template f32 variance<f32>(Array<f32> const&);
-extern template f64 variance<f64>(Array<f64> const&);
-
+extern template f32 mean<f32>(Array<f32> const &);
+extern template f64 mean<f64>(Array<f64> const &);
+extern template f32 variance<f32>(Array<f32> const &);
+extern template f64 variance<f64>(Array<f64> const &);
 
 #endif // __HEISENBERG_H__

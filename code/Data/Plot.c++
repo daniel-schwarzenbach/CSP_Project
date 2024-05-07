@@ -168,8 +168,7 @@ bool data::plot_lattice(Lattice &lattice, std::string filename)
     {
         plt::show();
     }
-    fig.reset();
-    plt::figure(false);
+    plt::cla();
     return 0;
 }
 

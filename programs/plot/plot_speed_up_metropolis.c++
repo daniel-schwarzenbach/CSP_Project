@@ -8,9 +8,9 @@
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+6;
+const flt Ns_met = 1e+7;
 // end Time
-const flt Nmax_met = 5e+7;
+const flt Nmax_met = 1e+9;
 
 const flt Ns_wolff = 1e+2;
 // end Time
@@ -32,7 +32,7 @@ int main(int mainArgCount, char **mainArgs)
     data::make_folder("data");
     Lattice lattice(L, L, L);
     Array<flt> Ts =
-    {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
+    {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4 ,1.5, 1.7, 2.0,
     3.0, 4.0, 5.0, 10, 100};
     for (flt T : Ts)
     {
@@ -41,83 +41,91 @@ int main(int mainArgCount, char **mainArgs)
         string Folder = "data/" + Tstr;
         data::make_folder(Folder);
 
-        //              --- adaptive step metropolis omp
-        cout << "running adaptive step metropolis omp" << endl;
+        
+        cout << "running small step metropolis omp" << endl;
+        
         rng::set_seed(seed);
         lattice.randomize();
         restet_adaptive_omp();
-        Array2D<flt> metro_omp_adapt = algo::ds::test_algorithm(
+        Array2D<flt> metro_omp = algo::ds::test_algorithm(
                 lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive_omp);
-        data::store_data(metro_omp_adapt,
-                        Folder + "/metropolis_adaptive_omp");
+            J, h, k, algo::ds::metropolis_smallStep_omp);
+        data::store_data(metro_omp,
+                        Folder + "/metropolis_omp");
 
-        //              --- adaptive step metropolis
-        cout << "running adaptive step metropolis" << endl;
+        
+        cout << "running small step metropolis" << endl;
+
         rng::set_seed(seed);
         lattice.randomize();
         restet_adaptive();
-        Array2D<flt> metro_adapt = algo::ds::test_algorithm(
+        Array2D<flt> metro = algo::ds::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive);
-        data::store_data(metro_adapt,
-                        Folder + "/metropolis_adaptive");
+            J, h, k, algo::ds::metropolis_smallStep);
+        data::store_data(metro,
+                        Folder + "/metropolis");
 
 
-        //              --- plot data
+         //              --- plot data
 
         // plot magnitisation
         cout << "plot magnitistion" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[1],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[1],"--s");
+            auto p2 = plt::plot(metro[0],metro[1],"--s");
+            auto p5 = plt::plot(metro_omp[0],metro_omp[1],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Adaptive Metropolis",
-                                  "Adaptive Metropolis Omp"
+                                  "Metropolis",
+                                  "Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::bottomright);
-            plt::xlabel("Time in s");
-            plt::ylabel("Magnetistation");
+            plt::xlabel("Number of Steps");
+            plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/magnet/T_" + to_str(T) + ".png");
-            plt::figure(false);
+            plt::cla();
             
         }
 
         // plot energy
         cout << "plot energy" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[3],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[3],"--s");
+            auto p2 = plt::plot(metro[0],metro[2],"--s");
+            auto p5 = plt::plot(metro_omp[0],metro_omp[2],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Adaptive Metropolis",
-                                  "Adaptive Metropolis Omp"
+                                  "Metropolis",
+                                  "Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::topright);
-            plt::xlabel("Time in s");
+            plt::xlabel("Number of Steps");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/energy/T_" + to_str(T) + ".png");
-            plt::hold(false);
-            plt::figure(false);
+            plt::cla();
+            
         }
 
                 // plot number of steps
         cout << "plot number of steps" << endl;
         {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro_adapt[4],metro_adapt[0],"--s");
-            auto p5 = plt::plot(metro_omp_adapt[4],metro_omp_adapt[0],"--s");
+            auto p2 = plt::plot(metro[3],metro[0],"--s");
+            auto p5 = plt::plot(metro_omp[3],metro_omp[0],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Adaptive Metropolis",
-                                  "Adaptive Metropolis Omp"
+                                  "Metropolis",
+                                  "Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::topright);
@@ -125,9 +133,12 @@ int main(int mainArgCount, char **mainArgs)
             plt::ylabel("Number of Steps");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots/number_of_steps/" + to_str(T) + ".png");
-            plt::hold(false);
-            plt::figure(false);
+            plt::cla();
         }
+        flt Speed_up = metro[3][metro[3].size()-1]/
+                        metro_omp[3][metro_omp[3].size()-1];
+        what_is(Speed_up);
+        cout << endl << endl;
     }
     return 0;
 }

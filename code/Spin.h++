@@ -8,11 +8,18 @@
 #include <Eigen.h++>
 
 /*
-[x, y, z]†
-compute: efficient, 0.42 ns
-memory: inefficient, sizeof(f32)*3 ~ (float)96bit
+Spin class
+- Vector3 aka Eigen::Vector3f
+- with scalar product: |
+- with standard product: *
+- with addition operator: +
+- with subtraction operator: -
+- with normalization: normalize()
+- with output operator: <<
+- with compareration operator: ==
+- with assignment operator: =
 */
-class SpinVector : public Vector3
+class Spin : public Vector3
 {
 private:
     using base = Vector3;
@@ -24,19 +31,19 @@ public:
     f32 theta() const;
     f32 phi() const;
     // Constructor
-    SpinVector(f32 x = 0, f32 y = 0, f32 z = 0);
+    Spin(f32 x = 0, f32 y = 0, f32 z = 0);
     // Constructor from Vector3
-    SpinVector(Vector3 const &v);
+    Spin(Vector3 const &v);
     // Assignment operator
-    SpinVector &operator=(SpinVector const &other);
+    Spin &operator=(Spin const &other);
     // Assignment operator Vector3
-    SpinVector &operator=(Vector3 const &other);
+    Spin &operator=(Vector3 const &other);
     // output operator
     friend std::ostream &operator<<(std::ostream &os,
-                                    SpinVector const &s);
-    SpinVector from_xyz(f32 x, f32 y, f32 z);
-    SpinVector from_phi_theata(f32 phi, f32 theta);
-    static SpinVector get_random();
+                                    Spin const &s);
+    Spin from_xyz(f32 x, f32 y, f32 z);
+    Spin from_phi_theata(f32 phi, f32 theta);
+    static Spin get_random();
 
     // Trial moves
     void spin_flip_step();
@@ -46,9 +53,9 @@ public:
 };
 
 template <>
-SpinVector rng::get_random<SpinVector>()
+Spin rng::get_random<Spin>()
 {
-    return SpinVector::get_random();
+    return Spin::get_random();
 }
 
 /*

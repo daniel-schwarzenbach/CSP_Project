@@ -4,8 +4,8 @@
 #include <thread>
 
 // Function to activate bond depending on given probability
-bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta, 
-                  Spin &spin_y)
+bool activate_bond(flt J, Spin &spin_x, Spin &spin_r, flt beta,
+                   Spin &spin_y)
 {
 
     flt cdot = 2 * J * beta * (spin_r | spin_x) * (spin_r | spin_y);
@@ -22,8 +22,8 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     int Lz = lattice.Lz();
 
     // Create vector that checks whether the site has been checked
-    Lattice3d<bool> visited =
-        Lattice3d<bool>::constant_lattice(Lx, Ly, Lz, false);
+    Lattice3D<bool> visited =
+        Lattice3D<bool>::constant_lattice(Lx, Ly, Lz, false);
     visited.set_boundary_conditions(
         lattice.get_boundary_conditions());
 
@@ -37,9 +37,9 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
     Spin spin_r = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int sx = rng::rand_int_range(0,Lx);
-    int sy = rng::rand_int_range(0,Ly);
-    int sz = rng::rand_int_range(0,Lz);
+    int sx = rng::rand_int_range(0, Lx);
+    int sy = rng::rand_int_range(0, Ly);
+    int sz = rng::rand_int_range(0, Lz);
 
     // Define spin_x to be flipped, first point of the cluster
     Spin &spin_x = lattice(sx, sy, sz);
@@ -90,8 +90,7 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
 #pragma omp critical
             visited.set(current, true);
             Array<Index> neighbors = {
-                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, 
-                {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
+                {x - 1, y, z}, {x, y - 1, z}, {x, y, z - 1}, {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}};
             for (Index neighbor : neighbors)
             {
                 bool wasVisited;
@@ -108,10 +107,10 @@ int wolf_algorithm(Lattice &lattice, f32 beta, flt const &J)
                     {
 #pragma omp critical
                         {
-                            flip_spin(spin_r, lattice(neighbor));       //...flip spin
-                            stack.push_back(neighbor);   // ...add to stack
-                            cluster.push_back(neighbor); // ...add to cluster (mark y)
-                            visited.set(neighbor, true); // Mark as visited
+                            flip_spin(spin_r, lattice(neighbor)); //...flip spin
+                            stack.push_back(neighbor);            // ...add to stack
+                            cluster.push_back(neighbor);          // ...add to cluster (mark y)
+                            visited.set(neighbor, true);          // Mark as visited
                             stack_local = stack;
                         }
                     }
@@ -140,8 +139,8 @@ performs the wolff algoritm on the lattice
 - can throw
 */
 
-flt wolff_omp(Lattice &lattice, flt const& T, flt const& J, 
-              flt const& MaxTime, u64 const& MaxSteps)
+flt wolff_omp(Lattice &lattice, flt const &T, flt const &J,
+              flt const &MaxTime, u64 const &MaxSteps)
 {
     // to implement
 

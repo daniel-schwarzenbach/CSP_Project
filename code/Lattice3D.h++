@@ -16,7 +16,7 @@ mathematical correct modulo
 */
 inline uint modulo(int const &i, uint u);
 
-// Lattice Containder
+// Lattice Container
 /*
 
 
@@ -24,25 +24,23 @@ T value = lattice<T>(x,y,z)
 
 */
 template <class T>
-class Lattice3d
+class Lattice3D
 {
 private:
     // datavector
     Array<T> data;
     // dimentions of the lattic
-    uint Lx_, Ly_, Lz_;
+    uint Lx_, Ly_, Lz_; u64 fullSize;
     // boundary condition
     BC bc = BC::Periodic;
-    // value on the zero boundary
-    T zero_element;
 
 public:
     // return raw data
-    Array<T>& get_raw_data();
+    Array<T> &get_raw_data();
     // return raw data id
-    uint get_raw_id(int const& x,int  const& y, int const& z) const;
+    uint get_raw_id(int const &x, int const &y, int const &z) const;
     // return raw data id
-    uint get_raw_id(Index const& index) const;
+    uint get_raw_id(Index const &index) const;
     // size of the lattice in x-direction
     uint Lx() const;
     // size of the lattice in y-direction
@@ -63,46 +61,37 @@ public:
     T &operator()(Index const &id);
     // acess operator refrence, doesn't work for bools!
     T operator()(Index const &id) const;
-    // set operator, works for bools
-    void set(int const &x, int const &y, int const &z, T const &v);
-    // set operator, works for bools
-    void set(Index const &id, T const &v);
-    // set operator, works for bools
-    T get(int const &x, int const &y, int const &z) const;
-    // set operator, works for bools
-    T get(Index const &id) const;
     // consturctor
-    Lattice3d(uint Lx, uint Ly, uint Lz);
+    Lattice3D(uint Lx, uint Ly, uint Lz);
     // copy constructor
-    Lattice3d(Lattice3d &other) = default;
-    Lattice3d(Lattice3d const &other) = default;
+    Lattice3D(Lattice3D &other) = default;
+    Lattice3D(Lattice3D const &other) = default;
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
-    bool set_constant(T const& value);
+    bool set_constant(T const &value);
 
-    static Lattice3d constant_lattice(uint Lx, uint Ly, uint Lz,
+    static Lattice3D constant_lattice(uint Lx, uint Ly, uint Lz,
                                       T const &value);
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
-    static Lattice3d random_lattice(uint Lx, uint Ly, uint Lz);
+    static Lattice3D random_lattice(uint Lx, uint Ly, uint Lz);
 
     // size of the entire lattice
     uint get_total_size() const;
 };
 
 template <>
-class Lattice3d<bool>{
+class Lattice3D<bool>
+{
 
 private:
     // datavector
     Array<bool> data;
     // dimentions of the lattic
-    uint Lx_, Ly_, Lz_;
+    uint Lx_, Ly_, Lz_; u64 fullSize;
     // boundary condition
     BC bc = BC::Periodic;
-    // value on the zero boundary
-    bool zero_element;
 
 public:
     // size of the lattice in x-direction
@@ -112,7 +101,7 @@ public:
     // size of the lattice in z-direction
     uint Lz() const;
     // return raw data id
-    uint get_raw_id(int const& x,int  const& y, int const& z) const;
+    uint get_raw_id(int const &x, int const &y, int const &z) const;
     // get boundary condition
     BC get_boundary_conditions() const;
     // set value of the BC::_0
@@ -128,20 +117,20 @@ public:
     // set operator, works for bools
     bool get(Index const &id) const;
     // consturctor
-    Lattice3d(uint Lx, uint Ly, uint Lz);
+    Lattice3D(uint Lx, uint Ly, uint Lz);
     // copy constructor
-    Lattice3d(Lattice3d &other) = default;
-    Lattice3d(Lattice3d const &other) = default;
+    Lattice3D(Lattice3D &other) = default;
+    Lattice3D(Lattice3D const &other) = default;
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
-    bool set_constant(bool const& value);
+    bool set_constant(bool const &value);
 
-    static Lattice3d constant_lattice(uint Lx, uint Ly, uint Lz,
+    static Lattice3D constant_lattice(uint Lx, uint Ly, uint Lz,
                                       bool const &value);
 
     // randomizes the Lattice, same effect as Lattice::random_lattice
-    static Lattice3d random_lattice(uint Lx, uint Ly, uint Lz);
+    static Lattice3D random_lattice(uint Lx, uint Ly, uint Lz);
 
     // size of the entire lattice
     uint get_total_size() const;
