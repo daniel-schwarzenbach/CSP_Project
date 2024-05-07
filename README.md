@@ -97,6 +97,9 @@ a demagnetized phase at high temperatures and the critical exponents
 can be calculated. Additionally, the effect of an external magnetic
 field and spatial anisotropies can be observed.
 
+![plot1](Magnetisation.pdf)
+
+
 # Contributions
 
 M.C.W. implemented the observables, J.G. implemented the normal and adaptive Metropolis algorithm, C.T. implemented the Wolff algorithm, D.S. and J.G. implemented the lattice and spin classes. J.G. and C.T. implemented the data calculation. D.S. set up and managed the git-repository. M.C.W., J.G. and C.T. planned the calculations, analysed the data, and created the figures. J.G. and C.T. calculated the linear and non-linear correlation times, determined the critical exponents, and measured the algorithmic performance. D.S. assigned calculations on the EULER cluster. M.C.W. drafted and wrote the report with input from all authors. All authors contributed equally to the theory and final presentations.
