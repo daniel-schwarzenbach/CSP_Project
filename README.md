@@ -97,8 +97,14 @@ a demagnetized phase at high temperatures and the critical exponents
 can be calculated. Additionally, the effect of an external magnetic
 field and spatial anisotropies can be observed.
 
+In the following plot, we can observe a phase transition as shown by the order parameter $M$ for $L = 8$. The data was calculated using the Metropolis algorithm.
 ![plot1](Magnetisation.png)
 
+The time per algorithm step is constant for the Metropolis algorithm, as expected...
+![plot2](Time_per_step.png)
+
+... however, for the Monte Carlo steps, we observe an increase over several orders of magnitude. This is known as the critical slowing down of the dynamics:
+![plot3](Time_per_MC.png)
 
 # Contributions
 
