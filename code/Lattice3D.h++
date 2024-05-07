@@ -109,7 +109,7 @@ private:
     u64 fullSize;
     // boundary condition
     BC bc = BC::Periodic;
-
+    
 public:
     // size of the lattice in x-direction
     uint Lx() const;
@@ -142,8 +142,9 @@ public:
     Lattice3D(Lattice3D const &other) = default;
     // randomizes the Lattice, same effect as Lattice::random_lattice
     bool randomize();
-    bool set_constant(bool const &value);
     // sets the entire lattic to a constant value
+    bool set_constant(bool const &value);
+    // returns a Lattice with constant size
     static Lattice3D constant_lattice(uint Lx, uint Ly, uint Lz,
                                       bool const &value);
     // randomizes the Lattice, same effect as Lattice::random_lattice

@@ -43,18 +43,7 @@ namespace measure
                    Vector3 const& h_vec = {0, 0, 0},
                    flt const& J = 1, Vector3 const& k_vec = {0,0,0});
 
-    /*
-    not tested!!!!!!!! danger
-    calculate τ  s.d  min(|| yᵢ = exp(Tᵢ-T₀ / τ) ||²)
 
-    / @brief
-    / @param y Array<F64>
-    / @param T Array<F64>
-    on
-    / @return the energy of the lattice
-    */
-    flt calculate_auto_correlation_time(Array<flt> const &y,
-                                        Array<flt> const &T);
 
 }
 

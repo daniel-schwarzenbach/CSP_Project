@@ -4,29 +4,6 @@
 #include <mpi.h>
 #include <ctime>
 
-u64 get_wolf_steps(flt const &T)
-{
-    flt T_lower = 1.3;
-    flt T_upper = 1.6;
-    flt N_t0 = 1e4;
-    flt N_tinf = 1e+6;
-    flt T_inf = 100;
-    flt T_0 = 0.01;
-    flt N_tc = 1e+8;
-
-    if (T <= T_lower)
-        return u64((N_t0 + (T - T_0) * (N_tc - N_t0)) / (T_lower - T_0));
-    else if (T >= T_upper)
-        return u64((N_tc + (T_upper - T) * (N_tc - N_tinf)) / (T_inf - T_upper));
-    else if (T_lower <= T <= T_upper)
-        return u64(N_tc);
-    else
-    {
-        cerr << "invalid temperature" << endl;
-        return 1e-4;
-    }
-}
-
 flt constexpr J = 1.0;
 
 const Spin h = Spin{0.0, 0.0, 0.0};
@@ -112,47 +89,49 @@ int main(int argc, char *argv[])
     //      --- init Lattice
     Lattice lattice(Lx, Ly, Lz);
 
-    // //         --- Metropolis
-    // {
-    //     measure::Timer watch; watch.start();
-    //     cout << rank <<" is running metropolis ..."<< endl;
-    //     rng::set_seed(Seed);
-    //     if(T > T_critical)
-    //         lattice.randomize();
-    //     else
-    //         lattice.set_constant(Spin{0,0,1});
+    //         --- Metropolis
+    {
+        measure::Timer watch; watch.start();
+        cout << rank <<" is running metropolis ..."<< endl;
+        rng::set_seed(Seed);
+        if(T > T_critical)
+            lattice.randomize();
+        else
+            lattice.set_constant(Spin{0,0,1});
 
-    //     cout << "T = " << T << endl;
-    //     Array2D<flt> data =
-    //             sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
-    //                     J, h, k, sim::ns::metropolis_smallStep,
-    //                     loading_bar);
-    //     data::store_data(data,metropolisFile+to_string(rank));
-    //     data::store_lattice(lattice,
-    //                     metropolisFile+"Lattice_"+to_string(rank));
-    //     cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
-    // }
+        cout << "T = " << T << endl;
+        Array2D<flt> data =
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep,
+                        loading_bar);
+        data::store_data(data,metropolisFile+to_string(rank));
+        data::store_lattice(lattice,
+                        metropolisFile+"Lattice_"+to_string(rank));
+        cout << "finished metropolis in: "<<watch.time()<<endl<<endl;
+    }
 
-    //     //      --- Metropolis Adaptive
-    // {
-    //     measure::Timer watch; watch.start();
-    //     cout << rank <<" is running metropolis adaptive ..."<< endl;
-    //     rng::set_seed(Seed);
-    //     if(T > T_critical)
-    //         lattice.randomize();
-    //     else
-    //         lattice.set_constant(Spin{0,0,1});
+        //      --- Metropolis Adaptive
+    {
+        measure::Timer watch; watch.start();
+        cout << rank <<" is running metropolis adaptive ..."<< endl;
+        rng::set_seed(Seed);
+        if(T > T_critical)
+            lattice.randomize();
+        else
+            lattice.set_constant(Spin{0,0,1});
 
-    //     cout << "T = " << T << endl;
-    //     Array2D<flt> data =
-    //             sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
-    //                     J, h, k, sim::ns::metropolis_adaptive,
-    //                     loading_bar);
-    //     data::store_data(data,metropolisAdaptFile + to_string(rank));
-    //     data::store_lattice(lattice,
-    //                     metropolisAdaptFile+"Lattice_"+to_string(rank));
-    //     cout << "finished metropolis adaptive in: "<< watch.time()<<endl<<endl;
-    // }
+        cout << "T = " << T << endl;
+        Array2D<flt> data =
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_adaptive,
+                        loading_bar);
+        data::store_data(data,metropolisAdaptFile + to_string(rank));
+        data::store_lattice(lattice,
+                        metropolisAdaptFile+"Lattice_"
+                        +to_string(rank));
+        cout << "finished metropolis adaptive in: "
+             << watch.time()<<endl<<endl;
+    }
 
     //         --- Wolff
     {
@@ -168,7 +147,7 @@ int main(int argc, char *argv[])
         cout << "T = " << T << endl;
         Array2D<flt> data =
             sim::ns::test_algorithm(lattice, Ns_wolff, Nmax_wolff, T,
-                                    J, h, k, sim::ns::wolff_, loading_bar);
+                    J, h, k, sim::ns::wolff_, loading_bar);
         data::store_data(data, wolffFile + to_string(rank));
         data::store_lattice(lattice,
                             wolffFile + "Lattice_" + to_string(rank));

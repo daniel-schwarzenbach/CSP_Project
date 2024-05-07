@@ -7,7 +7,7 @@ then
 fi
 
 #generate cmake files
-cmake -O . -B ../build -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DMPI=ON
+cmake -O . -B ./build -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DMPI=ON
 
 # compile project
-cd ../build && cmake --build .
+cd ./build && cmake --build .

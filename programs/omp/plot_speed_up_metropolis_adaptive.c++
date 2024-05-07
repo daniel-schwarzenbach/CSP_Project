@@ -4,7 +4,7 @@
 #include <Measure/Timer.h++>
 #include <Measure/Observables.h++>
 #include <Data/DataHandler.h++>
-#include <Algorithm/Algorithm.h++>
+#include <Simulations/Simulation.h++>
 
 namespace plt = matplot;
 
@@ -46,9 +46,9 @@ int main(int mainArgCount, char **mainArgs)
         rng::set_seed(seed);
         lattice.randomize();
         restet_adaptive_omp();
-        Array2D<flt> metro_omp = algo::ds::test_algorithm(
+        Array2D<flt> metro_omp = sim::ns::test_algorithm(
                 lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive_omp);
+            J, h, k, sim::ns::metropolis_adaptive_omp);
         data::store_data(metro_omp,
                         Folder + "/metropolis_adaptive_omp");
 
@@ -57,9 +57,9 @@ int main(int mainArgCount, char **mainArgs)
         rng::set_seed(seed);
         lattice.randomize();
         restet_adaptive();
-        Array2D<flt> metro = algo::ds::test_algorithm(
+        Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
-            J, h, k, algo::ds::metropolis_adaptive);
+            J, h, k, sim::ns::metropolis_adaptive);
         data::store_data(metro,
                         Folder + "/metropolis_adaptive");
 

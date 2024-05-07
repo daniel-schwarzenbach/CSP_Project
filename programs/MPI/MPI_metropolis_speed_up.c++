@@ -106,8 +106,8 @@ int main(int argc, char* argv[])
         
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
         cout << "finished metropolis in: " << watch.time() <<endl << endl;
@@ -128,8 +128,8 @@ int main(int argc, char* argv[])
     
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
+                sim::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_adaptive,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile + to_string(rank));
         cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
@@ -148,10 +148,10 @@ int main(int argc, char* argv[])
         cout << "T = " << T << endl;
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
+                        J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis in: "<<watch.time()<<endl< endl;
     }
 
 

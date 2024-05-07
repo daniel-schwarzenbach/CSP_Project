@@ -27,8 +27,9 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis.c++)
-
+add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot-lattices.c++)
+add_executable(Magnetization ${SRC_FILES} ./programs/magnetization.c++)
+add_executable(Plot_Speed_UP ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis_adaptive.c++)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -59,9 +60,12 @@ if(MPI)
     #include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
     # programs
-    add_executable(HeisenbergMPI ${SRC_FILES}
+    add_executable(MPI_Seed ${SRC_FILES}
+        ./programs/MPI/MPI_seed.c++)
+    add_executable(MPI_Neq ${SRC_FILES}
         ./programs/MPI/MPI_Neq.c++)
-    # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
+        add_executable(HeisenbergMPI ${SRC_FILES}
+        ./programs/MPI/MPI_metropolis_speed_up.c++)
 
     # lib/
     set(LIBRARIES
@@ -73,79 +77,10 @@ if(MPI)
 
     # link libraries
     target_link_libraries(HeisenbergMPI ${LIBRARIES})
-    # target_link_libraries(IpplTest ${LIBRARIES})
+    target_link_libraries(MPI_Neq ${LIBRARIES})
+    target_link_libraries(MPI_Seed ${LIBRARIES})
 endif()
 
-
-
-
-# # IPPL if it is aked for
-option(IPPL "Use IPPL" OFF)
-if(IPPL AND NOT MPI)
-    message(STATUS "IPPL option is set to ${IPPL}")
-    set(CMAKE_CXX_COMPILER mpic++)
-    # include/ippl
-    include_directories(${CMAKE_SOURCE_DIR}/code_ippl)
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/include/)
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_omp/include)
-    include_directories(${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_omp/include)
-
-    # source files
-    file(GLOB_RECURSE IPPL_SRC_FILES code_ippl/*.c++ CMAKE_CONFIGURE_DEPENDS)
-
-    add_definitions(-DIPPL_ENABLE_TIMER_FENCES=false -DOMP_PROC_BIND=false)
-
-    # lib/ippl
-    set(IPPL_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/lib/)
-    set(HEFFTE_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Heffte/Heffte_omp/lib/)
-    set(KOKKOS_PATH ${CMAKE_SOURCE_DIR}/libraries/Ippl/build/Kokkos/Kokkos_omp/lib/)
-
-    find_library(IPPL_LIBRARY ippl PATHS ${IPPL_PATH})
-    find_library(KOKKOS_CORE_LIBRARY kokkoscore PATHS ${KOKKOS_PATH})
-    find_library(KOKKOS_CONTAINERS_LIBRARY kokkoscontainers PATHS ${KOKKOS_PATH})
-    find_library(KOKKOS_SIMD_LIBRARY kokkossimd PATHS ${KOKKOS_PATH})
-    find_library(HEFFTE_LIBRARY heffte PATHS ${HEFFTE_PATH})
-   
-
-    # add open mp
-    find_package(OpenMP REQUIRED)
-    if (OPENMP_FOUND)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        set (OMP_PROC_BIND=false and OMP_PLACES=threads)
-    endif()
-
-    # add MPI
-    find_package(MPI REQUIRED)
-    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-
-    # programs
-    add_executable(HeisenbergIppl ${SRC_FILES} ${IPPL_SRC_FILES} 
-        ./programs/Ippl/heisenbergIppl.c++)
-    # add_executable(IpplTest ${SRC_FILES} ./programs/test-ippl.c++)
-
-    # precompile header
-    target_precompile_headers(HeisenbergIppl
-        PUBLIC
-        code_ippl/LatticeIppl.h++
-    )
-
-    # lib/
-    set(LIBRARIES
-    matplot
-    Eigen3::Eigen
-    ${MPI_CXX_LIBRARIES}
-    ${IPPL_LIBRARY}
-    ${KOKKOS_CORE_LIBRARY}
-    ${KOKKOS_CONTAINERS_LIBRARY}
-    ${KOKKOS_SIMD_LIBRARY}
-    ${HEFFTE_LIBRARY}
-    dl
-    )
-
-    # link libraries
-    target_link_libraries(HeisenbergIppl ${LIBRARIES})
-    # target_link_libraries(IpplTest ${LIBRARIES})
-endif()
 
 if(NOT MPI AND NOT IPPL)# without MPI and IPPL
 message(STATUS "compiling gtests")
@@ -200,6 +135,8 @@ add_definitions(-DDEBUG)
 
 # link libraries
 target_link_libraries(Heisenberg ${LIBRARIES})
+target_link_libraries(Magnetization ${LIBRARIES})
+target_link_libraries(Plot_Speed_UP ${LIBRARIES})
 
 
 

@@ -1,8 +1,8 @@
 #ifndef __ALGORITHM_H__
 #define __ALGORITHM_H__
-
 /*
-preprogramt test algoritms for creating standardiesed tests
+wraps up the algorithms
+preprogramt test algoritms for centralized tests
 */
 #include <Base.h++>
 #include <Metropolis/metropolis.h++>

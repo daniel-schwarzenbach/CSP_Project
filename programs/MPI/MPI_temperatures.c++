@@ -98,8 +98,8 @@ int main(int argc, char** argv)
         
         cout << "T = " << T << endl;
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
         data::store_data(data,metropolisSmallFile+to_str(T));
     }
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
         cout << "T = " << T << endl;
         Array2D<flt> data = 
                 algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
+                        J, h, k, sime::ds::metropolis_adaptive,
                         loading_bar);
         data::store_data(data,metropolisAdaptFile + to_str(T));
     }

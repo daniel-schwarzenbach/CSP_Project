@@ -1,38 +1,54 @@
 #include "Spin.h++"
 
-//            --- Spin ---
+// make spin from Vector3 like Eigen
 Spin::Spin(Vector3 const &v) : base(v) {}
+
+// operator = like Eignen
 Spin &Spin::operator=(Vector3 const &other)
 {
     this->base::operator=(other);
     return *this;
 }
 
+// get x coordinate
 f32 Spin::x() const { return this->base::operator()(0); }
+// get y coordinate
 f32 Spin::y() const { return this->base::operator()(1); }
+// get x coordinate
 f32 Spin::z() const { return this->base::operator()(2); }
 
+// get angle ϑ
 f32 Spin::theta() const
 {
-    Spin s = this->base::normalized();
+    // ensure that the spin is normalized
+    Spin s = this->normalized();
     return acos(s.z());
 }
+
+// get angle φ
 f32 Spin::phi() const
 {
+    // ensure that the spin is normalized
     Spin s = this->normalized();
+    // get a phi in [-π, π)
     f32 phi = atan2(s.y(), s.x());
+    // reset phi range to [0, 2π)
     if (phi < 0)
         phi += _2pi_;
     return phi;
 }
 
+// init spin
 Spin::Spin(f32 x, f32 y, f32 z) : base(x, y, z) {}
+
+// use = operator from Eigen
 Spin &Spin::operator=(Spin const &other)
 {
     this->base::operator=(other);
     return *this;
 }
 
+// add to the outstream: {x, y, z}
 std::ostream &operator<<(std::ostream &os,
                          Spin const &s)
 {
@@ -41,12 +57,15 @@ std::ostream &operator<<(std::ostream &os,
     return os;
 }
 
+// make spin from x,y,z
 Spin Spin::from_xyz(f32 const& x, f32 const& y, f32  const& z)
 {
     Spin s;
     s << x, y, z;
     return s;
 }
+
+// make spin from φ,ϑ
 Spin Spin::from_phi_theata(flt const& phi, flt const& theta)
 {
     Spin s;
@@ -57,7 +76,7 @@ Spin Spin::from_phi_theata(flt const& phi, flt const& theta)
     return s;
 }
 
-
+// make random spin
 Spin Spin::get_random()
 {
     // generate random vector
@@ -72,17 +91,21 @@ Spin Spin::get_random()
 
 // Trial moves
 
+// metropolis step
 void Spin::spin_flip_step()
 {
     // flip the spin
     *this *= -1;
 }
+
+// metropolis step
 void Spin::random_step()
 {
     // set the vector to random
     *this = get_random();
 }
 
+// metropolis step
 void Spin::small_step(flt const& openingAngle)
 {
     // define random angles
@@ -105,6 +128,7 @@ void Spin::small_step(flt const& openingAngle)
     this->normalize();
 }
 
+// for metropolis
 void Spin::adaptive_step(flt const& sigma)
 {
     // define a 3D gausion step
