@@ -1,13 +1,20 @@
+# Heisenberg3D modell
+
+Every picture is 10 random steps with metropolis algorithm at T=0.01. 2'000 steps in total.
+
+![metropolis algorithm](./docs/plots/metropolis.gif)
+
 # Table of contents
  1. Introduction
- 2. Installation
- 3. Structure of the code
+ 2. Structure of the code
  4. Algorithms
     - Metropolis
     - Adaptive Metropolis
     - Wolff Algorithm
  5. Results
  6. Contributions
+ 7. Installation
+ 8. Libraries
 
 # Introduction
 
@@ -99,15 +106,15 @@ field and spatial anisotropies can be observed.
 
 In the following plot, we can observe a phase transition as shown by the order parameter $M$ for $L = 8$. The data was calculated using the Metropolis algorithm.
 
-![plot1](./docs/plots/Magnetisation.png)
+<img src="./docs/plots/Magnetisation.png" width="500" height="400">
 
 The time per algorithm step is constant for the Metropolis algorithm, as expected...
 
-![plot2](./docs/plots/Time_per_step.png)
+<img src="./docs/plots/Time_per_step.png" width="500" height="400">
 
 ... however, for the Monte Carlo steps, we observe an increase over several orders of magnitude. This is known as the critical slowing down of the dynamics:
 
-![plot3](./docs/plots/Time_per_MC.png)
+<img src="./docs/plots/Time_per_MC.png" width="500" height="400">
 
 # Contributions
 
@@ -180,7 +187,6 @@ sudo make install
 
 Is auto installed through CMake
 
-![Lattice](./docs/plots/Lattice_99.png)
 
 [Documentation](https://alandefreitas.github.io/matplotplusplus/)
 

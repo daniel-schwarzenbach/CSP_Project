@@ -22,22 +22,26 @@ const Spin h = {0, 0, 1};
 
 int main(int mainArgCount, char **mainArgs)
 {
+    // make a folder to store the data in
     data::make_folder("data");
+    // init lattice
     Lattice3D<Spin> lattice(L, L, L);
-    
+    // do loop over Temperatures
     Array<flt> Ts = {0.5, 1.5, 3};
     for (flt T : Ts)
     {
+        // set k = 0
         const Spin k = {0, 0, 0};
         cout << "running for T = " << T << endl;
         string Tstr = "T_" + to_string(uint(T * 1e3)) + "e-3/";
         string Folder = "data/" + Tstr;
+        // make folder for temprature
         data::make_folder(Folder);
-
-
-        cout << "running small step metropolis" << endl;
-
+        // run metropolis
+        cout << "running metropolis" << endl;
+        // set the seed
         rng::set_seed(seed);
+        // set the lattice to point down in z direction
         lattice.set_constant({0,0,-1});
 
         Array2D<flt> metro = sim::ns::test_algorithm(
@@ -57,7 +61,7 @@ int main(int mainArgCount, char **mainArgs)
         data::make_folder(Folder);
 
 
-        cout << "running small step metropolis" << endl;
+        cout << "running metropolis" << endl;
 
         rng::set_seed(seed);
         lattice.set_constant({0,0,-1});

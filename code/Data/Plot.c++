@@ -145,8 +145,8 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
 
     auto fig = plt::figure(true);
     fig->size(1000, 1000);
-    string title = "Magnetization: {"+ to_str(mag(0)) + ", " 
-                + to_str(mag(1)) + ", " + to_str(mag(2)) + " }";
+    string title = "Magnetization: {" +to_str(mag(0))+ ","
+            +to_str(mag(0)) +"," +to_str(mag(0))+ "}";
     fig->title(title);
     plt::colormap(heat);
     plt::colorbar(true);
@@ -176,11 +176,57 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
     return 0;
 }
 
-bool data::convert_pngs_to_gif(string gifname, string pngfilePrefix)
+bool data::plot_lattice_small(Lattice3D<Spin> &lattice, 
+                        std::string filename)
 {
-    double delay = 5;
+    StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
+    // calculates average
+    flt mag =measure::get_magnetization(lattice).norm();
+    // get dims
+    uint Lx = lattice.Lx();
+    uint Ly = lattice.Ly();
+    uint Lz = lattice.Lz();
+    auto fig = plt::figure(true);
+    fig->size(400, 400);
+    string title = "Magnetization: " + to_str(mag);
+    fig->title(title);
+    plt::xrange({-1.0,flt(Lx)});
+    plt::yrange({-1.0,flt(Ly)});
+    plt::zlim({-1.0,flt(Lz)});
+    plt::colormap(heat);
+    plt::colorbar(true);
+    plt::gca()->cblabel("Magnetization");
+    plt::gca()->cb_position({1.05f, 0.f, 0.03f, 1.f});
+    plt::gca()->position({0.08f, 0.1f, 0.7f, 0.85f});
+
+    auto plot = plt::quiver3(arrays[0], arrays[1], arrays[2],
+                             arrays[3],
+                             arrays[4], arrays[5], arrays[6], 0.5);
+    plot->line_width(3);
+    plot->normalize(true);
+    //plt::caxis({1, -1});
+    plt::xlabel("x");
+    plt::ylabel("y");
+    plt::zlabel("z");
+
+    if (filename != "")
+    {
+        plt::save(filename);
+    }
+    else
+    {
+        plt::show();
+    }
+    plt::cla();
+    return 0;
+}
+
+bool data::convert_pngs_to_gif(string gifname, string pngFolder)
+{
+    uint delay = 20;
     string command =
-        "convert -delay " + to_string(delay) + " -layers Optimize " + pngfilePrefix + "*.png " + gifname;
+        "convert -delay " + to_string(delay) 
+                + " -loop 0 "+ pngFolder + "*.png " + gifname;
     int i = std::system(command.c_str());
     return i;
 }

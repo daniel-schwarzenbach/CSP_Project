@@ -120,7 +120,8 @@ u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
 // function that calls the wolff_algorithm as requested and calculates
 // average cluster size
 flt wolff(Lattice3D<Spin> &lattice, flt const& T, flt const& J, 
-          flt const& MaxTime, u64 const& MaxSteps, Spin const& h){
+          flt const& MaxTime, u64 const& MaxSteps, 
+          Spin const& h){
 
     flt beta = Beta(T);
     measure::Timer watch;
