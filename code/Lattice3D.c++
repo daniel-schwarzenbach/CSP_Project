@@ -77,6 +77,51 @@ inline uint get_id(int const &x, int const &y, int const &z,
     }
 }
 
+/*
+function to access the undelying Lattice Vector for refrences for
+dirichlet BC
+
+/ @brief
+/ @param x: position at x
+/ @param y: position at y
+/ @param z: position at z
+/ @param Lx: X dimension
+/ @param Ly: Y dimension
+/ @param Lz: Z dimension
+/ @param bc: Boundary condition
+/ @param data: data array: important for dirichlet
+/ @return id for data array
+*/
+template<typename T>
+inline uint get_id_ref(int const &x, int const &y, int const &z,
+                   uint const &Lx, uint const &Ly, uint const &Lz,
+                   BC const &bc, u64 const &fullSize, 
+                   Array<T>& data)
+{
+    // check if the 
+    if (x >= 0 && x < Lx &&
+        y >= 0 && y < Ly &&
+        z >= 0 && z < Lz)
+    {
+        return x * Ly * Lz + y * Lz + z;
+    }
+    // else
+    switch (bc)
+    {
+    case BC::Dirichlet:
+        // ensure that rhe boundry stays correct with refrences
+        data[fullSize+1] = data[fullSize];
+        return fullSize+1;
+    default:
+        // way more effitient modolo, 
+        // but requires that Lx,Ly,Lz are powers of 2
+        uint x_ = x & (Lx - 1);
+        uint y_ = y & (Ly - 1);
+        uint z_ = z & (Lz - 1);
+        return x_ * Ly * Lz + y_ * Lz + z_;
+    }
+}
+
 
 //========================= Lattic3D =================================
 
@@ -98,7 +143,8 @@ uint Lattice3D<T>::get_raw_id(
 template <typename T>
 uint Lattice3D<T>::get_raw_id(Index const &index) const
 {
-    return get_id(index[0], index[1], index[2], Lx_, Ly_, Lz_, bc, fullSize);
+    return get_id(index[0], index[1], index[2], Lx_, Ly_, Lz_, bc, 
+            fullSize);
 }
 
 // size of the lattice in x-direction
@@ -136,8 +182,8 @@ T Lattice3D<T>::operator()(int x, int y, int z) const
 template <typename T>
 T &Lattice3D<T>::operator()(Index const &id)
 {
-    return data.at(get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, 
-            fullSize));
+    return data.at(get_id_ref<T>(id[0], id[1], id[2], Lx_, Ly_, Lz_, 
+            bc, fullSize, data));
 }
 
 
@@ -145,7 +191,7 @@ T &Lattice3D<T>::operator()(Index const &id)
 template <typename T>
 T Lattice3D<T>::operator()(Index const &id) const
 {
-    return data.at(get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, 
+    return data.at(get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc,
             fullSize));
 }
 
@@ -153,7 +199,8 @@ T Lattice3D<T>::operator()(Index const &id) const
 template <typename T>
 T &Lattice3D<T>::operator()(int x, int y, int z)
 {
-    return data.at(get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize));
+    return data.at(get_id_ref<T>(x, y, z, Lx_, Ly_, Lz_, bc, fullSize, 
+            data));
 }
 
 template <typename T>
@@ -173,9 +220,10 @@ Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_;
     // ensure that the data has the correct size
-    data.resize(fullSize + 1); // +1 is the dirichlet boundry element
+    data.resize(fullSize + 2); // +2 are the dirichlet elements
     // set the +1 to 0
-    data[fullSize] = 0;
+    data[fullSize] = T(0); // true boundry
+    data[fullSize+1] = data[fullSize]; // boundry value for refrences
     // ensure that we do not use do much data, keep the data compact
     data.shrink_to_fit();
 }
@@ -280,9 +328,10 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
     }
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_; // +1 is the dirichlet boundry element
-    data.resize(fullSize + 1);
-    // set the +1 to true so that we do not go outside of the lattice
-    data[fullSize] = true;
+    data.resize(fullSize + 2);
+    // set the +2 to true so that we do not go outside of the lattice
+    data[fullSize] = true; // true boundary
+    data[fullSize + 1] = true; // boundry element for refrences
     // ensure that we do not use do much data, keep the data compact
     data.shrink_to_fit();
 }
@@ -323,14 +372,15 @@ void Lattice3D<bool>::set_boundary_conditions(BC bc_) { bc = bc_; }
 void Lattice3D<bool>::set(int const &x, int const &y, int const &z,
                           bool const &v)
 {
-    data[get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize)] = v;
+    data[get_id_ref<bool>(x, y, z, Lx_, Ly_, Lz_, bc, fullSize, 
+            data)] = v;
 }
 
 // change the value at index
 void Lattice3D<bool>::set(Index const &id, bool const &v)
 {
-    data[get_id(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, fullSize)] 
-            = v;
+    data[get_id_ref<bool>(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, 
+            fullSize, data)] = v;
 }
 
 // return the value at x,y,z
@@ -423,6 +473,8 @@ Lattice3D<bool> Lattice3D<bool>::random_lattice(uint Lx, uint Ly,
 }
 
 
-// compile lattices
+
+
+// ====================== compile lattices ===========================
 template class Lattice3D<Spin>;
 template class Lattice3D<bool>;
