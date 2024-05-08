@@ -6,7 +6,7 @@
 namespace plt = matplot;
 using std::to_string;
 
-// rainbow color map
+// custom rainbow color map
 static Array<Array<double>> rainbow_dark{
     {0.0, 0.0, 0.9},
     {0.0, 0.6, 0.6},
@@ -16,7 +16,7 @@ static Array<Array<double>> rainbow_dark{
     {0.6, 0.0, 0.6},
     {0.0, 0.0, 0.9}};
 
-//
+// custom heat color map
 static Array<Array<double>> heat{
     {0.6, 0.0, 0.0},
     {0.8, 0.0, 0.0},
@@ -25,9 +25,7 @@ static Array<Array<double>> heat{
     {1.0, 0.3, 0.0},
     {1.0, 0.5, 0},
     {1.0, 0.9, 0},
-
     {1.0, 1.0, 0.5},
-
     {0.9, 1.0, 0.0},
     {0.5, 1.0, 0.0},
     {0.0, 1.0, 0.0},
@@ -38,10 +36,13 @@ static Array<Array<double>> heat{
 
 Array2D<f32> lattice_slice(Lattice3D<Spin> &lattice, uint z)
 {
+    // get dims
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
-    Array<Array<f32>> latticeSlice(Lx,
+    // copy lattice data
+    Array2D<f32> latticeSlice(Lx,
                                    Array<f32>(Ly, 0));
+    #pragma omp parallel for collapse(2)
     for (uint x = 0; x < Lx; ++x)
     {
         for (uint y = 0; y < Ly; ++y)
@@ -59,40 +60,40 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
+    // get magnetization
     Vector3 mag = measure::get_magnetization(lattice);
     mag * (1.0 / flt(Lx * Ly * Lz));
     flt maxmag = mag.norm();
-    uint sizeL = Lx * Ly * Lz + 2;
+    u64 sizeL = Lx * Ly * Lz + 2;
     // initialize Arrays
     Array<double> x(sizeL, 0), y(sizeL, 0), z(sizeL, 0),
         u(sizeL, 0), v(sizeL, 0), w(sizeL, 0),
         color(sizeL, 0);
-    uint i = 0;
-#pragma omp parallel for
+    // iterarate over all lattice sides
+    #pragma omp parallel for collapse(3)
     for (uint ix = 0; ix < Lx; ++ix)
     {
         for (uint iy = 0; iy < Ly; ++iy)
         {
             for (uint iz = 0; iz < Lz; ++iz)
             {
+                // label number
+                u64 i = lattice.get_raw_id(ix,iy,iz);
                 x[i] = ix;
                 y[i] = iy;
                 z[i] = iz;
                 Spin s;
-    #pragma omp critical
                 s = lattice(ix, iy, iz);
                 u[i] = s.x();
                 v[i] = s.y();
                 w[i] = s.z();
-
-                
                 // color the spins according to the magnetization
                 color[i] = (s | mag);
-#pragma omp critical
-                i++;
             }
         }
     }
+    u64 i = sizeL-2;
+    // set dummy data to -maxmag and +maxmag
     x[i] = 0;
     y[i] = 0;
     z[i] = 0;
@@ -108,7 +109,6 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
     v[i] = 0;
     w[i] = 0;
     color[i] = maxmag;
-    ++i;
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
     
 }
@@ -116,54 +116,73 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
 bool data::plot_lattice_slice(  Lattice3D<Spin> &lattice, int z, 
                                 string filename)
 {
-
-    Array<Array<f32>> latticeSlice = lattice_slice(lattice, z);
-
+    // read in the lattice slice
+    Array2D<f32> latticeSlice = lattice_slice(lattice, z);
+    // enable figure settings
     auto fig = plt::figure(true);
+    // set size in pixel
     fig->size(1000, 1000);
+    // set rainbow colors
     plt::colormap(rainbow_dark);
     plt::imagesc(latticeSlice);
+    // define the color axis
     plt::caxis({0, _2pi_});
     plt::figure()->size(1000, 1000);
     if (filename != "")
     {
-        plt::save(filename);
+        plt::save(filename); // save the plot
     }
     else
     {
-        plt::show();
+        plt::show(); // just show the plot
     }
     return 0;
+    // clean up the entire plotting context
+    plt::cla();
 }
 
 bool data::plot_lattice(Lattice3D<Spin> &lattice, 
                         std::string filename)
 {
+    // get quiver vectors
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
-    // calculates average
+    // calculates magnetization
     Vector3 mag =measure::get_magnetization(lattice);
-
+    // enables figure settings
     auto fig = plt::figure(true);
+    // set size in pixels
     fig->size(1000, 1000);
+    // pritn the mag. vector in the Title
     string title = "Magnetization: {" +to_str(mag(0))+ ","
             +to_str(mag(0)) +"," +to_str(mag(0))+ "}";
     fig->title(title);
+    // get dims
+    uint Lx = lattice.Lx();
+    uint Ly = lattice.Ly();
+    uint Lz = lattice.Lz();
+    // define limits
+    plt::xrange({-1.0,flt(Lx)});
+    plt::yrange({-1.0,flt(Ly)});
+    plt::zlim({-1.0,flt(Lz)});
+    // set clolr
     plt::colormap(heat);
     plt::colorbar(true);
     plt::gca()->cblabel("Magnetization");
+    // do not change!!! it works somehow
     plt::gca()->cb_position({1.1f, 0.f, 0.03f, 1.f});
     plt::gca()->position({0.135f, 0.1f, 0.7f, 0.85f});
-
+    // set plotdata
     auto plot = plt::quiver3(arrays[0], arrays[1], arrays[2],
                              arrays[3],
                              arrays[4], arrays[5], arrays[6], 0.5);
+    // set line width
     plot->line_width(3);
     plot->normalize(true);
-    //plt::caxis({1, -1});
+    // label dimension
     plt::xlabel("x");
     plt::ylabel("y");
     plt::zlabel("z");
-
+    // save if the filename was given, else just show
     if (filename != "")
     {
         plt::save(filename);
@@ -172,6 +191,7 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
     {
         plt::show();
     }
+    // clean up the entire plotting context
     plt::cla();
     return 0;
 }
@@ -179,44 +199,53 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
 bool data::plot_lattice_small(Lattice3D<Spin> &lattice, 
                         std::string filename)
 {
+    // get quiver vectors
     StaticArray<Array<double>, 7> arrays = lattice_Arrays(lattice);
-    // calculates average
+    // calculates magnetization
     flt mag =measure::get_magnetization(lattice).norm();
     // get dims
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
+    // enable figure settings
     auto fig = plt::figure(true);
+    // set figure size in pixel
     fig->size(400, 400);
+    // set titles
     string title = "Magnetization: " + to_str(mag);
     fig->title(title);
+    // define limits
     plt::xrange({-1.0,flt(Lx)});
     plt::yrange({-1.0,flt(Ly)});
     plt::zlim({-1.0,flt(Lz)});
+    // set color
     plt::colormap(heat);
     plt::colorbar(true);
     plt::gca()->cblabel("Magnetization");
+    // do not change!!! it works somehow
     plt::gca()->cb_position({1.05f, 0.f, 0.03f, 1.f});
     plt::gca()->position({0.08f, 0.1f, 0.7f, 0.85f});
-
+    // set plotdata
     auto plot = plt::quiver3(arrays[0], arrays[1], arrays[2],
                              arrays[3],
                              arrays[4], arrays[5], arrays[6], 0.5);
+    // set line_width
     plot->line_width(3);
     plot->normalize(true);
-    //plt::caxis({1, -1});
+    // label dimensions
     plt::xlabel("x");
     plt::ylabel("y");
     plt::zlabel("z");
-
+    // save if the filename was given, else just show
     if (filename != "")
     {
-        plt::save(filename);
+        plt::save(filename); // save the file
     }
     else
     {
-        plt::show();
+        plt::show(); // just show the plot
     }
+    // clean up the entire plotting context
     plt::cla();
     return 0;
 }

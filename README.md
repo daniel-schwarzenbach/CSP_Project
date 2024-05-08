@@ -5,6 +5,7 @@ Every picture is 500 random steps with metropolis algorithm at T=0.01. 100'000 s
 ![metropolis algorithm](./docs/plots/metropolis.gif)
 
 # Table of contents
+
  1. Introduction
  2. Structure of the code
  4. Algorithms
@@ -34,7 +35,9 @@ Finally, we list the contributions.
 
 # Structure of the code 
 
-The main part of our implementation can be found in the folder 'code'.
+#### code
+
+Our implementation can be found in the folder 'code'.
 The different folders contain the following:
 
 
@@ -49,8 +52,7 @@ The different folders contain the following:
         2. get::magnetisation: calculates magnetization of the current lattice configuration
     - LoadingBar.h++: implements a Loading bar to track progressof simulations
 - Metropolis:
-    - metropolis.h++: implements the standard metroplis algorithm
-    - adaptive_metropolis.h++: implements the adaptive variation of the metroplis algorithm
+    - metropolis.h++: implements the metroplis algorithms
     - energy_diff.h++: calculates the energy difference between initial and proposed configuration
 - Wolff / : wolff algorithm
     - wolff.h++: defines the Wolff algorithm
@@ -60,9 +62,26 @@ The different folders contain the following:
 - Lattice.h++: defines 3D lattice class of the Heisenberg model 
 - RNG.h++: standardized random number generator used in the whole repository
 - Spin.h++: defines our spins and the member functions
-- docs: includes Euler launch scripts
-- libraries: matplotplusplus and others
-- contains various programs for the Heisenberg3D modell
+
+#### buildscripts
+
+contains various build scripts
+
+#### docs
+
+contains plots, documents and launch scripts for the euler cluster
+
+#### libraries 
+
+contains all libraries
+
+#### Programs
+
+contains various programs for the Heisenberg3D modell
+
+#### .vscode
+
+contains files for working in VS-Code
 
 # Algorithms
 
@@ -183,7 +202,17 @@ sudo make install
 
 ```
 
+## Windows
+
+We sadly do not support windows itself, but you can install Windows Subsystems for Linux (WSL) and follow the linux installation guide.
+
+[install WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+
+# Libraries
+
 ## Matplot++-Library
+
+Rich plotting library
 
 Is auto installed through CMake
 

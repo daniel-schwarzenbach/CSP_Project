@@ -1,5 +1,7 @@
+/*
+    This Test makes sure the algorithms are working as intended
+*/
 #include <gtest/gtest.h>
-
 #include <Wolff/wolff.h++>
 #include <Metropolis/metropolis.h++>
 #include <Measure/Observables.h++>

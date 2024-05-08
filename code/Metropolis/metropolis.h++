@@ -17,7 +17,8 @@ enum MoveType
 /*
 metropolis algorithm for the Heisenberg 3D model
 
-/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform the simulation on
+/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform 
+the simulation on
 / @param T: temperature
 / @param J: spin interaction strenth
 / @param maxTimeSeconds: the maximal time the simulation will run
@@ -39,7 +40,8 @@ bool metropolis(Lattice3D<Spin> &lattice,
 /*
 metropolis algorithm for the Heisenberg 3D model
 
-/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform the simulation on
+/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform 
+the simulation on
 / @param T: temperature
 / @param J: spin interaction strenth
 / @param maxTimeSeconds: the maximal time the simulation will run
@@ -62,7 +64,8 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
 metropolis algorithm for the Heisenberg 3D model with addaptive step
 sizes
 
-/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform the simulation on
+/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform 
+the simulation on
 / @param T: temperature
 / @param J: spin interaction strenth
 / @param maxTimeSeconds: the maximal time the simulation will run
@@ -81,7 +84,14 @@ bool adaptive_metropolis(   Lattice3D<Spin> &lattice,
                             Spin const& k = {0,0,0},
                             flt const& maxFactor = 60.0);
 
+/*
+    resets the adaptation data for the adaptive metropolis omp
+*/
 void restet_adaptive_omp();
+
+/*
+    resets the adaptation data for the adaptive metropolis
+*/
 void restet_adaptive();
 
 #endif

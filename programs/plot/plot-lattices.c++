@@ -1,3 +1,14 @@
+/*
+This program runs through the random step metropolis and plots the
+lattice all Ns steps until Nmax. It than will make an animation out 
+of it with ImageMagic
+
+Linux:
+> sudo apt-get install imagemagick
+
+Mac-Os:
+> brew install imagemagick
+*/
 #include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timer.h++>
@@ -16,6 +27,10 @@ const uint L = 8;
 const flt J = 1.0;
 // set Temperature
 const flt T = 0.01;
+// plot after 50 steps
+const u64 Ns = 500;
+// final number of steps
+const u64 Nmax = 100'000;
 
 
 int main(int mainArgCount, char **mainArgs)
@@ -25,10 +40,6 @@ int main(int mainArgCount, char **mainArgs)
     // init lattice
     Lattice3D<Spin> lattice(L, L, L);
     lattice.randomize();
-    // plot after 50 steps
-    const u64 Ns = 500;
-    // final number of steps
-    const u64 Nmax = 100'000;
     uint it = 0; // to name files
     // start 
     cout << "start Ploting ..."  << endl;
@@ -48,6 +59,7 @@ int main(int mainArgCount, char **mainArgs)
                 + ".png");
         ++it;
     }
+    // set the loading bar to 100%
     lbar.update(100);
     }
     cout << "finished ploting" << endl;

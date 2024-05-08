@@ -1,4 +1,10 @@
-#include <matplot/matplot.h>
+/*
+This program callculates what happens if we add a magnetic field h and
+and anisotropy k to a magnetiesed lattice
+
+1. lattice = -z, h = +z, k = 0
+2. lattice = -z, h = +z, k = -z
+*/
 #include <Data/Plot.h++>
 #include <Heisenberg.h++>
 #include <Measure/Timer.h++>
@@ -6,17 +12,18 @@
 #include <Data/DataHandler.h++>
 #include <Simulations/Simulation.h++>
 
+// number of steps between measuring
 const flt Ns_met = 1e+1;
-// end Time
+// number of steps
 const flt Nmax_met = 1e+4;
 
-// int Random Lattice Seed
+// seed to set
 const int seed = 42;
-// side Lenth
+// side Lenth of the Lattice
 const uint L = 8;
 // interaction strenth
 const flt J = 1.0;
-// h
+// magnetic field
 const Spin h = {0, 0, 1};
 
 
@@ -28,49 +35,55 @@ int main(int mainArgCount, char **mainArgs)
     Lattice3D<Spin> lattice(L, L, L);
     // do loop over Temperatures
     Array<flt> Ts = {0.5, 1.5, 3};
+
+    //          ---- run with anisotropy k = 0
     for (flt T : Ts)
     {
         // set k = 0
         const Spin k = {0, 0, 0};
         cout << "running for T = " << T << endl;
+        // define names
         string Tstr = "T_" + to_string(uint(T * 1e3)) + "e-3/";
-        string Folder = "data/" + Tstr;
-        // make folder for temprature
+        string Folder = "k=0/";
+        // make folder for k = 0
         data::make_folder(Folder);
-        // run metropolis
         cout << "running metropolis" << endl;
-        // set the seed
+        // set seed
         rng::set_seed(seed);
-        // set the lattice to point down in z direction
+        // set lattice to -z
         lattice.set_constant({0,0,-1});
-
+        // run algorithm
         Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
             J, h, k, sim::ns::metropolis_adaptive);
+        // store the resulting data
         data::store_data(metro,
-                         Folder + "/metropolis_adaptive");
+                         Folder + "/metropolis_adaptive_" + Tstr);
     }
 
-    Array<flt> T2s = {0.5, 1.5, 3};
-    for (flt T : T2s)
+    //          ---- run with anisotropy k = -z
+    for (flt T : Ts)
     {
+        // set k = -z
         const Spin k = {0, 0, -1};
         cout << "running for T = " << T << endl;
+        // define names
         string Tstr = "T_" + to_string(uint(T * 1e3)) + "e-3/";
-        string Folder = "data/" + Tstr;
+        string Folder = "k=-z/";
+        // make folder for k = -z
         data::make_folder(Folder);
-
-
         cout << "running metropolis" << endl;
-
+        // set seed
         rng::set_seed(seed);
+        // set lattice to -z
         lattice.set_constant({0,0,-1});
-
+        // run algorithm
         Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
             J, h, k, sim::ns::metropolis_adaptive);
+        // store the resulting data
         data::store_data(metro,
-                         Folder + "/metropolis_adaptive");
+                         Folder + "/metropolis_adaptive_" + Tstr);
     }
     return 0;
 }
