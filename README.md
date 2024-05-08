@@ -1,4 +1,4 @@
-# Heisenberg3D modell
+# Heisenberg 3D model
 
 Every picture is 500 random steps with metropolis algorithm at T=0.01. 100'000 steps in total.
 
