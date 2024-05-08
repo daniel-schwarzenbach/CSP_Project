@@ -26,9 +26,9 @@ int main(int mainArgCount, char **mainArgs)
     Lattice3D<Spin> lattice(L, L, L);
     lattice.randomize();
     // plot after 50 steps
-    const u64 Ns = 10;
+    const u64 Ns = 500;
     // final number of steps
-    const u64 Nmax = 2000;
+    const u64 Nmax = 100'000;
     uint it = 0; // to name files
     // start 
     cout << "start Ploting ..."  << endl;
@@ -40,7 +40,7 @@ int main(int mainArgCount, char **mainArgs)
         // updade the loading bar
         lbar.update((i * 100.0) / Nmax);
         // do Ns steps
-        metropolis_omp(lattice,T,J,_inf_,Ns,{0,0,0},{0,0,0},
+        metropolis(lattice,T,J,_inf_,Ns,{0,0,0},{0,0,0},
                 MoveType::Random);
         // plot the lattice
         std::string num = std::format("{:03}", it);
