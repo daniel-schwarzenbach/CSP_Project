@@ -183,7 +183,7 @@ if (T < T_low)
             NRange{u64(1e8), u64(1e4)}};
     N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e4),u64(1e1)}, 
             NRange{u64(1e6), u64(1e2)}};
-    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+    N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
             NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
 }
 // mid temperatures
@@ -192,7 +192,7 @@ else if(T <= T_high){
             NRange{u64(1e8), u64(1e4)}};
     N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e6),u64(1e2)}, 
             NRange{u64(2e6), u64(1e2)}};
-    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+    N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
             NRange{u64(1e10), u64(1e6)}, NRange{u64(1e8), u64(1e4)}};
 }
 // high temperatures
@@ -202,7 +202,7 @@ else {
     N_wolff = {NRange{u64(1e2), u64(1e0)}, 
             NRange{u64(1e4),u64(1e1)}, 
             NRange{u64(1e7), u64(1e3)}};
-    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+    N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
             NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
 }
 
