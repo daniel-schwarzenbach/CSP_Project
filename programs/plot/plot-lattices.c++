@@ -17,7 +17,6 @@ Mac-Os:
 #include <Metropolis/metropolis.h++>
 #include <Wolff/wolff.h++>
 #include <Measure/LoadingBar.h++>
-#include <format>
 
 // int Random Lattice Seed
 const int seed = 42;
@@ -53,8 +52,11 @@ int main(int mainArgCount, char **mainArgs)
         // do Ns steps
         metropolis(lattice,T,J,_inf_,Ns,{0,0,0},{0,0,0},
                 MoveType::Random);
+        // set 1 -> "001"
+        std::ostringstream oss;
+        oss << std::setw(3) << std::setfill('0') << it;
+        std::string num = oss.str();
         // plot the lattice
-        std::string num = std::format("{:03}", it);
         data::plot_lattice_small(lattice,"plot/Lattice_" + num
                 + ".png");
         ++it;
