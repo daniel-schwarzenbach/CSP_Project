@@ -27,7 +27,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 
 # programs
-add_executable(Heisenberg ${SRC_FILES} ./programs/plot/plot-lattices.c++)
+add_executable(Plot_Lattices ${SRC_FILES} ./programs/plot/plot-lattices.c++)
 add_executable(Magnetization ${SRC_FILES} ./programs/magnetization.c++)
 add_executable(Plot_Speed_UP ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis_adaptive.c++)
 
@@ -64,7 +64,7 @@ if(MPI)
         ./programs/MPI/MPI_seed.c++)
     add_executable(MPI_Neq ${SRC_FILES}
         ./programs/MPI/MPI_Neq.c++)
-        add_executable(HeisenbergMPI ${SRC_FILES}
+    add_executable(MPI_Speed_Up ${SRC_FILES}
         ./programs/MPI/MPI_metropolis_speed_up.c++)
 
     # lib/
@@ -76,13 +76,13 @@ if(MPI)
     )
 
     # link libraries
-    target_link_libraries(HeisenbergMPI ${LIBRARIES})
+    target_link_libraries(MPI_Speed_Up ${LIBRARIES})
     target_link_libraries(MPI_Neq ${LIBRARIES})
     target_link_libraries(MPI_Seed ${LIBRARIES})
 endif()
 
 
-if(NOT MPI AND NOT IPPL)# without MPI and IPPL
+if(NOT MPI)# without MPI and IPPL
 message(STATUS "compiling gtests")
     # google-tests
     add_executable(Test_Lattice ${SRC_FILES} ./programs/gtests/test-latttice.c++)
@@ -134,7 +134,7 @@ add_definitions(-DDEBUG)
 
 
 # link libraries
-target_link_libraries(Heisenberg ${LIBRARIES})
+target_link_libraries(Plot_Lattices ${LIBRARIES})
 target_link_libraries(Magnetization ${LIBRARIES})
 target_link_libraries(Plot_Speed_UP ${LIBRARIES})
 

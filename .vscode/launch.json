@@ -10,7 +10,7 @@
             "name": "Linux-MPI",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/HeisenbergMPI",
+            "program": "${workspaceFolder}/build/MPI_Speed_Up",
             "cwd": "${workspaceFolder}/build",
             "args": [
                 "0.1",
@@ -23,7 +23,7 @@
             "name": "Euler-MPI",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/HeisenbergMPI",
+            "program": "${workspaceFolder}/build/MPI_Speed_Up",
             "cwd": "${workspaceFolder}/build",
             "args": [
                 "0.1",
@@ -36,7 +36,7 @@
             "name": "Euler",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/HeisenbergIppl",
+            "program": "${workspaceFolder}/build/Plot_Lattices",
             "cwd": "${workspaceFolder}/build",
         },
         {
@@ -45,7 +45,7 @@
             "name": "Linux",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Heisenberg",
+            "program": "${workspaceFolder}/build/Plot_Lattices",
             "cwd": "${workspaceFolder}/build",
             "setupCommands": [
                 {
@@ -61,7 +61,7 @@
             "type": "cppdbg",
             "request": "launch",
             "cwd" : "${workspaceFolder}/build",
-            "program": "${workspaceFolder}/build/Heisenberg",
+            "program": "${workspaceFolder}/build/Plot_Lattices",
             "args": [],
             "stopAtEntry": false,
             "MIMode": "lldb",
@@ -73,17 +73,6 @@
                 }
             ],
             "internalConsoleOptions": "openOnSessionStart",
-        },
-        {
-            "name": "mpiexec -n 2",
-            "type": "node",
-            "request": "launch",
-            "runtimeExecutable": "echo",
-            "runtimeArgs": ["\n \n MPI ran succesfully xD \n \n"],
-            "preLaunchTask": "run mpiexec",
-            "cwd" : "${workspaceFolder}/build"
         }
-        
-
     ]
 }

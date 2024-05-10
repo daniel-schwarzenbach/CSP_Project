@@ -48,19 +48,6 @@
             },
         },
         {
-            "label": "run mpiexec",
-            "type": "shell",
-            "command": "mpiexec -n 2 ${workspaceFolder}/buildscripts/build/HeisenbergIppl",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": ["build-ippl"],
-            "options" :{
-                "cwd": "${workspaceFolder}/build"
-            },
-        },
-        {
             "type": "shell",
             "label": "build-mpi",
 

@@ -6,15 +6,10 @@
                 "/usr/include",
                 "/usr/include/eigen3",
                 "/usr/local/include/",
-                
                 "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 "${workspaceFolder}/code",
-                "${workspaceFolder}/code_ippl",
                 "${workspaceFolder}/libraries/matplotplusplus/source",
-                "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot",
-                "${workspaceFolder}/libraries/Ippl/build/ippl/src/",
-                "${workspaceFolder}/libraries/Ippl/build/Heffte/Heffte_omp/include/",
-                "${workspaceFolder}/libraries/Ippl/build/Kokkos/Kokkos_omp/include/"
+                "${workspaceFolder}/build/libraries/matplotplusplus/source/matplot"
             ],
             "defines": [
                 "CSP_DEBUG"
