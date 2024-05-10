@@ -73,9 +73,11 @@ flt get_sigma_omp(){
 }
 
 flt get_acceptance_rate_omp(){
-    return flt(acceptedCount_omp)/flt(totalSteps_omp);
+    if(totalSteps_omp != 0)
+        return flt(acceptedCount_omp)/flt(totalSteps_omp);
+    else
+        return 1.;
 }
-
 // reset the global variables
 void restet_adaptive_omp(   flt const& sigmaArg, 
                         flt const& acceptanceRateArg,

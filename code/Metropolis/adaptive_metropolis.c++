@@ -35,7 +35,10 @@ flt get_sigma(){
 }
 // return R
 flt get_acceptance_rate(){
-    return flt(acceptedCount/totalSteps);
+    if(totalSteps != 0)
+        return flt(acceptedCount)/flt(totalSteps);
+    else
+        return 1.;
 }
 
 void restet_adaptive(   flt const& sigmaArg, 
