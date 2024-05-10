@@ -171,37 +171,40 @@ int main(int argc, char *argv[])
     string wolffFile = foldername + "/Wolff_";
 
     // get N
-    using Nrange = StaticArray<u64,2>
-    StaticArray< Nrange, 3> N_wolff;
-    StaticArray< Nrange, 3> N_met;
-    StaticArray< Nrange, 4> N_add;
+    using NRange = StaticArray<u64,2>;
+    StaticArray< NRange, 3> N_wolff;
+    StaticArray< NRange, 3> N_met;
+    StaticArray< NRange, 4> N_add;
 
     // low temperature
-    if (T < T_low)
-    {
-        N_met = {Nrange{1e7, 1e3}, Nrange{1e9,1e5}, Nrange{1e8, 1e4}};
-        N_wolff = {Nrange{1e2, 1e0}, Nrange{1e4,1e1}, 
-                Nrange{1e6, 1e2}};
-        N_add = {Nrange{1e4, 1e2}, Nrange{1e7,1e3}, Nrange{1e9, 1e5}, 
-                Nrange{1e8, 1e4}};
-    }
-    // mid temperatures
-    else if(T < T_high){
-        N_met = {Nrange{1e8, 1e5}, Nrange{1e10,1e6}, 
-                Nrange{1e8, 1e4}};
-        N_wolff = {Nrange{1e2, 1e0}, Nrange{1e6,1e2}, 
-                Nrange{2e6, 1e2}};
-        N_add = {Nrange{1e4, 1e2}, Nrange{1e7,1e3}, Nrange{1e10, 1e6}, 
-                {1e8, 1e4}};
-    }
-    // hight temperatures
-    else {
-        N_met = {Nrange{1e7, 1e3}, Nrange{1e9,1e5}, Nrange{1e8, 1e4}};
-        N_wolff = {Nrange{1e2, 1e0}, Nrange{1e4,1e1}, 
-                Nrange{1e7, 1e3}};
-        N_add = {Nrange{1e4, 1e2}, Nrange{1e7,1e3}, Nrange{1e9, 1e5}, 
-                {1e8, 1e4}};
-    }
+if (T < T_low)
+{
+    N_met = {NRange{u64(1e7), u64(1e3)}, NRange{u64(1e9),u64(1e5)}, 
+            NRange{u64(1e8), u64(1e4)}};
+    N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e4),u64(1e1)}, 
+            NRange{u64(1e6), u64(1e2)}};
+    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+            NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
+}
+// mid temperatures
+else if(T <= T_high){
+    N_met = {NRange{u64(1e8), u64(1e5)}, NRange{u64(1e10),u64(1e6)}, 
+            NRange{u64(1e8), u64(1e4)}};
+    N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e6),u64(1e2)}, 
+            NRange{u64(2e6), u64(1e2)}};
+    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+            NRange{u64(1e10), u64(1e6)}, NRange{u64(1e8), u64(1e4)}};
+}
+// high temperatures
+else {
+    N_met = {NRange{u64(1e7), u64(1e3)}, NRange{u64(1e9),u64(1e5)}, 
+            NRange{u64(1e8), u64(1e4)}};
+    N_wolff = {NRange{u64(1e2), u64(1e0)}, 
+            NRange{u64(1e4),u64(1e1)}, 
+            NRange{u64(1e7), u64(1e3)}};
+    N_add = {NRange{u64(1e4), u64(1e2)}, NRange{u64(1e7),u64(1e3)}, 
+            NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
+}
 
     //      --- init Lattice
     Lattice lattice(Lx, Ly, Lz);
@@ -254,7 +257,7 @@ int main(int argc, char *argv[])
         //      --- Metropolis Adaptive
     {
         measure::Timer watch;
-        cout << rank <<" is running metropolis ..."<< endl;
+        cout << rank <<" is running adaptive ..."<< endl;
         rng::set_seed(Seed);
         // set the lattice after the critical temperature
         if(T > T_critical)
@@ -307,7 +310,7 @@ int main(int argc, char *argv[])
     {
         
         measure::Timer watch;
-        cout << rank <<" is running metropolis ..."<< endl;
+        cout << rank <<" is running wolff ..."<< endl;
         rng::set_seed(Seed);
         // set the lattice after the critical temperature
         if(T > T_critical)
