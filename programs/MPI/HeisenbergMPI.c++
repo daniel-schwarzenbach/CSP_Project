@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     programTimer.start();
 
     // set a ranndom seed
-    const u64 FullSeed = static_cast<uint>(time(0)) * rank;
+    const u64 FullSeed = static_cast<uint>(time(0)) * (1+rank);
     const uint Seed =
         static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
     cout << " for rank " << rank << " has ";
