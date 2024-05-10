@@ -8,8 +8,7 @@
 #SBATCH --output=output.txt
 #SBATCH --time=04:00:00
 
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI_Neq 0.5
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI_Neq 1
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI_Neq 1.8
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI_Neq 3.0
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI_Neq 10
+mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Neq 0.5
+mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Neq 1
+mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Neq 1.5
+mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Neq 2
