@@ -62,8 +62,8 @@ if(MPI)
     # programs
     add_executable(MPI_Seed ${SRC_FILES}
         ./programs/MPI/MPI_seed.c++)
-    add_executable(MPI_Neq ${SRC_FILES}
-        ./programs/MPI/MPI_Neq.c++)
+    add_executable(HeisenbergMPI ${SRC_FILES}
+        ./programs/MPI/HeisenbergMPI.c++)
     add_executable(MPI_Speed_Up ${SRC_FILES}
         ./programs/MPI/MPI_metropolis_speed_up.c++)
 
@@ -77,7 +77,7 @@ if(MPI)
 
     # link libraries
     target_link_libraries(MPI_Speed_Up ${LIBRARIES})
-    target_link_libraries(MPI_Neq ${LIBRARIES})
+    target_link_libraries(HeisenbergMPI ${LIBRARIES})
     target_link_libraries(MPI_Seed ${LIBRARIES})
 endif()
 

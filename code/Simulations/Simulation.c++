@@ -58,12 +58,14 @@ Array2D<flt> sim::dt::test_algorithm(
 }
 
 Array2D<flt> sim::ns::test_algorithm(
-    Lattice3D<Spin> &lattice,
-    uint const &ns, u64 const &numSteps, flt const &T,
-    flt const &J,
-    Spin const &h, Spin const &k,
-    Algorithm const &algorithmus,
-    bool const &loadingBar)
+        Lattice3D<Spin> &lattice,
+        uint const &ns, u64 const &numSteps, flt const &T,
+        flt const &J,
+        Spin const &h, Spin const &k,
+        Algorithm const &algorithmus,
+        bool const &loadingBar,
+        u64 const& startStep,
+        flt const& startTime)
 {
     // get z Vector for measuring Mz
     Vector3 z = {0, 0, 1};
@@ -85,9 +87,10 @@ Array2D<flt> sim::ns::test_algorithm(
     // init loding bar
     measure::LoadingBar lbar(60);
     // measure steps and elapsed time
-    u64 step = 0;
     flt t_elapsed = 0;
-    while (step < numSteps)
+    u64 step = startStep;
+    const u64 maxSteps = numSteps + startStep;
+    while (step < maxSteps)
     {
         // update loading bar if requested
         if (loadingBar)

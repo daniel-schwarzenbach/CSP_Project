@@ -61,6 +61,7 @@ namespace data
     */
     bool load_lattice(Lattice3D<Spin> &lattice,
                       string const &filename);
+
 };
 
 #endif // __DATAHANDLER_H__

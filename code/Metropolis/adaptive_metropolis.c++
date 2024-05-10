@@ -22,14 +22,28 @@ acceptance rate of 50%. A more detailed description of the algorithm
 can be found in the report.
 */
 
+
+
 flt sigma = 60;
 u64 totalSteps = 0;
 u64 acceptedCount = 0;
 
-void restet_adaptive(){
-    flt sigma = 60;
-    u64 totalSteps = 0;
-    u64 acceptedCount = 0;
+
+// return sigma
+flt get_sigma(){
+    return sigma;
+}
+// return R
+flt get_acceptance_rate(){
+    return flt(acceptedCount/totalSteps);
+}
+
+void restet_adaptive(   flt const& sigmaArg, 
+                        flt const& acceptanceRateArg,
+                        flt const& totalStepsArg){
+    sigma = sigmaArg;
+    totalSteps = totalStepsArg;
+    acceptedCount = acceptanceRateArg * totalStepsArg;
 }
 
 // Input:
@@ -91,7 +105,7 @@ bool adaptive_metropolis(   Lattice3D<Spin> &lattice,
             // Increase counter of accepted steps
             ++acceptedCount;
             // Update acceptance rate
-            flt R = flt(acceptedCount)/flt(totalSteps+1.0);
+            flt R = flt(acceptedCount)/flt(totalSteps);
             // Calculate update factor
             flt f = 0.5 / (1.0 - R + 1e-18);
             // Update sigma

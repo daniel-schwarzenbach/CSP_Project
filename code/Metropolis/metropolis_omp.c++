@@ -60,18 +60,29 @@ inline flt calculate_energy_diff_omp(Lattice3D<Spin>& lattice,
     return deltaE;
 }
 
+
 // define global variables that stay the same
-flt sigma_omp = 100;
+constexpr flt maxFactor_omp = 60;
+flt sigma_omp = maxFactor_omp;
 u64 totalSteps_omp = 0;
 u64 acceptedCount_omp = 0;
-constexpr flt maxFactor_omp = 60;
-constexpr flt changerate = 0.9;
+
+// return sigma
+flt get_sigma_omp(){
+    return sigma_omp;
+}
+
+flt get_acceptance_rate_omp(){
+    return flt(acceptedCount_omp)/flt(totalSteps_omp);
+}
 
 // reset the global variables
-void restet_adaptive_omp(){
-    flt sigma_omp = 100;
-    u64 totalSteps_omp = 0;
-    u64 acceptedCount_omp = 0;
+void restet_adaptive_omp(   flt const& sigmaArg, 
+                        flt const& acceptanceRateArg,
+                        flt const& totalStepsArg){
+    sigma_omp = sigmaArg;
+    totalSteps_omp = totalStepsArg;
+    acceptedCount_omp = acceptanceRateArg * totalStepsArg;
 }
 
 // main algorithm
@@ -217,7 +228,7 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
                 ++thread_acceptedCount;
                 // Update acceptance rate
                 const flt R =   thread_acceptedCount/
-                                (thread_totalSteps+1.0);
+                                (thread_totalSteps);
                 // Calculate update factor
                 const flt f = 0.5 / (1.0 - R + _eps_);
                 // Update sigma   
