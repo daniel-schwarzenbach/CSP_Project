@@ -1,54 +1,45 @@
-#include <Algorithm/Algorithm.h++>
+/*
+This programm benchmarks the parrallel implementation of metropolis on
+MPI. It takes a temperature as floating point and wites out multiple
+data files
+*/
+#include <Simulations/Simulation.h++>
 #include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
+#include <ctime>
 
-u64 get_wolf_steps(flt const& T){
-    flt T_lower = 1.3;
-    flt T_upper = 1.6;
-    flt N_t0 =  1e4;
-    flt N_tinf = 1e+6;
-    flt T_inf = 100;
-    flt T_0 = 0.01;
-    flt N_tc = 1e+8;
-
-    if (T <= T_lower)
-        return u64( (N_t0 + (T - T_0) * (N_tc - N_t0))/(T_lower - T_0) );
-    else if (T >= T_upper)
-        return u64( (N_tc + (T_upper - T) * (N_tc - N_tinf))/(T_inf - T_upper) );
-    else if (T_lower <= T <= T_upper)
-        return u64( N_tc );
-    else{
-        cerr << "invalid temperature" << endl;
-        return 1e-4;
-    }
-}
-
+// variables
 flt constexpr J = 1.0;
-
 const Spin h = Spin{0.0,0.0,0.0};
 const Spin k = Spin{0.0,0.0,0.0};
-
+// lattice size
 constexpr uint L = 32;
 constexpr uint Lx = L;
 constexpr uint Ly = L; 
 constexpr uint Lz = L;
 constexpr Index Ls = {Lx,Ly,Lz};
-
-
-
-
+// number of steps
+constexpr u64 Nmax_met = 1e+9;
+constexpr u64 Ns_met = 1e+6;
+// critical temperature
+constexpr flt T_critical = 1.45;
 
 int main(int argc, char* argv[])
 {
+    // init MPI
     MPI_Init(&argc, &argv);
     MPI_Comm comm = MPI_COMM_WORLD;
     int rank = 0;
     MPI_Comm_rank(comm, &rank);
     int size = 1;
     MPI_Comm_size(comm, &size);
-    measure::Timer programTimer; programTimer.start();
-    const uint Seed = 42 + rank;
+    // measure the duration of the whole program
+    measure::Timer programTimer;
+    // get a random seed for each node
+    const u64 FullSeed = static_cast<unsigned int>(time(0)) * rank;
+    const uint Seed =
+        static_cast<unsigned int>(FullSeed & 0xff'ff'ff'ffUL);
     // read input
     flt T = -1;
     if (argc > 1) {
@@ -68,6 +59,7 @@ int main(int argc, char* argv[])
         cerr << ERROR << "to few arguments";
         return 0;
     } 
+    // cout << T = <T>
     what_is(T);
     // activate Loading bar fore a single core
     bool loading_bar = false;
@@ -82,35 +74,31 @@ int main(int argc, char* argv[])
     string metropolisFile = foldername +"/Metropolis_";
     string metropolisAdaptFile = foldername +"/MetropolisAdaptive_";
     string metropolisFile_omp = foldername +"/Metropolis_omp";
-    string metropolisAdaptFile_omp = foldername +"/MetropolisAdaptive_omp";
-
-    
-
-    constexpr u64 Nmax_met = 5e+8;
-    constexpr u64 Ns_met = 5e+7;
+    string metropolisAdaptFile_omp = foldername 
+            +"/MetropolisAdaptive_omp";
 
     //      --- init Lattice
     Lattice lattice(Lx,Ly,Lz);
-
-
 
     //         --- Metropolis
     {
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.45)
+        // set lattice after the critical temperature
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
-        
-        cout << "T = " << T << endl;
+        // run algorithm
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
+        // store collected data
         data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis in: " << watch.time()
+             << endl <<  endl;
     }
 
 
@@ -120,19 +108,20 @@ int main(int argc, char* argv[])
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis adaptive ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.45)
+        // set lattice after the critical temperature
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
-
-    
-        cout << "T = " << T << endl;
+        // run algorithm
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive,
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_adaptive,
                         loading_bar);
+        // store collected data
         data::store_data(data,metropolisAdaptFile + to_string(rank));
-        cout << "finished metropolis adaptive in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis adaptive in: " << watch.time() 
+             << endl << endl;
     }
 
         //         --- Metropolis
@@ -140,43 +129,48 @@ int main(int argc, char* argv[])
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
         rng::set_seed(Seed);
-        if(T > 1.45)
+        // set lattice after the critical temperature
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
-        
-        cout << "T = " << T << endl;
+        // run algorithm
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep, 
                         loading_bar);
+        // store collected data
         data::store_data(data,metropolisFile+to_string(rank));
-        cout << "finished metropolis in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis in: " 
+             << watch.time() << endl << endl;
     }
 
 
 
-        //      --- Metropolis Adaptive _OMP
+        //      --- Metropolis Adaptive OMP
     {   
         measure::Timer watch; watch.start();
-        cout << rank <<" is running metropolis adaptive omp ..."<< endl;
+        cout << rank <<" is running metropolis adaptive omp ..."
+                << endl;
+        // set lattice after the critical temperature
         rng::set_seed(Seed);
-        if(T > 1.45)
+        if(T > T_critical)
             lattice.randomize();
         else
             lattice.set_constant(Spin{0,0,1});
-
-    
-        cout << "T = " << T << endl;
+        // run algoritm
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_adaptive_omp,
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_adaptive_omp,
                         loading_bar);
-        data::store_data(data,metropolisAdaptFile_omp + to_string(rank));
-        cout << "finished metropolis adaptive omp in: " << watch.time() <<endl << endl;
+        // store the resulting data
+        data::store_data(data,metropolisAdaptFile_omp 
+                + to_string(rank));
+        cout << "finished metropolis adaptive omp in: " 
+             << watch.time() << endl << endl;
     }
 
-            //         --- Metropolis
+            //         --- Metropolis OMP
     {
         measure::Timer watch; watch.start();
         cout << rank <<" is running metropolis ..."<< endl;
@@ -186,15 +180,17 @@ int main(int argc, char* argv[])
         else
             lattice.set_constant(Spin{0,0,1});
         
-        cout << "T = " << T << endl;
+        // run algortim
         Array2D<flt> data = 
-                algo::ds::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, algo::ds::metropolis_smallStep_omp, 
+                sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
+                        J, h, k, sim::ns::metropolis_smallStep_omp, 
                         loading_bar);
+        // store the resulting data
         data::store_data(data,metropolisFile_omp+to_string(rank));
-        cout << "finished metropolis omp in: " << watch.time() <<endl << endl;
+        cout << "finished metropolis omp in: " 
+             << watch.time() << endl << endl;
     }
-
-
+    cout << "finished Program with: ";what_is(programTimer.time());
+    MPI_Finalize();
     return 0;
 }

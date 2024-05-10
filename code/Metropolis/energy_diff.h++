@@ -3,7 +3,7 @@
 
 #include <Heisenberg.h++>
 
-flt calculateEnergyDiff(Lattice const& lattice, int  const& x, 
+flt calculateEnergyDiff(Lattice3D<Spin> const& lattice, int  const& x, 
                         int const& y,int const& z, 
                         Spin const& oldSpin, Spin const& newSpin, 
                         flt const& J, Spin const& h, Spin const& k);

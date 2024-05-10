@@ -3,17 +3,18 @@
 #include <numeric>
 #include <algorithm>
 
-Vector3 measure::get_magnetization(const Lattice &lattice)
+Vector3 measure::get_magnetization(const Lattice3D<Spin> &lattice)
 {
 
     // Define the magnetization as a vector
     // e. g. magnetization[0] = x-component of the vector M
-    // The return value magnetization is NOT normalized by the total no. of spins
+    // The return value magnetization is NOT normalized by the total 
+    // no. of spins
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
     flt N = Lx * Ly * Lz;
-
+    // sum up all values
     flt sx = 0; flt sy = 0; flt sz = 0;
     #pragma omp parallel for reduction(+:sx, sy, sz)
     for (int x = 0; x < Lx; x++)
@@ -28,11 +29,13 @@ Vector3 measure::get_magnetization(const Lattice &lattice)
             }
         }
     }
+    //  normalize the values and return them
     return {f32(sx/N), f32(sy/N), f32(sz/N)};
 }
 
-flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec, 
-        flt const& J, Vector3 const& k_vec)
+flt measure::get_energy(const Lattice3D<Spin> &lattice, 
+                        Vector3 const& h_vec, 
+                        flt const& J, Vector3 const& k_vec)
 {
 
     /*
@@ -63,16 +66,13 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
     The magnetic interaction energy is not affected by the boundary 
     conditions.
     */
-
+    // get dims
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    uint sizeX = Lx;
-    uint sizeY = Ly;
-    uint sizeZ = Lz;
 // sum over all bonds parallel to x-direction
 #pragma omp parallel for reduction(+ : spin_interaction_energy)
-    for (int x = 0; x < sizeX; x++)
+    for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
         {
@@ -88,7 +88,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
 #pragma omp parallel for reduction(+ : spin_interaction_energy)
     for (int x = 0; x < Lx; x++)
     {
-        for (int y = 0; y < sizeY; y++)
+        for (int y = 0; y < Ly; y++)
         {
             for (int z = 0; z < Lz; z++)
             {
@@ -104,7 +104,7 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
     {
         for (int y = 0; y < Ly; y++)
         {
-            for (int z = 0; z < sizeZ; z++)
+            for (int z = 0; z < Lz; z++)
             {
                 spin_interaction_energy +=
                     lattice(x, y, z) | lattice(x, y, z + 1);
@@ -136,18 +136,20 @@ flt measure::get_energy(const Lattice &lattice, Vector3 const& h_vec,
             }
         }
     }
-
+    // return all summed up enegries
     return (-J * spin_interaction_energy - mag_interaction_energy - 
             anisotropy_energy);
 }
 
-flt measure::get_scalar_average(Lattice const &lattice, 
+flt measure::get_scalar_average(Lattice3D<Spin> const &lattice, 
                                 Vector3 const &vec)
 {
+    // get dimensions
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    flt scalarAverage;
+    // sum up all scalar products
+    flt scalarAverage = 0;
 #pragma omp parallel for reduction(+ : scalarAverage)
     for (int x = 0; x < Lx; x++)
     {
@@ -159,15 +161,18 @@ flt measure::get_scalar_average(Lattice const &lattice,
             }
         }
     }
+    // normalize the value
     return scalarAverage / (Lx*Ly*Lx);
 }
 
-flt measure::get_correlation(Lattice const &start, 
-                                  Lattice const &next)
+flt measure::get_correlation(Lattice3D<Spin> const &start, 
+                                  Lattice3D<Spin> const &next)
 {
+    // get dimension
     uint Lx = start.Lx();
     uint Ly = start.Ly();
     uint Lz = start.Lz();
+    // sum up the correlation between each vetor
     flt correlation = 0;
 #pragma omp parallel for reduction(+ : correlation)
     for (int x = 0; x < Lx; x++)
@@ -175,54 +180,11 @@ flt measure::get_correlation(Lattice const &start,
         for (int y = 0; y < Ly; y++)
         {
             for (int z = 0; z < Lz; z++)
-            {
+            {   
                 correlation += start(x, y, z) | next(x, y, z);
             }
         }
     }
+    // normalize the values
     return correlation / (Lx * Ly * Lz);
-}
-
-flt measure::calculate_auto_correlation_time(Array<flt> const &y,
-                                    Array<flt> const &t)
-{
-    flt t0 = t[0];
-    flt min_energy = std::numeric_limits<flt>::max();
-
-    // Define the objective function to minimize
-    auto objective_function = [y, t, t0](flt tau)
-    {
-        flt sum = 0.0;
-#pragma omp parrallel for
-        for (size_t i = 0; i < y.size(); ++i)
-        {
-            flt diff = y[i] - std::exp((t[i] - t0) / tau);
-            sum += diff;
-        }
-        return sum;
-    };
-
-    // Minimization process (simplified example, use a proper minimization algorithm)
-    flt maxTau = 1'000'000;
-    flt minTau = 0.000'1;
-    flt midTau = (maxTau + minTau) / 2.0;
-    for (uint i = 0; i < 100; ++i)
-    {
-        flt diff = objective_function(midTau);
-        if (diff < 0)
-        {
-            minTau = midTau;
-        }
-        else if (diff > 0)
-        {
-            maxTau = midTau;
-        }
-        else if (diff == 0)
-        {
-            return midTau;
-        }
-        midTau = (maxTau + minTau) / 2.0;
-    }
-    // Return the value of τ that minimizes the energy
-    return midTau;
 }

@@ -5,15 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "build-ippl",
-            "miDebuggerPath": "/usr/bin/gdb",
-            "name": "Linux-ippl",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/HeisenbergIppl",
-            "cwd": "${workspaceFolder}/build",
-        },
-        {
             "preLaunchTask": "build-mpi",
             "miDebuggerPath": "/usr/bin/gdb",
             "name": "Linux-MPI",
@@ -34,6 +25,10 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/HeisenbergMPI",
             "cwd": "${workspaceFolder}/build",
+            "args": [
+                "0.1",
+                "3.0"
+            ]
         },
         {
             "preLaunchTask": "build-euler",
@@ -59,14 +54,6 @@
                     "ignoreFailures": false
                 }
             ]
-        },
-        {
-            "preLaunchTask": "build",
-            "name": "windows",
-            "type": "cppdbg",
-            "request": "launch",
-            "cwd" : "${workspaceFolder}/build",
-            "program": "${workspaceFolder}/build/Heisenberg.exe"
         },
         {
             "preLaunchTask": "build",

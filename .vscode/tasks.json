@@ -3,39 +3,11 @@
         {
             "type": "shell",
             "label": "build",
-
-            "windows" :{
-                "command": "${workspaceFolder}/build-win.bat"
-            },
             "linux" :{
-                "command": "${workspaceFolder}/build-unix.sh"
+                "command": "${workspaceFolder}/buildscripts/build-unix.sh"
             },
             "osx" :{
-                "command": "${workspaceFolder}/build-unix.sh"
-            },
-            "presentation": {
-                "reveal": "always"
-            },
-            "options" :{
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher":[
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "build-ippl",
-
-            "linux" :{
-                "command": "${workspaceFolder}/build-unix-ippl.sh"
-            },
-            "osx" :{
-                "command": "${workspaceFolder}/build-unix-ippl.sh"
+                "command": "${workspaceFolder}/buildscripts/build-unix.sh"
             },
             "presentation": {
                 "reveal": "always"
@@ -56,10 +28,10 @@
             "label": "build-euler",
 
             "linux" :{
-                "command": "${workspaceFolder}/build-euler.sh"
+                "command": "${workspaceFolder}/buildscripts/build-euler.sh"
             },
             "osx" :{
-                "command": "${workspaceFolder}/build-euler.sh"
+                "command": "${workspaceFolder}/buildscripts/build-euler.sh"
             },
             "presentation": {
                 "reveal": "always"
@@ -78,7 +50,7 @@
         {
             "label": "run mpiexec",
             "type": "shell",
-            "command": "mpiexec -n 2 ${workspaceFolder}/build/HeisenbergIppl",
+            "command": "mpiexec -n 2 ${workspaceFolder}/buildscripts/build/HeisenbergIppl",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -93,10 +65,10 @@
             "label": "build-mpi",
 
             "linux" :{
-                "command": "${workspaceFolder}/build-unix-mpi.sh"
+                "command": "${workspaceFolder}/buildscripts/build-unix-mpi.sh"
             },
             "osx" :{
-                "command": "${workspaceFolder}/build-unix-mpi.sh"
+                "command": "${workspaceFolder}/buildscripts/build-unix-mpi.sh"
             },
             "presentation": {
                 "reveal": "always"
@@ -117,10 +89,10 @@
             "label": "build-mpi-euler",
 
             "linux" :{
-                "command": "${workspaceFolder}/build-euler-mpi.sh"
+                "command": "${workspaceFolder}/buildscripts/build-euler-mpi.sh"
             },
             "osx" :{
-                "command": "${workspaceFolder}/build-euler-mpi.sh"
+                "command": "${workspaceFolder}/buildscripts/build-euler-mpi.sh"
             },
             "presentation": {
                 "reveal": "always"

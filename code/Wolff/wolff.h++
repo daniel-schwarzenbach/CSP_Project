@@ -1,5 +1,5 @@
-#ifndef WOLF_HPP
-#define WOLF_HPP
+#ifndef __WOLFF_H__
+#define __WOLFF_H__
 
 #include <Heisenberg.h++>
 #include <algorithm>
@@ -7,37 +7,19 @@
 #include <algorithm>
 
 /*
-wolff algorithm for the Heisenberg3D model
+wolff algorithm for the Heisenberg 3D model
 
-/ @brief
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return if the procedure succeds
-/ @exception may fail
+/ @param Lattice3D<Spin>: our 3d Lattice3D<Spin>, where to perform the simulation on
+/ @param T: temperature
+/ @param J: spin interaction strenth
+/ @param maxTimeSeconds: the maximal time the simulation will run
+/ @param maxSteps: the maximal number of steps the simulation will run
+/ @param h: the magnetization vector of the external field
+/ @return average cluster size
 */
-flt wolff(Lattice &lattice, flt const &T, flt const &J,
-          flt const &MaxTime, u64 const &MaxSteps, Spin const &h);
+flt wolff(Lattice3D<Spin> &lattice, flt const &T, flt const &J,
+          flt const &MaxTime, u64 const &MaxSteps, 
+          Spin const &h = {0,0,0});
 
-/*
-wolff algorithm for the Heisenberg3D model
 
-/ @brief
-/ @param lattice: our Lattice3D<Spin>, where to perform the simulation
-on
-/ @param T:
-/ @return if the procedure succeds
-/ @exception may fail
-*/
-flt wolff_ghost(Lattice &lattice, flt const &T, flt const &J,
-                flt const &MaxTime, u64 const &MaxSteps, Spin const &h);
-
-/*
-wolff algorithm for the Heisenberg3D model that is naivly parallel
-
-/ @param lattice our 3d lattice, where to perform the simulation on
-/ @return if the procedure succeds
-/ @exception may fail
-*/
-flt wolff_omp(Lattice &lattice, flt const &T, flt const &J,
-              flt const &MaxTime, u64 const &MaxSteps);
-
-#endif
+#endif // __WOLFF_H__

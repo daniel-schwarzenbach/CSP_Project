@@ -6,14 +6,16 @@
 #include <Data/DataHandler.h++>
 #include <thread>
 
+// read a flt from an char*
 flt data::read_flt(char *in)
 {
-    flt valueF64 = 1;
+    flt valueF64 = 1.0;
     string valueStr = in;
     try
-    {
+    {   // try reading it
         valueF64 = std::stod(valueStr);
     }
+    // catch errors
     catch (const std::invalid_argument &e)
     {
         std::cerr << "Invalid input: " << valueStr << std::endl;
@@ -26,20 +28,22 @@ flt data::read_flt(char *in)
 }
 
 bool data::append_line_in_file(string const &filename,
-                               string const &data, u64 const &lineNum)
+                               string const &data, 
+                               u64 const &lineNum)
 {
+    // open file
     std::ifstream fileIn(filename);
+    // init the lines array
     Array<string> lines(0);
     string line;
     int currentLine = 0;
-
+    // check if we can open the file
     if (!fileIn.is_open())
     {
         std::cerr << "Error opening file to read." << std::endl;
         return false;
     }
-
-    // Read all lines into a vector
+    // Read all lines into an Array
     while (std::getline(fileIn, line))
     {
         lines.push_back(line);
@@ -52,7 +56,6 @@ bool data::append_line_in_file(string const &filename,
         std::cerr << ERROR << "line number out of range." << std::endl;
         return false;
     }
-
     // Append the data to the specified line
     lines[lineNum] += data;
 
@@ -75,34 +78,40 @@ bool data::append_line_in_file(string const &filename,
 }
 
 bool data::append_lines_in_file(string const &filename,
-                                Array<string> const &datas, Array<u64> const &lineNums)
+                                Array<string> const &datas, 
+                                Array<u64> const &lineNums)
 {
+    // open file
     std::ifstream fileIn(filename);
+    // init Array for all lines
     Array<string> lines(0);
     string line;
     int currentLine = 0;
-
+    // check if the file cold been opened
     if (!fileIn.is_open())
     {
         std::cerr << "Error opening file to read" << std::endl;
         return false;
     }
-
     // Read all lines into a vector
     while (std::getline(fileIn, line))
     {
         lines.push_back(line);
         currentLine++;
     }
+    // close the file
     fileIn.close();
+    // check if the data fits
     u64 dataSize = datas.size();
     if (dataSize != lineNums.size())
     {
-        cerr << ERROR << "can not append files! size missmatch" << endl;
+        cerr << ERROR << "can not append files! size missmatch" 
+             << endl;
         cerr << "datas.size() =" << dataSize << endl;
         cerr << "lines.size() =" << lineNums.size() << endl;
         return false;
     }
+    // add data to all requested lines
     for (u64 i = 0; i < dataSize; ++i)
     {
         // Check if the specified line number is within the file size
@@ -114,181 +123,25 @@ bool data::append_lines_in_file(string const &filename,
         // Append the data to the specified line
         lines[lineNums[i]] += datas[i];
     }
-    std::this_thread::sleep_for(
-        std::chrono::microseconds(1));
     // Write everything back to the file
     std::ofstream fileOut(filename);
+    // check if we can open the file
     if (!fileOut.is_open())
     {
         std::cerr << "Error opening file to write" << std::endl;
         return false;
     }
+    // rewrite the hole file
     for (const auto &outputLine : lines)
     {
         fileOut << outputLine << "\n";
     }
-
+    // close the file
     fileOut.close();
     return true;
 }
 
-bool data::store_alo_data(const string &filename,
-                          string const &algoname,
-                          const Array2D<flt> &data,
-                          flt const &T, flt const &J,
-                          Spin const &h, Spin const &k,
-                          u64 const &Ns, u64 const &Nmax,
-                          Index const &L)
-{
-    // check data size!!!
-    if (data.size() != 4)
-    {
-        cerr << ERROR << " wrong data size:" << filename << endl;
-        return false;
-    }
-    u64 n_data = data[0].size();
-    for (Array<flt> d : data)
-    {
-        if (d.size() != n_data)
-        {
-            cerr << ERROR << " wrong data size:" << filename << endl;
-            return false;
-        }
-    }
-    // openfile
-    std::ofstream outfile(filename);
-    if (!outfile)
-    {
-        cerr << ERROR << " couldnt open file:" << filename << endl;
-        return "";
-    }
-    outfile << filename << endl
-            << algoname << endl
-            << "L = " << L[0] << "," << L[1] << "," << L[2] << endl
-            << "h = " << h(0) << "," << h(1) << "," << h(2) << endl
-            << "k = " << k(0) << "," << k(1) << "," << k(2) << endl
-            << "Ns = " << Ns << endl
-            << "Nmax = " << Nmax << endl
-            << "No_of_datapoints = " << n_data << endl
-            << T << endl
-            << "====" << endl
-            << T << " M "
-            << " Mz "
-            << " E " << endl;
-    // Write data to the header
-    for (uint i = 0; i < n_data; ++i)
-    {
-        for (const auto &col : data)
-        {
-            outfile << col[i] << " ";
-        }
-        outfile << endl;
-    }
-
-    outfile.close();
-    return true;
-}
-
-bool appent_algo_lines(string const &filename,
-                       u64 const &dataSize, flt const &T)
-{
-    std::ifstream fileIn(filename);
-    Array<string> lines(0);
-    string line;
-    int currentLine = 0;
-
-    if (!fileIn.is_open())
-    {
-        std::cerr << "Error opening file to read" << std::endl;
-        return false;
-    }
-
-    // Read all lines into a vector
-    while (std::getline(fileIn, line))
-    {
-        lines.push_back(line);
-        currentLine++;
-    }
-    fileIn.close();
-
-    // Check if the specified line number is within the file size
-    if (8 >= currentLine)
-    {
-        std::cerr << ERROR << "line number out of range." << std::endl;
-        return false;
-    }
-    // Append the data to the specified line
-    size_t pos = lines[7].find_last_of("= ");
-    int old_size = std::stoi(lines[7].substr(pos + 1));
-    lines[7] = "No_of_datapoints = " + to_string(old_size + dataSize);
-    lines[8] += ", " + to_str(T);
-
-    std::this_thread::sleep_for(
-        std::chrono::microseconds(1));
-    // Write everything back to the file
-    std::ofstream fileOut(filename);
-    if (!fileOut.is_open())
-    {
-        std::cerr << "Error opening file to write" << std::endl;
-        return false;
-    }
-    for (const auto &outputLine : lines)
-    {
-        fileOut << outputLine << "\n";
-    }
-
-    fileOut.close();
-    return true;
-}
-
-bool data::append_algo_data(const std::string &filename,
-                            const Array2D<flt> &data,
-                            flt const &T)
-{
-
-    // check data size!!!
-    if (data.size() != 4)
-    {
-        cerr << ERROR << " wrong data size:" << filename << endl;
-        return false;
-    }
-    u64 n_data = data[0].size();
-    for (Array<flt> d : data)
-    {
-        if (d.size() != n_data)
-        {
-            cerr << ERROR << " wrong data size:" << filename << endl;
-            return false;
-        }
-    }
-    appent_algo_lines(filename, n_data, T);
-    // Open the file in append mode
-    std::ofstream file(filename, std::ios_base::app);
-
-    // Check if the file was opened successfully
-    if (!file.is_open())
-    {
-        cerr << ERROR << " opening file for appending." << std::endl;
-        return false;
-    }
-    file << "====" << endl;
-    file << to_str(T) << " M "
-         << " Mz "
-         << " E " << endl;
-    // Append data
-    for (uint i = 0; i < n_data; i++)
-    {
-        for (uint j = 0; j < 4; j++)
-        {
-            file << data[j][i] << " ";
-        }
-        file << endl;
-    }
-    // Close the file
-    file.close();
-    return true;
-}
-
+// read integer valuew from char*
 int data::read_int(char *in)
 {
     int valueInt = 1;
@@ -318,8 +171,10 @@ bool data::make_folder(string foldername)
 bool data::store_data(const Array<Array<flt>> &data,
                       const std::string &filename)
 {
+    // get rows and cols
     uint cols = data.size();
     u64 rows = data[0].size();
+    // check if the data has the correct size
     for (Array<flt> d : data)
     {
         if (d.size() != rows)
@@ -330,11 +185,13 @@ bool data::store_data(const Array<Array<flt>> &data,
     }
     // openfile
     std::ofstream outfile(filename);
+    // chek if we opened the file correctly
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file to write to:" << filename << endl;
         return false;
     }
+    // write the data in the file
     for (u64 i = 0; i < rows; ++i)
     {
         for (u64 j = 0; j < cols; ++j)
@@ -343,58 +200,24 @@ bool data::store_data(const Array<Array<flt>> &data,
         }
         outfile << endl;
     }
+    // close the file
     outfile.close();
     return true;
 }
-
-template <uint I>
-bool data::store_data(const StaticArray<Array<flt>, I> &data,
-                      const string &filename)
-{
-    // openfile
-    std::ofstream outfile(filename);
-    if (!outfile)
-    {
-        cerr << ERROR << " couldnt open file to write to:" << filename << endl;
-        return "";
-    }
-    for (u64 i = 0; i < I; ++i)
-    {
-        for (const flt value : data[i])
-        {
-            outfile << value << ' ';
-        }
-        outfile << '\n';
-    }
-    outfile.close();
-    return true;
-}
-
-template bool data::store_data<2>(
-    const StaticArray<Array<flt>, 2> &,
-    const string &);
-template bool data::store_data<3>(
-    const StaticArray<Array<flt>, 3> &,
-    const string &);
-template bool data::store_data<4>(
-    const StaticArray<Array<flt>, 4> &,
-    const string &);
-template bool data::store_data<5>(
-    const StaticArray<Array<flt>, 5> &,
-    const string &);
 
 Array2D<flt> data::load_data(string const &filename)
 {
+    // open file and check if we could
     std::ifstream file(filename);
     if (!file)
     {
         cerr << ERROR << " couldnt open file to loat:"
              << filename << endl;
+        // empty data
         return {{}};
     }
     Array2D<flt> columns;
     string line;
-
     // Read the first line to determine the number of columns
     if (std::getline(file, line))
     {
@@ -405,7 +228,6 @@ Array2D<flt> data::load_data(string const &filename)
             columns.push_back(std::vector<double>{value});
         }
     }
-
     // Read the rest of the lines
     while (std::getline(file, line))
     {
@@ -421,10 +243,13 @@ Array2D<flt> data::load_data(string const &filename)
             }
         }
     }
-
+    // close the file
     file.close();
     return columns;
 }
+
+
+// for ploting the lattice we need a 
 std::ofstream &operator<<(std::ofstream &of, Spin const &v)
 {
     of << "{" << v[0] << ", " << v[1] << ", " << v[2] << "}";
@@ -436,16 +261,18 @@ bool data::store_lattice(Lattice3D<Spin> const &lattice,
 {
     // openfile
     std::ofstream outfile(filename);
+    // check if it can be ofened
     if (!outfile)
     {
         cerr << ERROR << " couldnt open file to write to:"
              << filename << endl;
         return false;
     }
+    // get dims
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-
+    // write the entire lattice to the file
     for (uint x = 0; x < Lx; ++x)
     {
         outfile << "{" << endl;
@@ -460,6 +287,7 @@ bool data::store_lattice(Lattice3D<Spin> const &lattice,
         }
         outfile << "}" << endl;
     }
+    // close the folder
     outfile.close();
     return true;
 }
@@ -472,14 +300,16 @@ bool data::load_lattice(Lattice3D<Spin> &lattice, string const &filename)
         std::cerr << "ERROR: Couldn't open file to read from: " << filename << std::endl;
         return false;
     }
+    // get dims
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
 
     std::string line;
     f32 spinX, spinY, spinZ;
+    // srings to ignore
     char brace;
-
+    // read entire spin
     for (uint x = 0; x < Lx; ++x)
     {
         std::getline(infile, line); // Skip {
@@ -490,7 +320,8 @@ bool data::load_lattice(Lattice3D<Spin> &lattice, string const &filename)
             {
                 std::getline(infile, line);
                 std::istringstream iss(line);
-                iss >> brace >> spinX >> brace >> spinY >> brace >> spinZ >> brace;
+                iss >> brace >> spinX >> brace >> spinY >> brace
+                    >> spinZ >> brace;
                 lattice(x, y, z) = Spin{spinX, spinY, spinZ};
             }
             std::getline(infile, line); // Skip }
@@ -498,7 +329,7 @@ bool data::load_lattice(Lattice3D<Spin> &lattice, string const &filename)
         std::getline(infile, line); // Skip }
         
     }
-
+    // close file
     infile.close();
     return true;
 }

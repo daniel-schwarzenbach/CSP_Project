@@ -113,12 +113,11 @@ write symbols and types that are often into Base.h++. do never write:
 `using namespace std;` or any other auto inclusion of a namespace.
 only use `using std::something` for the things you regulary need to use.
 
-`using flt = double` - our generic floatingpoint: Allows for an easy change in precition\
-if you now you need a certain precition dont hesitate to use another type.
+`using flt = double` - is more convienent and faster to wite type.
 
 `Spin` : Our Spin class that works with all representations
 
-`Lattice` : A 3d Lattice containing Spins. If you include ippl.h before Heisenberg.h++ it usese the parrelised LatticeIppl insteat of the LatticeSerial
+`Lattice3D` : A 3d Lattice that can handle different boundry conditions
 
 ## Exeptions
 
@@ -138,7 +137,7 @@ divides a by b = a/b
 - returns: a/b
 - can throw!
 */
-double division(int a, int b) {
+flt division(int a, int b) {
    if( b == 0 ) {
       throw "Division by zero condition!";
    }
@@ -154,7 +153,7 @@ MainFunction
 int main () {
    int x = 50;
    int y = 0;
-   double z = 0;
+   flt z = 0;
  
    try {
       z = division(x, y);
@@ -243,8 +242,8 @@ extend lines with a double tab
 
 example:
 ```cpp
-flt my_superlong_function(vector<flt> const& x, vector<flt> const& y, 
-        const& vector<flt> z)
+flt my_superlong_function(Array<flt> const& x, Array<flt> const& y, 
+        const& Array<flt> z)
 {
     // ...
     // code
@@ -253,9 +252,9 @@ flt my_superlong_function(vector<flt> const& x, vector<flt> const& y,
 ```
 or use a consitent padding
 ```cpp
-flt my_superlong_function(  vector<flt> const& x, 
-                            vector<flt> const& y, 
-                            const& vector<flt> z){
+flt my_superlong_function(  Array<flt> const& x, 
+                            Array<flt> const& y, 
+                            const& Array<flt> z){
     // ...
     // code
     // ...
@@ -284,33 +283,3 @@ for(uint n = 0; n < L; ++n){
     }
 }
 ```
-
-## Unicode symbols
-
-### install
-
-in vscode
-
-Ctrl+Shift
-
-`ext install gao-shuhua.vsc-unicode-latex`
-
-### Usage
-
-
-math symbols are allowed and encuraged when they make the code more 
-readable!
-
-leave hints on how to type certain symbols
-```cpp
-//          --- Constants
-
-constexpr flt π = M_PI; //\pi
-constexpr flt ₂π = 2*π; //\_2\pi
-
-// eulers number 
-flt 𝑒 = M_E; //\mite
-
-```
-
-Do not use any emojis or unknown Symbols!

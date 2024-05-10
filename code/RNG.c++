@@ -1,7 +1,7 @@
 #ifndef __RNG_H__
 #define __RNG_H__
 /*
-    random number generation
+    centralised random number generation
 */
 
 //#define RandomDebug
