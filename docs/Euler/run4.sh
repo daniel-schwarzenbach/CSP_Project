@@ -8,4 +8,8 @@ then
 fi
 
 ########### run batch launchscript
-cd output && sbatch ../launch4.sh
+cd output 
+sbatch ../launch4/launch1.sh
+sbatch ../launch4/launch2.sh
+sbatch ../launch4/launch3.sh
+sbatch ../launch4/launch4.sh

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --nodes=48                   
-#SBATCH --ntasks=48              
+#SBATCH --nodes=12                   
+#SBATCH --ntasks=12             
 #SBATCH --ntasks-per-node=1 
 #SBATCH --mem-per-cpu=2500
 #SBATCH --error=error.txt
