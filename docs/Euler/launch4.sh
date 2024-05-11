@@ -10,6 +10,7 @@
 
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.66
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.67
+mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.68
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.69
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.70
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 2
