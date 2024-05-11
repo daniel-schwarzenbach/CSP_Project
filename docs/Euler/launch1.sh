@@ -6,7 +6,7 @@
 #SBATCH --mem-per-cpu=2500
 #SBATCH --error=error.txt
 #SBATCH --output=output.txt
-#SBATCH --time=20:00:00
+#SBATCH --time=36:00:00
 
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 0.3
 mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 0.75
