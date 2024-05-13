@@ -29,7 +29,8 @@ file(GLOB_RECURSE SRC_FILES code/*.c++ CMAKE_CONFIGURE_DEPENDS)
 # programs
 add_executable(Plot_Lattices ${SRC_FILES} ./programs/plot/plot-lattices.c++)
 add_executable(Magnetization ${SRC_FILES} ./programs/magnetization.c++)
-add_executable(Plot_Speed_UP ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis_adaptive.c++)
+add_executable(Plot_Speed_Up ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis.c++)
+add_executable(Plot_Speed_Adapt_Up ${SRC_FILES} ./programs/omp/plot_speed_up_metropolis_adaptive.c++)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -136,7 +137,8 @@ add_definitions(-DDEBUG)
 # link libraries
 target_link_libraries(Plot_Lattices ${LIBRARIES})
 target_link_libraries(Magnetization ${LIBRARIES})
-target_link_libraries(Plot_Speed_UP ${LIBRARIES})
+target_link_libraries(Plot_Speed_Up ${LIBRARIES})
+target_link_libraries(Plot_Speed_Adapt_Up ${LIBRARIES})
 
 
 
