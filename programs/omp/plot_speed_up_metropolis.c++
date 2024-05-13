@@ -1,5 +1,5 @@
 /*
-This program compares the parallel metorpolis small step with the non
+This program compares the parallel metorpolis adaptive with the non
 parallelized version, in terms of physical quantaties and speed-up
 */
 #include <matplot/matplot.h>
@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+7;
+const flt Ns_met = 1e+5;
 // end Time
-const flt Nmax_met = 1e+9;
+const flt Nmax_met = 1e+7;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -37,6 +37,7 @@ int main(int mainArgCount, char **mainArgs)
     Array<flt> Ts =
     {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
     3.0, 4.0, 5.0, 10, 100};
+    Array<flt> speedUps(0); speedUps.reserve(Ts.size());
     // loop over every temperature
     for (flt T : Ts)
     {
@@ -46,8 +47,8 @@ int main(int mainArgCount, char **mainArgs)
         string Folder = "data/" + Tstr;
         data::make_folder(Folder);
 
-        //              --- small step metropolis omp
-        cout << "running small step metropolis omp" << endl;
+        //              --- adaptive step metropolis omp
+        cout << "running metropolis omp" << endl;
         rng::set_seed(seed);
         // randomize lattice
         lattice.randomize();
@@ -61,8 +62,8 @@ int main(int mainArgCount, char **mainArgs)
         data::store_data(metro_omp,
                         Folder + "/metropolis_omp");
 
-        //              --- small step metropolis
-        cout << "running adaptive step metropolis" << endl;
+        //              --- metropolis
+        cout << "running metropolis" << endl;
         rng::set_seed(seed);
         // randomize lattice
         lattice.randomize();
@@ -75,7 +76,6 @@ int main(int mainArgCount, char **mainArgs)
         // store the data
         data::store_data(metro,
                         Folder + "/metropolis");
-
 
 
         //              --- plot data
@@ -109,8 +109,8 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[0],metro[2],"--s");
-            auto p5 = plt::plot(metro_omp[0],metro_omp[2],"--s");
+            auto p2 = plt::plot(metro[0],metro[3],"--s");
+            auto p5 = plt::plot(metro_omp[0],metro_omp[3],"--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Metropolis",
@@ -131,8 +131,8 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[3],metro[0],"--s");
-            auto p5 = plt::plot(metro_omp[3],metro_omp[0],"--s");
+            auto p2 = plt::plot(metro[4],metro[0],"--s");
+            auto p5 = plt::plot(metro_omp[4],metro_omp[0],"--s");
             plt::hold(false);
             auto l = plt::legend({
                                   "Metropolis",
@@ -148,10 +148,13 @@ int main(int mainArgCount, char **mainArgs)
         }
 
         // calculate and cout the parallel speed-up
-        flt Speed_up = metro[3][metro[3].size()-1]/
-                        metro_omp[3][metro_omp[3].size()-1];
+        flt Speed_up = metro[4][metro[4].size()-1]/
+                        metro_omp[4][metro_omp[4].size()-1];
         what_is(Speed_up);
-        cout << endl << endl;
+        speedUps.push_back(Speed_up);
+        cout << endl;
     }
+    what_is(mean(speedUps));
+    what_is(variance(speedUps));
     return 0;
 }

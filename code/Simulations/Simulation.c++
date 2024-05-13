@@ -87,7 +87,7 @@ Array2D<flt> sim::ns::test_algorithm(
     // init loding bar
     measure::LoadingBar lbar(60);
     // measure steps and elapsed time
-    flt t_elapsed = 0;
+    flt t_elapsed = startTime;
     u64 step = startStep;
     const u64 maxSteps = numSteps + startStep;
     while (step < maxSteps)
