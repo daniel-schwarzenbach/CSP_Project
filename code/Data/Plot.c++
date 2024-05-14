@@ -56,6 +56,7 @@ Array2D<f32> lattice_slice(Lattice3D<Spin> &lattice, uint z)
 
 StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
 {
+    const Spin z_vec = {0,0,1};
     // get lattice size
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
@@ -88,7 +89,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
                 v[i] = s.y();
                 w[i] = s.z();
                 // color the spins according to the magnetization
-                color[i] = (s | mag);
+                color[i] = (s | z_vec);
             }
         }
     }
@@ -100,7 +101,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
     u[i] = 0;
     v[i] = 0;
     w[i] = 0;
-    color[i] = -maxmag;
+    color[i] = -1;
     ++i;
     x[i] = 0;
     y[i] = 0;
@@ -108,7 +109,7 @@ StaticArray<Array<f64>, 7> lattice_Arrays(Lattice3D<Spin> &lattice)
     u[i] = 0;
     v[i] = 0;
     w[i] = 0;
-    color[i] = maxmag;
+    color[i] = 1;
     return StaticArray<Array<double>, 7>{x, y, z, u, v, w, color};
     
 }
@@ -153,8 +154,11 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
     // set size in pixels
     fig->size(1000, 1000);
     // pritn the mag. vector in the Title
-    string title = "Magnetization: {" +to_str(mag(0))+ ","
-            +to_str(mag(0)) +"," +to_str(mag(0))+ "}";
+    // string title = "Magnetization: {" +to_str(mag(0))+ ","
+    //         +to_str(mag(0)) +"," +to_str(mag(0))+ "}";
+    const Spin z = {0,0,1};
+    string title = "M: " + to_str(mag.norm()) + ",  Mz: " + 
+                    to_str(mag | z);
     fig->title(title);
     // get dims
     uint Lx = lattice.Lx();
@@ -167,7 +171,7 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
     // set clolr
     plt::colormap(heat);
     plt::colorbar(true);
-    plt::gca()->cblabel("Magnetization");
+    plt::gca()->cblabel("Mz");
     // do not change!!! it works somehow
     plt::gca()->cb_position({1.1f, 0.f, 0.03f, 1.f});
     plt::gca()->position({0.135f, 0.1f, 0.7f, 0.85f});

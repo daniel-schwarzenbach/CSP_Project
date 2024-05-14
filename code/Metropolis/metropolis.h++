@@ -85,13 +85,38 @@ bool adaptive_metropolis(   Lattice3D<Spin> &lattice,
                             flt const& maxFactor = 60.0);
 
 /*
+    returns the sigma of the adaptive metropolis
+*/
+flt get_sigma();
+
+/*
+    returns the acceptance rate of the adaptive metropolis
+*/
+flt get_acceptance_rate();
+
+/*
+    returns the sigma of the adaptive metropolis omp
+*/
+flt get_sigma_omp();
+
+/*
+    returns the acceptance rate of the adaptive metropolis omp
+*/
+flt get_acceptance_rate_omp();
+
+
+/*
     resets the adaptation data for the adaptive metropolis omp
 */
-void restet_adaptive_omp();
+void restet_adaptive_omp(flt const& sigma = 60, 
+                         flt const& acceptanceRate = 0.5,
+                         flt const& totalSteps = 0);
 
 /*
     resets the adaptation data for the adaptive metropolis
 */
-void restet_adaptive();
+void restet_adaptive(flt const& sigma = 60, 
+                     flt const& acceptanceRate = 0.5,
+                     flt const& totalSteps = 0);
 
 #endif

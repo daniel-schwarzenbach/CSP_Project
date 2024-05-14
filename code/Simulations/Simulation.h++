@@ -207,7 +207,9 @@ namespace sim
             flt const &J,
             Spin const &h, Spin const &k,
             Algorithm const &algorithmus,
-            bool const &loadingbar = true);
+            bool const &loadingbar = true,
+            u64 const& startStep = 0, 
+            flt const& startTime = 0.0);
 
     }
 }

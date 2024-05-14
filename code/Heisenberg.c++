@@ -96,3 +96,33 @@ string to_str(flt const& value){
     // return the changed longsting: 1.2
     return longstr;
 }
+
+/*
+Push back array
+*/
+Array<flt>& push_back(Array<flt>& array, 
+                        Array<flt> const& to_push_back){
+    Adress pushSize = to_push_back.size();
+    Adress nowSize = array.size();
+    array.reserve(nowSize + pushSize);
+    for (Adress i = 0; i < pushSize; ++i){
+        array.push_back(to_push_back[i]);
+    }
+    return array;
+}
+
+/*
+Pushes back each array sub array
+*/
+Array2D<flt>& push_back(Array2D<flt>& array, 
+                        Array2D<flt> const& to_push_back){
+    Adress size = array.size();
+    if(size != to_push_back.size()){
+        cerr << "Not the same number of Culums" << endl;
+        return array;
+    }
+    for(Adress i = 0; i < size; ++i){
+        push_back(array[i], to_push_back[i]);
+    }
+    return array;
+}

@@ -89,6 +89,18 @@ Array<U> convert_array(Array<T> const &array){
 }
 
 /*
+Push back array
+*/
+Array<flt>& push_back(Array<flt>& array, 
+                        Array<flt> const& to_push_back);
+
+/*
+Pushes back each array sub array
+*/
+Array2D<flt>& push_back(Array2D<flt>& array, 
+                        Array2D<flt> const& to_push_back);
+
+/*
 - alternative to to_string
 - only gives digits without zeros after the comma
 1.200000 -> 1.2

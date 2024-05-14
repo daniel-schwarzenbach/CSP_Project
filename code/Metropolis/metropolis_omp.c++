@@ -60,18 +60,31 @@ inline flt calculate_energy_diff_omp(Lattice3D<Spin>& lattice,
     return deltaE;
 }
 
+
 // define global variables that stay the same
-flt sigma_omp = 100;
+constexpr flt maxFactor_omp = 60;
+flt sigma_omp = maxFactor_omp;
 u64 totalSteps_omp = 0;
 u64 acceptedCount_omp = 0;
-constexpr flt maxFactor_omp = 60;
-constexpr flt changerate = 0.9;
 
+// return sigma
+flt get_sigma_omp(){
+    return sigma_omp;
+}
+
+flt get_acceptance_rate_omp(){
+    if(totalSteps_omp != 0)
+        return flt(acceptedCount_omp)/flt(totalSteps_omp);
+    else
+        return 1.;
+}
 // reset the global variables
-void restet_adaptive_omp(){
-    flt sigma_omp = 100;
-    u64 totalSteps_omp = 0;
-    u64 acceptedCount_omp = 0;
+void restet_adaptive_omp(   flt const& sigmaArg, 
+                        flt const& acceptanceRateArg,
+                        flt const& totalStepsArg){
+    sigma_omp = sigmaArg;
+    totalSteps_omp = totalStepsArg;
+    acceptedCount_omp = acceptanceRateArg * totalStepsArg;
 }
 
 // main algorithm
@@ -103,7 +116,7 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
     std::mt19937 rndmgen(seed + omp_get_thread_num());
     std::normal_distribution<flt> gaussian(0.0, 1.0);
     std::uniform_real_distribution<flt> uniform(0.0, 1.0);
-    std::uniform_real_distribution<flt> uniform_signed(0.0, 1.0);
+    std::uniform_real_distribution<flt> uniform_signed(-1.0, 1.0);
     std::uniform_int_distribution<int> disLx(0, Lx-1);
     std::uniform_int_distribution<int> disLy(0, Ly-1);
     std::uniform_int_distribution<int> disLz(0, Lz-1);
@@ -114,7 +127,7 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
     flt thread_sigma = sigma_omp;
 
     // partition for loops over all threads
-    #pragma omp for schedule (dynamic, 100)
+    #pragma omp for schedule(dynamic, 100)
     for (u64 step = 0; step < maxSteps; ++step){
         // Choose a random lattice site
         int x = disLx(rndmgen);
@@ -157,19 +170,19 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
             case MoveType::SmallStep:{
                 // define random angles
                 constexpr flt openingAngle = 0.2;
-                flt theta = rng::rand_uniform_singed()*openingAngle;
-                flt phi = rng::rand_uniform() * _2pi_;
+                flt theta = uniform_signed(rndmgen)*openingAngle;
+                flt phi = uniform(rndmgen) * _2pi_;
                 // set to a random Spin
                 Vector3 randomPole;
                 randomPole << std::sin(theta) * std::cos(phi),
                         std::sin(theta) * std::sin(phi),
                         std::cos(theta);
                 // define the north pole
-                Vector3 northPole(0, 0, 1);
+                Vector3 northPole(0.f, 0.f, 1.f);
                 // define the rotation to the the current vector
                 Eigen::Quaternion<f32> rotationToOriginal =
                         Eigen::Quaternion<f32>::FromTwoVectors(
-                        northPole, spin);
+                            northPole, spin);
                 // rotate the randomPole with the rotation
                 newSpin = rotationToOriginal * randomPole;
                 // normalize the vector for security
@@ -177,14 +190,14 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
                 break;
             }
             case MoveType::Addaptive:{
+                newSpin = spin;
                 // define a 3D gausion step
-                f32 nx = gaussian(rndmgen);
-                f32 ny = gaussian(rndmgen);
-                f32 nz = gaussian(rndmgen);
-                Spin addSpin{nx,ny,nz};
+                f32 dx = gaussian(rndmgen);
+                f32 dy = gaussian(rndmgen);
+                f32 dz = gaussian(rndmgen);
                 // take this step with factor sigma
-                newSpin = (spin + thread_sigma*addSpin).normalized();
-                // increase the addaptive step count
+                newSpin += thread_sigma * Spin(dx,dy,dz);
+                newSpin.normalize();
                 ++thread_totalSteps;
                 break;
             }
@@ -216,12 +229,16 @@ bool metropolis_omp(Lattice3D<Spin> &lattice,
                 //thread_sigma /= chanerate;
                 ++thread_acceptedCount;
                 // Update acceptance rate
-                const flt R =   thread_acceptedCount/
-                                (thread_totalSteps+1.0);
+                flt R =   
+                        flt(thread_acceptedCount)/
+                        flt(thread_totalSteps);
                 // Calculate update factor
-                const flt f = 0.5 / (1.0 - R + _eps_);
-                // Update sigma   
-                thread_sigma=min(maxFactor_omp,thread_sigma*f);
+                flt f = 0.5 / (1.0 - R + _eps_);
+                // // Update sigma 
+                // what_is(thread_totalSteps);
+                // what_is(thread_acceptedCount);
+                // what_is(thread_sigma);  
+                thread_sigma=min(maxFactor_omp, thread_sigma*f+_eps_);
             }
         }
         // else if(moveType == MoveType::Addaptive){
