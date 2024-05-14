@@ -1,8 +1,8 @@
 # Heisenberg 3D model
 
-Every picture is 500 random steps with metropolis algorithm at T=0.01. 100'000 steps in total.
+Every picture is 100 random steps with metropolis algorithm at temperature $T = 0.5$ and an external magnetic field of $h = [0,0,1]$. 10'000 steps in total.
 
-![metropolis algorithm](./docs/plots/metropolis.gif)
+![metropolis algorithm](./docs/plots/Magnetfeld.gif)
 
 # Table of contents
 

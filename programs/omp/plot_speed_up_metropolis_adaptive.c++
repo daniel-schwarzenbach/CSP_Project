@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+7;
+const flt Ns_met = 1e+5;
 // end Time
-const flt Nmax_met = 1e+9;
+const flt Nmax_met = 1e+7;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -29,7 +29,7 @@ const Spin k = {0,0,0};
 int main(int mainArgCount, char **mainArgs)
 {
     // make folders
-    data::make_folder("plots");
+    data::make_folder("plots_adapt");
     data::make_folder("data");
     // init lattice
     Lattice lattice(L, L, L);
@@ -37,6 +37,7 @@ int main(int mainArgCount, char **mainArgs)
     Array<flt> Ts =
     {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4,1.5, 1.7, 2.0,
     3.0, 4.0, 5.0, 10, 100};
+    Array<flt> speedUps(0); speedUps.reserve(Ts.size());
     // loop over every temperature
     for (flt T : Ts)
     {
@@ -47,7 +48,7 @@ int main(int mainArgCount, char **mainArgs)
         data::make_folder(Folder);
 
         //              --- adaptive step metropolis omp
-        cout << "running adaptive step metropolis omp" << endl;
+        cout << "running metropolis omp" << endl;
         rng::set_seed(seed);
         // randomize lattice
         lattice.randomize();
@@ -61,8 +62,8 @@ int main(int mainArgCount, char **mainArgs)
         data::store_data(metro_omp,
                         Folder + "/metropolis_adaptive_omp");
 
-        //              --- adaptive step metropolis
-        cout << "running adaptive step metropolis" << endl;
+        //              --- metropolis
+        cout << "running metropolis" << endl;
         rng::set_seed(seed);
         // randomize lattice
         lattice.randomize();
@@ -89,15 +90,15 @@ int main(int mainArgCount, char **mainArgs)
             auto p5 = plt::plot(metro_omp[0],metro_omp[1],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Metropolis Adaptive",
-                                  "Metropolis Adaptive Omp"
+                                  "Adaptive Metropolis",
+                                  "Adaptive Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::bottomright);
             plt::xlabel("Number of Steps");
             plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/magnet/T_" + to_str(T) + ".png");
+            plt::save("plots_adapt/magnet/T_" + to_str(T) + ".png");
             plt::cla();
             
         }
@@ -108,19 +109,19 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[0],metro[2],"--s");
-            auto p5 = plt::plot(metro_omp[0],metro_omp[2],"--s");
+            auto p2 = plt::plot(metro[0],metro[3],"--s");
+            auto p5 = plt::plot(metro_omp[0],metro_omp[3],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Metropolis Adaptive",
-                                  "Metropolis Adaptive Omp"
+                                  "Adaptive Metropolis",
+                                  "Adaptive Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::topright);
             plt::xlabel("Number of Steps");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/energy/T_" + to_str(T) + ".png");
+            plt::save("plots_adapt/energy/T_" + to_str(T) + ".png");
             plt::cla();
         }
 
@@ -130,27 +131,31 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[3],metro[0],"--s");
-            auto p5 = plt::plot(metro_omp[3],metro_omp[0],"--s");
+            auto p2 = plt::plot(metro[4],metro[0],"--s");
+            auto p5 = plt::plot(metro_omp[4],metro_omp[0],"--s");
             plt::hold(false);
             auto l = plt::legend({
-                                  "Metropolis Adaptive",
-                                  "Metropolis Adaptive Omp"
+                                  "Adaptive Metropolis",
+                                  "Adaptive Metropolis Omp"
                                   });
             
             l->location(plt::legend::general_alignment::topright);
             plt::xlabel("Time in s");
             plt::ylabel("Number of Steps");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots/number_of_steps/" + to_str(T) + ".png");
+            plt::save("plots_adapt/number_of_steps/" 
+                    + to_str(T) + ".png");
             plt::cla();
         }
 
         // calculate and cout the parallel speed-up
-        flt Speed_up = metro[3][metro[3].size()-1]/
-                        metro_omp[3][metro_omp[3].size()-1];
+        flt Speed_up = metro[4][metro[4].size()-1]/
+                        metro_omp[4][metro_omp[4].size()-1];
         what_is(Speed_up);
-        cout << endl << endl;
+        speedUps.push_back(Speed_up);
+        cout << endl;
     }
+    what_is(mean(speedUps));
+    what_is(variance(speedUps));
     return 0;
 }

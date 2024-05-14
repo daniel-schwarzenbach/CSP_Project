@@ -134,17 +134,17 @@ Array<T> &Lattice3D<T>::get_raw_data()
 // return raw data id
 template <typename T>
 uint Lattice3D<T>::get_raw_id(
-    int const &x, int const &y, int const &z) const
+    int const &x, int const &y, int const &z)
 {
-    return get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize);
+    return get_id_ref<T>(x, y, z, Lx_, Ly_, Lz_, bc, fullSize, data);
 }
 
 // return raw data id
 template <typename T>
-uint Lattice3D<T>::get_raw_id(Index const &index) const
+uint Lattice3D<T>::get_raw_id(Index const &index)
 {
-    return get_id(index[0], index[1], index[2], Lx_, Ly_, Lz_, bc, 
-            fullSize);
+    return get_id_ref<T>(index[0], index[1], index[2], Lx_, Ly_, Lz_, 
+            bc, fullSize, data);
 }
 
 // size of the lattice in x-direction

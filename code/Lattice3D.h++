@@ -40,9 +40,9 @@ public:
     // return raw data: important for parrallelization
     Array<T> &get_raw_data();
     // return raw data id
-    uint get_raw_id(int const &x, int const &y, int const &z) const;
+    uint get_raw_id(int const &x, int const &y, int const &z);
     // return raw data id
-    uint get_raw_id(Index const &index) const;
+    uint get_raw_id(Index const &index);
     // size of the lattice in x-direction
     uint Lx() const;
     // size of the lattice in y-direction
