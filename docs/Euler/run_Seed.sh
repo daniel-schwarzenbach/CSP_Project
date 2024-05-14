@@ -8,4 +8,4 @@ then
 fi
 
 ########### run batch launchscript
-cd output && sbatch ../launch_Seed.sh
+cd output && sbatch ../launch1.sh
