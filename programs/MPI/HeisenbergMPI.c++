@@ -55,8 +55,8 @@ Array2D<flt> adaptive_sim(
         // calculate data
         Step.push_back(step);
         Time.push_back(t_elapsed);
-        Sigma.push_back(get_sigma());
-        R.push_back(get_acceptance_rate());
+        Sigma.push_back(get_sigma_omp());
+        R.push_back(get_acceptance_rate_omp());
         Vector3 magnVec = measure::get_magnetization(lattice);
         M.push_back(magnVec.norm());
         E.push_back(measure::get_energy(lattice));
@@ -64,7 +64,8 @@ Array2D<flt> adaptive_sim(
         measure::Timer timer;
         timer.start();
         // run algorithm
-        adaptive_metropolis(lattice, T, J, _inf_, ns, h, k, 60);
+        metropolis_omp(lattice, T, J, _inf_, ns, h, k, 
+                MoveType::Addaptive);
         timer.stop();
         // update time
         t_elapsed += timer.time();
@@ -225,14 +226,14 @@ else {
         Array2D<flt> data = sim::ns::test_algorithm(lattice,
                         N_met[0][1], 
                         N_met[0][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep,
+                        J, h, k, sim::ns::metropolis_smallStep_omp,
                         loading_bar, 0);
         remove_Mz(data);
         {
         Array2D<flt> dataNew = sim::ns::test_algorithm(lattice,
                         N_met[1][1], 
                         N_met[1][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep,
+                        J, h, k, sim::ns::metropolis_smallStep_omp,
                         loading_bar,
                         data[0][data[0].size()-1],
                         data[3][data[3].size()-1]);
@@ -243,7 +244,7 @@ else {
         Array2D<flt> dataNew = sim::ns::test_algorithm(lattice,
                         N_met[2][1], 
                         N_met[2][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep,
+                        J, h, k, sim::ns::metropolis_smallStep_omp,
                         loading_bar,
                         data[0][data[0].size()-1],
                         data[3][data[3].size()-1]);
