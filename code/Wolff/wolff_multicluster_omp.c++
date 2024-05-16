@@ -23,7 +23,7 @@ inline flt activate_bond(  flt const& J, Spin const& spinX,
 }
 
 
-inline u64 wolf_algorithm_shotgun_omp(Lattice &lattice, 
+inline u64 wolf_algorithm_omp(Lattice &lattice, 
                     flt const& beta, 
                     flt const &J,
                     Array<Spin>& spinArray)
@@ -177,7 +177,7 @@ flt wolff_omp(Lattice &lattice, flt const &T, flt const &J,
 
     for (; nRuns <= MaxSteps; ++nRuns)
     {
-        uint clusterSize = wolf_algorithm_shotgun_omp(lattice, 
+        uint clusterSize = wolf_algorithm_omp(lattice, 
                 beta, J,spinArray);
         clusters.push_back(clusterSize);
         // Check if maximum time has been reached
