@@ -56,7 +56,6 @@ int main(int mainArgCount, char **mainArgs)
         // reset adaptive variables
         restet_adaptive_omp();
         // test the algorithm
-        omp_set_num_threads(6);
         Array2D<flt> metro_omp = sim::ns::test_algorithm(
             lattice, Ns, Nmax, T,
             J, h, k, sim::ns::wolff_omp_);
