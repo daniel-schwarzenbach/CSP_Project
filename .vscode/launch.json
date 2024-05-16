@@ -45,7 +45,7 @@
             "name": "Linux",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Plot_Lattices",
+            "program": "${workspaceFolder}/build/Plot_Speed_Up_Wolff",
             "cwd": "${workspaceFolder}/build",
             "setupCommands": [
                 {

@@ -10,6 +10,7 @@
 #include <Lattice3D.h++>
 
 extern template class Lattice3D<Spin>;
+extern template class Lattice3D<u8>;
 extern template class Lattice3D<bool>;
 
 /*
@@ -47,6 +48,15 @@ Definition of thermodynamic beta
 flt Beta(flt const& T);
 
 /*
+calculate the sum of an array
+
+/ @brief
+/ @param array: vector of Floats
+/ @return sum over all elements: ∑ m[i]
+*/
+flt get_sum(Array<flt> const &array);
+
+/*
 calculate the mean value of a vector
 
 / @brief
@@ -55,6 +65,7 @@ calculate the mean value of a vector
 */
 template <typename Float>
 Float mean(Array<Float> const &array);
+
 /*
 calculate the variance of a vector
 

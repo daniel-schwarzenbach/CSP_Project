@@ -85,7 +85,7 @@ namespace sim
             [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
                flt const &J)
         {
-            wolff(lattice, T, J, dt, _maxU32_, Spin{0, 0, 0});
+            wolff(lattice, T, J, dt, _maxU32_);
         };
 
         /*
@@ -186,7 +186,15 @@ namespace sim
                flt const &J,
                Spin const &h, Spin const &k)
         {
-            wolff(lattice, T, J, _inf_, ns, h);
+            wolff(lattice, T, J, _inf_, ns);
+        };
+
+        static Algorithm wolff_omp_ =
+            [](Lattice3D<Spin> &lattice, flt const &ns, flt const &T,
+               flt const &J,
+               Spin const &h, Spin const &k)
+        {
+            wolff_omp(lattice, T, J, _inf_, ns);
         };
 
         /*

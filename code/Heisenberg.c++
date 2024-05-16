@@ -27,6 +27,23 @@ void omp_set_num_threads(int){}
 
 #endif
 
+
+/*
+calculate the sum of an array
+
+/ @brief
+/ @param array: vector of Floats
+/ @return sum over all elements: ∑ m[i]
+*/
+flt get_sum(Array<flt> const &array){
+    flt sum;
+    uint n = array.size();
+    #pragma omp parallel for collapse(1) reduction(+: sum)
+    for (uint i = 0; i < n; i++)
+        sum += array[i];
+    return sum;
+}
+
 /*
 calculate the mean value of a vector
 
