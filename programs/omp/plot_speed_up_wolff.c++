@@ -16,7 +16,7 @@ const flt Ns = 1e+0;
 // end Time
 const flt Nmax = 1e+3;
 // int Random Lattice Seed
-const int seed = 69;
+const int seed = 42;
 // side Lenth
 const uint L = 32;
 // interaction strenth
@@ -35,8 +35,9 @@ int main(int mainArgCount, char **mainArgs)
     Lattice lattice(L, L, L);
     // temperatures
     Array<flt> Ts =
-        {0.01, 0.05, 0.075, 0.1, 0.2, 0.3, 0.5, 0.55, 0.6, 0.7, 1.0, 1.2,
-         1.3, 1.4, 1.5, 1.7, 2.0, 3.0, 4.0, 5.0, 10, 100};
+        {0.01, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7, 
+        1.0, 1.2,
+        1.3, 1.4, 1.5, 1.7, 2.0, 3.0, 4.0, 5.0, 10, 100};
     Array<flt> speedUps(0);
     speedUps.reserve(Ts.size());
     // loop over every temperature
