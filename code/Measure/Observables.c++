@@ -14,7 +14,7 @@ Vector3 measure::get_magnetization(const Lattice3D<Spin> &lattice)
     f32 N = Lx * Ly * Lz;
     // sum up all values
     f32 sx = 0; f32 sy = 0; f32 sz = 0;
-    #pragma omp parallel for reduction(+:sx, sy, sz)
+    #pragma omp parallel for reduction(+:sx, sy, sz) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -69,7 +69,7 @@ flt measure::get_energy(const Lattice3D<Spin> &lattice,
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
 // sum over all bonds parallel to x-direction
-#pragma omp parallel for reduction(+ : spin_interaction_energy)
+#pragma omp parallel for reduction(+ : spin_interaction_energy) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -83,7 +83,7 @@ flt measure::get_energy(const Lattice3D<Spin> &lattice,
     }
 
 // sum over all bonds parallel to y-direction
-#pragma omp parallel for reduction(+ : spin_interaction_energy)
+#pragma omp parallel for reduction(+ : spin_interaction_energy) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -97,7 +97,7 @@ flt measure::get_energy(const Lattice3D<Spin> &lattice,
     }
 
 // sum over all bonds parallel to z-direction
-#pragma omp parallel for reduction(+ : spin_interaction_energy)
+#pragma omp parallel for reduction(+ : spin_interaction_energy) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -111,7 +111,7 @@ flt measure::get_energy(const Lattice3D<Spin> &lattice,
     }
 
 // sum over spins to calculate the interaction with the magnetic field
-#pragma omp parallel for reduction(+ : mag_interaction_energy)
+#pragma omp parallel for reduction(+ : mag_interaction_energy) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -123,7 +123,7 @@ flt measure::get_energy(const Lattice3D<Spin> &lattice,
         }
     }
 
-#pragma omp parallel for reduction(+ : mag_interaction_energy)
+#pragma omp parallel for reduction(+ : mag_interaction_energy) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -148,7 +148,7 @@ flt measure::get_scalar_average(Lattice3D<Spin> const &lattice,
     uint Lz = lattice.Lz();
     // sum up all scalar products
     flt scalarAverage = 0;
-#pragma omp parallel for reduction(+ : scalarAverage)
+#pragma omp parallel for reduction(+ : scalarAverage) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
@@ -172,7 +172,7 @@ flt measure::get_correlation(Lattice3D<Spin> const &start,
     uint Lz = start.Lz();
     // sum up the correlation between each vetor
     flt correlation = 0;
-#pragma omp parallel for reduction(+ : correlation)
+#pragma omp parallel for reduction(+ : correlation) collapse(3)
     for (int x = 0; x < Lx; x++)
     {
         for (int y = 0; y < Ly; y++)
