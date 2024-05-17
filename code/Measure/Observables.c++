@@ -8,14 +8,12 @@ Vector3 measure::get_magnetization(const Lattice3D<Spin> &lattice)
 
     // Define the magnetization as a vector
     // e. g. magnetization[0] = x-component of the vector M
-    // The return value magnetization is NOT normalized by the total 
-    // no. of spins
     uint Lx = lattice.Lx();
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
-    flt N = Lx * Ly * Lz;
+    f32 N = Lx * Ly * Lz;
     // sum up all values
-    flt sx = 0; flt sy = 0; flt sz = 0;
+    f32 sx = 0; f32 sy = 0; f32 sz = 0;
     #pragma omp parallel for reduction(+:sx, sy, sz)
     for (int x = 0; x < Lx; x++)
     {
@@ -30,7 +28,7 @@ Vector3 measure::get_magnetization(const Lattice3D<Spin> &lattice)
         }
     }
     //  normalize the values and return them
-    return {f32(sx/N), f32(sy/N), f32(sz/N)};
+    return {sx/N, sy/N, sz/N};
 }
 
 flt measure::get_energy(const Lattice3D<Spin> &lattice, 
