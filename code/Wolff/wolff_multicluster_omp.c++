@@ -10,7 +10,7 @@ flt sigma_wolff = 1;
 //Function to flip the spin
 inline void flip_spin(Spin const& randomSpin, Spin& startSpin){
     flt cdot = startSpin | randomSpin;
-    startSpin = startSpin - (2.0 * cdot)*randomSpin;
+    startSpin -= (2.0 * cdot)*randomSpin;
 }
 
 inline flt activate_bond(  flt const& J, Spin const& spinX,
@@ -53,15 +53,17 @@ inline u64 wolf_algorithm_omp(Lattice &lattice,
     // init random number generator for every thread
     std::mt19937 rndmgen(seed + omp_get_thread_num());
 
-    std::uniform_real_distribution<flt> uniform(0.0, 1.0);
-    std::uniform_int_distribution<int> disLx(0, Lx-1);
-    std::uniform_int_distribution<int> disLy(0, Ly-1);
-    std::uniform_int_distribution<int> disLz(0, Lz-1);
+    static std::uniform_real_distribution<flt> uniform(0.0, 1.0);
+    static std::uniform_int_distribution<int> disLx(0, Lx-1);
+    static std::uniform_int_distribution<int> disLy(0, Ly-1);
+    static std::uniform_int_distribution<int> disLz(0, Lz-1);
 
         // Choose random lattice site as first point of cluster
     int sx = disLx(rndmgen);
     int sy = disLy(rndmgen);
     int sz = disLz(rndmgen);
+
+    uint local_cluster_size = 1;
 
     // Define startSpin to be flipped, first point of the cluster
     Spin startSpin;
@@ -147,12 +149,13 @@ inline u64 wolf_algorithm_omp(Lattice &lattice,
                     #pragma omp atomic write
                     u8Array[nid] = true;
 
-                    #pragma omp atomic update
-                    ++clusterSize;
+                    ++local_cluster_size;
                 }
             }
         }
-    }
+    }// end while(!stack.empty())
+    #pragma omp atomic update
+    clusterSize += local_cluster_size;
     } // end parallel
     return clusterSize;
 }

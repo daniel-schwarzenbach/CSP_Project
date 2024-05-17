@@ -87,8 +87,8 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[0], metro[1], "--s");
-            auto p5 = plt::plot(metro_omp[0], metro_omp[1], "--s");
+            auto p2 = plt::plot(metro[4], metro[1], "--s");
+            auto p5 = plt::plot(metro_omp[4], metro_omp[1], "--s");
             plt::hold(false);
             auto l = plt::legend({"Wolff",
                                   "Wolff Omp"});
@@ -107,8 +107,8 @@ int main(int mainArgCount, char **mainArgs)
             auto fig = plt::figure(true);
             fig->size(1000, 1000);
             plt::hold(true);
-            auto p2 = plt::plot(metro[0], metro[3], "--s");
-            auto p5 = plt::plot(metro_omp[0], metro_omp[3], "--s");
+            auto p2 = plt::plot(metro[4], metro[3], "--s");
+            auto p5 = plt::plot(metro_omp[4], metro_omp[3], "--s");
             plt::hold(false);
             auto l = plt::legend({"Wolff",
                                   "Wolff Omp"});
