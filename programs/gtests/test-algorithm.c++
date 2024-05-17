@@ -60,7 +60,7 @@ TEST(Algorithm, test_wolff){
     Lattice lattice = Lattice::random_lattice(4,4,4);
     // test wolff
     wolff(
-            lattice,T,J,_inf_,Steps_wolff,{0,0,0});
+            lattice,T,J,_inf_,Steps_wolff);
     // get magnetization and compare it
     flt mag = measure::get_magnetization(lattice).norm();
     what_is(mag);

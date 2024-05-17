@@ -120,7 +120,9 @@ public:
     // return raw data
     Array<bool> &get_raw_data();
     // return raw data id
-    uint get_raw_id(int const &x, int const &y, int const &z) const;
+    uint get_raw_id(int const &x, int const &y, int const &z);
+    // return raw data id
+    uint get_raw_id(Index const& index);
     // get boundary condition
     BC get_boundary_conditions() const;
     // set value of the BC::Dirichlet

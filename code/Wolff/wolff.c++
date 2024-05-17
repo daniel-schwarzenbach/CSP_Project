@@ -21,24 +21,8 @@ inline bool activate_bond( Spin const& spin_x, Spin const& spin_r,
 }
 
 
-
-void check_neighbor(Lattice3D<Spin>& lattice, Index ind, 
-                    Spin& spin_x, Spin& spin_r, 
-                    Lattice3D<bool>& visited, 
-                    Array<Index>& stack, Array<Index>& cluster, 
-                    flt const& beta, flt const& J){
-    Spin& spin_y = lattice(ind); //Define spin sigma_y
-    //If Bond is activated...
-    if (activate_bond(spin_x, spin_r, beta, spin_y, J)){
-        flip_spin(spin_r, spin_y); //...flip spin
-        stack.push_back(ind); // ...add to stack 
-        cluster.push_back(ind); // ...add to cluster (mark y)
-        visited.set(ind,true); //Mark as visited
-    }
-}
-
 // one step in the wolff_alogrithm
-u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
+inline u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
                     flt const& J){
     // get lattice dimension
     int Lx = lattice.Lx();
@@ -55,43 +39,43 @@ u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
 
     // Define stack for adding and removing lattice sites that are 
     // flipped, continue until it is empty (no new sites were added)
-    Array<Index> stack(0);
+    Stack<Index> stack;
 
     // Define cluster for adding the lattice sites that belong to the 
     // cluster (for computing average lattice size)
-    Array<Index> cluster(0);
+    u64 clusterSize = 0;
 
     // Choose random reflection
-    Spin spin_r = Spin::get_random();
+    Spin randomSpin = Spin::get_random();
 
     // Choose random lattice site as first point of cluster
-    int x = rng::rand_int_range(0,Lx);
-    int y = rng::rand_int_range(0,Ly);
-    int z = rng::rand_int_range(0,Lz);
+    int sx = rng::rand_int_range(0,Lx);
+    int sy = rng::rand_int_range(0,Ly);
+    int sz = rng::rand_int_range(0,Lz);
     
     // Define spin_first to be flipped, first point of the cluster
-    Spin& spin_first = lattice(x,y,z);
+    Spin& startSpin = lattice(sx,sy,sz);
 
     // Flip spin_first and mark Index {x,y,z}
-    flip_spin(spin_r, spin_first);
+    flip_spin(randomSpin, startSpin);
 
     // Add spin_x to stack & cluster, mark site as checked
-    stack.push_back({x,y,z});
-    cluster.push_back({x,y,z});
-    visited.set(x,y,z,true);
+    stack.push({sx,sy,sz});
+    ++clusterSize;
+    visited.set(sx,sy,sz,true);
     // Iterate over nearest neighbors until stack is empty, i.e. no 
     // newly adjoined sites
     while(!stack.empty()){
         
-        Index current = stack.back();
-        stack.pop_back();
+        Index current = stack.top();
+        stack.pop();
 
         //Get current lattice position
         int cx = current[0];
         int cy = current[1];
         int cz = current[2];
 
-        Spin& spin_x = lattice(cx,cy,cz);
+        Spin& currentSpin = lattice(current);
 
         //Visit neighboring sites
         Array<Index> neighbors = {
@@ -102,16 +86,17 @@ u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
         for (Index neighbor : neighbors){
             // if it hasen't been visited
             if(!visited.get(neighbor)){ 
-                check_neighbor( lattice, neighbor, spin_x, spin_r, 
-                                visited, stack, cluster, beta, J); 
+                Spin& neighborSpin = lattice(neighbor); //Define spin sigma_y
+                //If Bond is activated...
+                if (activate_bond(currentSpin, randomSpin, beta, 
+                        neighborSpin, J)){
+                    flip_spin(randomSpin, neighborSpin); //...flip spin
+                    stack.push(neighbor); // ...add to stack 
+                    ++clusterSize; // ...add to cluster (mark y)
+                    visited.set(neighbor,true); //Mark as visited
+                }
             }
         }
-    }
-    //Compute cluster size
-    size_t clusterSize = cluster.size();
-
-    if (clusterSize == 0){
-        return -1;
     }
 
     return clusterSize;
@@ -120,19 +105,18 @@ u64 wolff_algorithm(Lattice3D<Spin>& lattice, flt const& beta,
 // function that calls the wolff_algorithm as requested and calculates
 // average cluster size
 flt wolff(Lattice3D<Spin> &lattice, flt const& T, flt const& J, 
-          flt const& MaxTime, u64 const& MaxSteps, 
-          Spin const& h){
+          flt const& MaxTime, u64 const& MaxSteps){
 
     flt beta = Beta(T);
     measure::Timer watch;
 
-    Array<u64> clusters(0);
+    Array<flt> clusters(0);
     u64 nRuns = 0;
 
     // Run MaxSteps wolff steps or until the maximal time has been 
     // reached
     for (; nRuns < MaxSteps; ++nRuns){
-        u64 clusterSize = wolff_algorithm(lattice, beta, J);
+        flt clusterSize = wolff_algorithm(lattice, beta, J);
 
         clusters.push_back(clusterSize);
 
@@ -142,15 +126,6 @@ flt wolff(Lattice3D<Spin> &lattice, flt const& T, flt const& J,
             break; // Stop simulation if maximum time reached
         }
     }
-
-    // Compute total cluster size
-    u64 totalClusterSize = 0;
-    for (int size : clusters) {
-        totalClusterSize += size;
-    }
-    
-    // Compute mean cluster size and return it
-    flt averageClusterSize = flt(totalClusterSize)/flt(nRuns);
-    return averageClusterSize;
+    return mean(clusters);
 }
 

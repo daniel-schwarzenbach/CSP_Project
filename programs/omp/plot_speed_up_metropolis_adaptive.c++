@@ -30,7 +30,7 @@ int main(int mainArgCount, char **mainArgs)
 {
     // make folders
     data::make_folder("plots_adapt");
-    data::make_folder("data");
+    data::make_folder("data_adapt");
     // init lattice
     Lattice lattice(L, L, L);
     // temperatures

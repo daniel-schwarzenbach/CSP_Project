@@ -115,6 +115,11 @@ using List = std::list<T, std::allocator<T>>;
 template <typename T, Adress I>
 using StaticArray = std::array<T, I>;
 
+#include <stack>
+// stack
+template<typename T>
+using Stack = std::stack<T>;
+
 // ========================== Constants ==============================
 
 // π

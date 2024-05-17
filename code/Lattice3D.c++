@@ -338,9 +338,17 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
 
 // return raw data id
 uint Lattice3D<bool>::get_raw_id(int const &x, int const &y,
-                                 int const &z) const
+                                 int const &z)
 {
-    return get_id(x, y, z, Lx_, Ly_, Lz_, bc, fullSize);
+    return get_id_ref<bool>(x, y, z, Lx_, Ly_, Lz_, bc, fullSize, 
+            data);
+}
+
+// return raw data id
+uint Lattice3D<bool>::get_raw_id(Index const& id)
+{
+    return get_id_ref<bool>(id[0], id[1], id[2], Lx_, Ly_, Lz_, bc, fullSize, 
+            data);
 }
 
 // return raw data
@@ -477,4 +485,5 @@ Lattice3D<bool> Lattice3D<bool>::random_lattice(uint Lx, uint Ly,
 
 // ====================== compile lattices ===========================
 template class Lattice3D<Spin>;
+template class Lattice3D<u8>;
 template class Lattice3D<bool>;
