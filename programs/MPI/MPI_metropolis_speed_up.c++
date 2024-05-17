@@ -137,10 +137,10 @@ int main(int argc, char* argv[])
         // run algorithm
         Array2D<flt> data = 
                 sim::ns::test_algorithm(lattice, Ns_met, Nmax_met, T,
-                        J, h, k, sim::ns::metropolis_smallStep, 
+                        J, h, k, sim::ns::metropolis_smallStep_omp, 
                         loading_bar);
         // store collected data
-        data::store_data(data,metropolisFile+to_string(rank));
+        data::store_data(data,metropolisFile_omp+to_string(rank));
         cout << "finished metropolis in: " 
              << watch.time() << endl << endl;
     }
