@@ -123,3 +123,65 @@ Array2D<flt> sim::ns::test_algorithm(
     Time.push_back(t_elapsed);
     return {Step, M, M_z, E, Time};
 }
+
+// cut test_algorithm data to fit to a certain time
+Array2D<flt> sim::ns::cut_data_after_time(
+        Array2D<flt> const& data, flt const& time)
+{
+    uint cols = data.size();
+    if (cols < 5){
+        throw std::runtime_error("data has less than 4 cols");  
+    }
+    u64 rows = data[0].size();
+    for(Array<flt> d : data){
+        if (d.size() != rows){
+            throw std::runtime_error("data has not the same rows");
+        }
+    }
+    flt t = 0;
+    u64 i = 0;
+    while (i < rows && t < time){
+        t = data[4][i];
+        ++i;
+    }
+    --i;
+    Array2D<flt> newData(cols);
+    for(uint col = 0; col < cols; ++col){
+        newData[col] = sub_range(0,i, data[col]);
+    }
+    return newData;
+}
+
+void sim::ns::fit_datas_after_time(Array2D<flt>& data1,
+                                   Array2D<flt>& data2){
+    // check for correct sized data!
+    uint cols1 = data1.size();
+    if (cols1 < 5){
+        throw std::runtime_error("data has less than 4 cols");  
+    }
+    u64 rows1 = data1[0].size();
+    for(Array<flt> d : data1){
+        if (d.size() != rows1){
+            throw std::runtime_error("data has not the same rows");
+        }
+    }
+    uint cols2 = data2.size();
+    if (cols2 < 5){
+        throw std::runtime_error("data has less than 4 cols");  
+    }
+    u64 rows2 = data2[0].size();
+    for(Array<flt> d : data1){
+        if (d.size() != rows2){
+            throw std::runtime_error("data has not the same rows");
+        }
+    }
+    // check witch data has the shorter time span
+    flt t1 = data1[4][rows1-1];
+    flt t2 = data2[4][rows2-1];
+    if(t1 < t2){
+        data2 = sim::ns::cut_data_after_time(data2, t1);
+    } 
+    else if (t2 < t1){
+        data1 = sim::ns::cut_data_after_time(data1, t2);
+    }
+}

@@ -6,6 +6,7 @@
 */
 
 #include <Base.h++>
+#include <Array.h++>
 #include <Spin.h++>
 #include <Lattice3D.h++>
 
@@ -48,81 +49,10 @@ Definition of thermodynamic beta
 flt Beta(flt const& T);
 
 /*
-calculate the sum of an array
-
-/ @brief
-/ @param array: vector of Floats
-/ @return sum over all elements: ∑ m[i]
-*/
-flt get_sum(Array<flt> const &array);
-
-/*
-calculate the mean value of a vector
-
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-Float mean(Array<Float> const &array);
-
-/*
-calculate the variance of a vector
-
-/ @brief
-/ @param array: vector of Floats
-/ @return mean value of the vector: m = 1/m.size() * ∑ m[i]
-*/
-template <typename Float>
-Float variance(Array<Float> const &array);
-
-/*
-converts t -> u : important for generic convert_array
-
-/ @brief
-/ @param t: to convert from
-/ @param u: to convert to
-*/
-template <typename T, typename U>
-void convert_types(T const& t, U& u){
-    u = t;
-}
-
-
-template <typename T, typename U>
-Array<U> convert_array(Array<T> const &array){
-    Adress size = array.size();
-    Array<U> out(size);
-    for (Adress i = 0; i < size; ++i){
-        convert_types(array[i], out[i]);
-    }
-    return out;
-}
-
-/*
-Push back array
-*/
-Array<flt>& push_back(Array<flt>& array, 
-                        Array<flt> const& to_push_back);
-
-/*
-Pushes back each array sub array
-*/
-Array2D<flt>& push_back(Array2D<flt>& array, 
-                        Array2D<flt> const& to_push_back);
-
-/*
 - alternative to to_string
 - only gives digits without zeros after the comma
 1.200000 -> 1.2
 */
 string to_str(flt const &value);
-
-
-// template defitions
-extern template f32 mean<f32>(Array<f32> const &);
-extern template f64 mean<f64>(Array<f64> const &);
-extern template f32 variance<f32>(Array<f32> const &);
-extern template f64 variance<f64>(Array<f64> const &);
 
 #endif // __HEISENBERG_H__

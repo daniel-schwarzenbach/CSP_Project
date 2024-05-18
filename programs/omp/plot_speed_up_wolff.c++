@@ -14,11 +14,11 @@ namespace plt = matplot;
 
 const flt Ns = 1e+0;
 // end Time
-const flt Nmax = 1e+3;
+const flt Nmax = 5e+3;
 // int Random Lattice Seed
-const int seed = 42;
+const int seed = 16;
 // side Lenth
-const uint L = 32;
+const uint L = 16;
 // interaction strenth
 const flt J = 1.0;
 // no magnetic field
@@ -26,7 +26,7 @@ const Spin h = {0, 0, 0};
 // no anisotropy
 const Spin k = {0, 0, 0};
 
-int main(int mainArgCount, char **mainArgs)
+int main(int argc, char **argv)
 {
     // make folders
     data::make_folder("plots_wolff");
@@ -34,10 +34,34 @@ int main(int mainArgCount, char **mainArgs)
     // init lattice
     Lattice lattice(L, L, L);
     // temperatures
-    Array<flt> Ts =
-        {0.01, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7, 
-        1.0, 1.2,
-        1.3, 1.4, 1.5, 1.7, 2.0, 3.0, 4.0, 5.0, 10, 100};
+    Array<flt> Ts(argc-1, 0);
+    if (argc > 1)
+    {
+        try
+        {
+            for(uint i = 0; i< argc-1;++i){
+                Ts[i] = data::read_flt(argv[i+1]);
+            }
+        }
+        catch (const std::invalid_argument &e)
+        {
+            cerr << ERROR
+                 << "Invalid argument: please enter a valid "
+                 << "floating-point number." << endl;
+        }
+        catch (const std::out_of_range &e)
+        {
+            cerr << ERROR << "Out of range: the number is too large."
+                 << endl;
+            return 0;
+        }
+    }
+    else
+    {
+        cerr << ERROR << "no Arguments given";
+        return 0;
+    }
+    what_is(Ts);
     Array<flt> speedUps(0);
     speedUps.reserve(Ts.size());
     // loop over every temperature
@@ -81,6 +105,35 @@ int main(int mainArgCount, char **mainArgs)
 
         //              --- plot data
 
+                // plot number of steps
+        cout << "plot number of steps" << endl;
+        {
+            auto fig = plt::figure(true);
+            fig->size(1000, 1000);
+            plt::hold(true);
+            auto p2 = plt::plot(metro[4], metro[0], "--s");
+            auto p5 = plt::plot(metro_omp[4], metro_omp[0], "--s");
+            plt::hold(false);
+            auto l = plt::legend({"Wolff",
+                                  "Wolff Omp"});
+
+            l->location(plt::legend::general_alignment::topright);
+            plt::xlabel("Time in s");
+            plt::ylabel("Number of Steps");
+            plt::title("T = " + to_str(T) + ", L = " + to_string(L));
+            plt::save("plots_wolff/number_of_steps/" + to_str(T) + ".png");
+            plt::cla();
+        }
+        // calculate and cout the parallel speed-up
+        flt Speed_up = metro[4][metro[4].size() - 1] /
+                       metro_omp[4][metro_omp[4].size() - 1];
+        what_is(Speed_up);
+        speedUps.push_back(Speed_up);
+        cout << endl;
+
+        // cut data to the relevant path
+        sim::ns::fit_datas_after_time(metro_omp, metro);
+
         // plot magnitisation
         cout << "plot magnitistion" << endl;
         {
@@ -94,7 +147,7 @@ int main(int mainArgCount, char **mainArgs)
                                   "Wolff Omp"});
 
             l->location(plt::legend::general_alignment::bottomright);
-            plt::xlabel("Number of Steps");
+            plt::xlabel("Time in s");
             plt::ylabel("Magnetization");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots_wolff/magnet/T_" + to_str(T) + ".png");
@@ -114,39 +167,13 @@ int main(int mainArgCount, char **mainArgs)
                                   "Wolff Omp"});
 
             l->location(plt::legend::general_alignment::topright);
-            plt::xlabel("Number of Steps");
+            plt::xlabel("Time in s");
             plt::ylabel("Energy");
             plt::title("T = " + to_str(T) + ", L = " + to_string(L));
             plt::save("plots_wolff/energy/T_" + to_str(T) + ".png");
             plt::cla();
         }
 
-        // plot number of steps
-        cout << "plot number of steps" << endl;
-        {
-            auto fig = plt::figure(true);
-            fig->size(1000, 1000);
-            plt::hold(true);
-            auto p2 = plt::plot(metro[4], metro[0], "--s");
-            auto p5 = plt::plot(metro_omp[4], metro_omp[0], "--s");
-            plt::hold(false);
-            auto l = plt::legend({"Wolff",
-                                  "Wolff Omp"});
-
-            l->location(plt::legend::general_alignment::topright);
-            plt::xlabel("Time in s");
-            plt::ylabel("Number of Steps");
-            plt::title("T = " + to_str(T) + ", L = " + to_string(L));
-            plt::save("plots_wolff/number_of_steps/" + to_str(T) + ".png");
-            plt::cla();
-        }
-
-        // calculate and cout the parallel speed-up
-        flt Speed_up = metro[4][metro[4].size() - 1] /
-                       metro_omp[4][metro_omp[4].size() - 1];
-        what_is(Speed_up);
-        speedUps.push_back(Speed_up);
-        cout << endl;
     }
     what_is(mean(speedUps));
     what_is(variance(speedUps));
