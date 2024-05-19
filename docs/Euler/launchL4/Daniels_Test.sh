@@ -1,66 +1,65 @@
 #!/bin/bash
 
-#SBATCH --nodes=27
-#SBATCH --ntasks=27
-#SBATCH --array=1-54%21     #Array with 54 Jobs, always 27 running in parallel
+#SBATCH --nodes=3
+#SBATCH --ntasks=3
+#SBATCH --array=1-54%27     #Array with 54 Jobs, always 27 running in parallel
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=2500
 #SBATCH --error=error.txt
 #SBATCH --output=output.txt
 #SBATCH --time=48:00:00
 
-
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 0.01
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 0.1
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 0.3
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 0.75
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.0
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.1
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.2
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.3
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.31
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.32
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.33
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.34
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.35
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.36
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.37
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.38
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.39
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.40
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.41
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.42
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.43
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.44
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.45
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.46
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.47
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.48
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.49
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.50
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.51
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.52
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.53
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.54
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.55
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.56
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.57
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.58
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.59
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.60
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.61
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.62
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.63
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.64
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.65
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.66
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.67
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.68
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.69
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.70
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.8
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 1.9
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 2.0
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 3.0
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 5.0
-mpirun -bind-to core -map-by core -n 1 .././programs/Lattice4MPI 10.0
+srun .././programs/HeisenbergMPI 0.01 $1
+srun .././programs/HeisenbergMPI 0.1 $1
+srun .././programs/HeisenbergMPI 0.3 $1
+srun .././programs/HeisenbergMPI 0.75 $1
+srun .././programs/HeisenbergMPI 1.0 $1
+srun .././programs/HeisenbergMPI 1.1 $1
+srun .././programs/HeisenbergMPI 1.2 $1
+srun .././programs/HeisenbergMPI 1.3 $1
+srun .././programs/HeisenbergMPI 1.31 $1
+srun .././programs/HeisenbergMPI 1.32 $1
+srun .././programs/HeisenbergMPI 1.33 $1
+srun .././programs/HeisenbergMPI 1.34 $1
+srun .././programs/HeisenbergMPI 1.35 $1
+srun .././programs/HeisenbergMPI 1.36 $1
+srun .././programs/HeisenbergMPI 1.37 $1
+srun .././programs/HeisenbergMPI 1.38 $1
+srun .././programs/HeisenbergMPI 1.39 $1
+srun .././programs/HeisenbergMPI 1.40 $1
+srun .././programs/HeisenbergMPI 1.41 $1
+srun .././programs/HeisenbergMPI 1.42 $1
+srun .././programs/HeisenbergMPI 1.43 $1
+srun .././programs/HeisenbergMPI 1.44 $1
+srun .././programs/HeisenbergMPI 1.45 $1
+srun .././programs/HeisenbergMPI 1.46 $1
+srun .././programs/HeisenbergMPI 1.47 $1
+srun .././programs/HeisenbergMPI 1.48 $1
+srun .././programs/HeisenbergMPI 1.49 $1
+srun .././programs/HeisenbergMPI 1.50 $1
+srun .././programs/HeisenbergMPI 1.51 $1
+srun .././programs/HeisenbergMPI 1.52 $1
+srun .././programs/HeisenbergMPI 1.53 $1
+srun .././programs/HeisenbergMPI 1.54 $1
+srun .././programs/HeisenbergMPI 1.55 $1
+srun .././programs/HeisenbergMPI 1.56 $1
+srun .././programs/HeisenbergMPI 1.57 $1
+srun .././programs/HeisenbergMPI 1.58 $1
+srun .././programs/HeisenbergMPI 1.59 $1
+srun .././programs/HeisenbergMPI 1.60 $1
+srun .././programs/HeisenbergMPI 1.61 $1
+srun .././programs/HeisenbergMPI 1.62 $1
+srun .././programs/HeisenbergMPI 1.63 $1
+srun .././programs/HeisenbergMPI 1.64 $1
+srun .././programs/HeisenbergMPI 1.65 $1
+srun .././programs/HeisenbergMPI 1.66 $1
+srun .././programs/HeisenbergMPI 1.67 $1
+srun .././programs/HeisenbergMPI 1.68 $1
+srun .././programs/HeisenbergMPI 1.69 $1
+srun .././programs/HeisenbergMPI 1.70 $1
+srun .././programs/HeisenbergMPI 1.8 $1
+srun .././programs/HeisenbergMPI 1.9 $1
+srun .././programs/HeisenbergMPI 2.0 $1
+srun .././programs/HeisenbergMPI 3.0 $1
+srun .././programs/HeisenbergMPI 5.0 $1
+srun .././programs/HeisenbergMPI 10.0 $1
