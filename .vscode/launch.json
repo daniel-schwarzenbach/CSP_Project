@@ -10,11 +10,11 @@
             "name": "Linux-MPI",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/MPI_Speed_Up",
+            "program": "${workspaceFolder}/build/HeisenbergMPI",
             "cwd": "${workspaceFolder}/build",
             "args": [
                 "0.1",
-                "3.0"
+                "32"
             ]
         },
         {

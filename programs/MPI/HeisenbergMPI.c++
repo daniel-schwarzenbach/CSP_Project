@@ -97,12 +97,7 @@ flt constexpr J = 1.0;
 const Spin h = Spin{0.0, 0.0, 0.0};
 // anisotropy
 const Spin k = Spin{0.0, 0.0, 0.0};
-// lattice dimesions
-constexpr uint L = 8;
-constexpr uint Lx = L;
-constexpr uint Ly = L;
-constexpr uint Lz = L;
-constexpr Index Ls = {Lx, Ly, Lz};
+
 // temperature data
 constexpr flt T_critical = 1.45;
 constexpr flt T_low = 1.3;
@@ -131,12 +126,16 @@ int main(int argc, char *argv[])
 
     // read input
     flt T = -1;
+    // lattice Size
+    uint L = 8;
     if (argc > 1)
     {
         try
         {
             // Convert the first argument to a float
             T = data::read_flt(argv[1]);
+            if(argc > 2)
+                L = data::read_int(argv[2]);
         }
         catch (const std::invalid_argument &e)
         {
@@ -156,6 +155,12 @@ int main(int argc, char *argv[])
         cerr << ERROR << "to few arguments";
         return 0;
     }
+    what_is(L);
+    what_is(T);
+    // lattice dimesions
+    const uint Lx = L;
+    const uint Ly = L;
+    const uint Lz = L;
 
     // activate Loading bar fore a single core
     bool loading_bar = false;

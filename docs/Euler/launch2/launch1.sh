@@ -8,8 +8,8 @@
 #SBATCH --output=output.txt
 #SBATCH --time=36:00:00
 
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.42
-mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.44
+mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.42 32
+mpirun -bind-to core -map-by core -n 12 .././programs/HeisenbergMPI 1.44 32
 
 
 
