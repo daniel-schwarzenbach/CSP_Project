@@ -1,4 +1,5 @@
 #include <Lattice3D.h++>
+#define WITHOUT_POW2
 
 // A function that finds out if a uint is a power of 2 and if it isn't
 // returns the next lower power of two
@@ -70,9 +71,15 @@ inline uint get_id(int const &x, int const &y, int const &z,
     default:
         // way more effitient modolo, 
         // but requires that Lx,Ly,Lz are powers of 2
+        #ifndef WITHOUT_POW2
         uint x_ = x & (Lx - 1);
         uint y_ = y & (Ly - 1);
         uint z_ = z & (Lz - 1);
+        #else
+        uint x_ = modulo(x,Lx);
+        uint y_ = modulo(y,Ly);
+        uint z_ = modulo(z,Lz);
+        #endif
         return x_ * Ly * Lz + y_ * Lz + z_;
     }
 }
@@ -115,9 +122,15 @@ inline uint get_id_ref(int const &x, int const &y, int const &z,
     default:
         // way more effitient modolo, 
         // but requires that Lx,Ly,Lz are powers of 2
+        #ifndef WITHOUT_POW2
         uint x_ = x & (Lx - 1);
         uint y_ = y & (Ly - 1);
         uint z_ = z & (Lz - 1);
+        #else
+        uint x_ = modulo(x,Lx);
+        uint y_ = modulo(y,Ly);
+        uint z_ = modulo(z,Lz);
+        #endif
         return x_ * Ly * Lz + y_ * Lz + z_;
     }
 }
@@ -209,6 +222,7 @@ Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
       data(0), fullSize(0)
 {
     // ensure that the dimensions{Lx,Ly,Lz} are all powers of 2
+    #ifndef WITHOUT_POW2
     Lx_ = power_of_2_or_lower(Lx);
     Ly_ = power_of_2_or_lower(Ly);
     Lz_ = power_of_2_or_lower(Lz);
@@ -217,6 +231,7 @@ Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
         cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
+    #endif
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_;
     // ensure that the data has the correct size
@@ -317,6 +332,7 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
     : Lx_(0), Ly_(0), Lz_(0),
       data(0), fullSize(0)
 {
+    #ifndef WITHOUT_POW2
     // ensure that the dimensions{Lx,Ly,Lz} are all powers of 2
     Lx_ = power_of_2_or_lower(Lx);
     Ly_ = power_of_2_or_lower(Ly);
@@ -326,6 +342,7 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
         cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
+    #endif
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_; // +1 is the dirichlet boundry element
     data.resize(fullSize + 2);
