@@ -164,10 +164,10 @@ int main(int argc, char *argv[])
 
     // activate Loading bar fore a single core
     bool loading_bar = false;
-    if (size == 1)
-    {
-        loading_bar = true;
-    }
+    // if (size == 1)
+    // {
+    //     loading_bar = true;
+    // }
 
     //      --- set Filenames
     string foldername = "T_" + to_string(uint(T * 1000)) + "e-3";

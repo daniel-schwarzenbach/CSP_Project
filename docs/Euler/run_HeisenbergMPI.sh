@@ -8,4 +8,4 @@ then
 fi
 
 ########### run batch launchscript
-cd output && sbatch ../launchL4/Daniels_Test.sh $1
+cd output && sbatch ../launch_Heisenberg.sh $1
