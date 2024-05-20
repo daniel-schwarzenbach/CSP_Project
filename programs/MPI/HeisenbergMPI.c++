@@ -4,10 +4,7 @@
 */
 
 
-#define WITHOUT_POW2 // for every lattice size
-
 #include <Simulations/Simulation.h++>
-#include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
 #include <ctime>

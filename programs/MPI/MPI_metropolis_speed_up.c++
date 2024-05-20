@@ -4,7 +4,6 @@ MPI. It takes a temperature as floating point and wites out multiple
 data files
 */
 #include <Simulations/Simulation.h++>
-#include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
 #include <ctime>

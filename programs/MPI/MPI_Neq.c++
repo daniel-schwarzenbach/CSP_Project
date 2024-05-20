@@ -4,7 +4,6 @@ an lattice as an input at: ../input/T_<T*1'000>e-3/Lattice_<rank>
 and a temperature must be given to the program
 */
 #include <Simulations/Simulation.h++>
-#include <Data/MPI_Helper.h++>
 #include <Data/DataHandler.h++>
 #include <mpi.h>
 #include <ctime> // for time()

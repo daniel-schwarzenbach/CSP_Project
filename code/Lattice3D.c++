@@ -1,5 +1,4 @@
 #include <Lattice3D.h++>
-#define WITHOUT_POW2
 
 // A function that finds out if a uint is a power of 2 and if it isn't
 // returns the next lower power of two

@@ -44,6 +44,7 @@ endif()
 ###################################### MPI 
 option(MPI "Use MPI" OFF)
 if(MPI)
+    add_definitions(-DWITHOUT_POW2)
     message(STATUS "MPI option is set to ${MPI}")
     set(CMAKE_CXX_COMPILER mpic++)
 
