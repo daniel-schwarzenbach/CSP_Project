@@ -253,7 +253,7 @@ else {
         Array2D<flt> dataNew = sim::ns::test_algorithm(lattice,
                         N_met[1][1], 
                         N_met[1][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep_omp,
+                        J, h, k, sim::ns::metropolis_smallStep,
                         loading_bar,
                         data[0][data[0].size()-1],
                         data[3][data[3].size()-1]);
