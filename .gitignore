@@ -1,5 +1,5 @@
 build
-libraries/Ippl/build
+libraries/ippl
 docs/Euler/output
 docs/Euler/input
 .DS_Store
