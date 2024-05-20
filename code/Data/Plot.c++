@@ -165,9 +165,10 @@ bool data::plot_lattice(Lattice3D<Spin> &lattice,
     uint Ly = lattice.Ly();
     uint Lz = lattice.Lz();
     // define limits
-    plt::xrange({-1.0,flt(Lx)});
-    plt::yrange({-1.0,flt(Ly)});
-    plt::zlim({-1.0,flt(Lz)});
+    uint maxL = max(max(Lx,Lz),Ly);
+    plt::xrange({-1.0,flt(maxL)});
+    plt::yrange({-1.0,flt(maxL)});
+    plt::zlim({-1.0,flt(maxL)});
     // set clolr
     plt::colormap(heat);
     plt::colorbar(true);

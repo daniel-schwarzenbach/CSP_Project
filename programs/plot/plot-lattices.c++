@@ -25,11 +25,11 @@ const uint L = 8;
 // interaction strenth
 const flt J = 1.0;
 // plot after 50 steps
-const u64 Ns = 100;
+const u64 Ns = 4'000;
 // final number of steps
-const u64 Nmax = 10'000;
+const u64 Nmax = 400'000;
 // external Magnetic field
-const Spin h = {0,0,0};
+const Spin h = {0,0,0.01};
 // anisotropy Vector
 const Spin k = {0,0,0};
 
@@ -38,15 +38,17 @@ int main(int mainArgCount, char **mainArgs)
     
     
     // init lattice
-    Lattice3D<Spin> lattice(L, L, L);
-    lattice.set_constant({0,0,-1});
+    Lattice3D<Spin> lattice(4,4,16);
+    lattice.set_boundary_conditions(BC::Dirichlet);
+    lattice.set_zero_element(Spin{0,0,1});
     
     // start 
     Array<flt> Ts = {0.1, 1.5, 5.0};
     for(flt T : Ts){
         uint it = 0; // to name files
         // start with a constant lattice
-        lattice.set_constant({0,0,1});
+        //lattice.set_constant({0,0,1});
+        lattice.randomize();
         // make folder to store the plots
         string folder = "plot" + to_string(uint(T*10));
         data::make_folder(folder);
@@ -69,8 +71,8 @@ int main(int mainArgCount, char **mainArgs)
             // updade the loading bar
             lbar.update((i * 100.0) / Nmax);
             // do Ns steps
-            metropolis(lattice,T,J,_inf_,Ns,h,k,
-                    MoveType::Random);
+            metropolis_omp(lattice,T,J,_inf_,Ns,h,k,
+                    MoveType::Addaptive);
             // set 1 -> "001"
             std::ostringstream oss;
             oss << std::setw(3) << std::setfill('0') << it;

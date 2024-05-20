@@ -43,7 +43,6 @@ The different folders contain the following:
 
 - Data / : for evaluating, storing, loading data
     - DataHandler.h++: store and load data
-    - MPI_Helper.h++: slices up data for each core
     - Plot.h++: includes plotting functions for the lattice
 - Measure: contains various measure functions
     - Timer.h++: defines a simple and easy to use stopwatch
@@ -62,6 +61,7 @@ The different folders contain the following:
 - Lattice.h++: defines 3D lattice class of the Heisenberg model 
 - RNG.h++: standardized random number generator used in the whole repository
 - Spin.h++: defines our spins and the member functions
+- Array.h++: includes various function for Array aka. std::vector
 
 #### buildscripts
 
@@ -82,6 +82,45 @@ contains various programs for the Heisenberg3D modell
 #### .vscode
 
 contains files for working in VS-Code
+
+## Lattice3D
+
+The Lattice3D is a 3D-Array container class capable of handling 
+different lattice Sizes and periodic- and dirichlet- boundary 
+conditions. For optimization purposes Lattice-Side Lengths should be 
+powers of 2. If you would wish like to change that, ad the flag or
+definition: `-DWITHOUT_POW2`.
+
+```cpp
+// define the dimensions of the lattice
+uint Lx = 4; uint Ly = 4; uint Lz = 32;
+// initialize the lattice
+Lattice3D<Spin> lattice(Lx ,Ly ,Lz);
+// set dirichle/constant boundatry, default is Periodic
+lattice.set_boundary_conditions(BC::Dirichlet);
+// set the dirichlet boundary to {0,0,1}, default is {0,0,0}
+lattice.set_zero_element(Spin{0,0,1});
+// get a element at x,y,z
+Spin s = lattice(x,y,z);
+// set element at x,y,z
+lattice(x,y,z) = s;
+```
+
+The Lattice3D class also includes a Specialized boolen-version.
+
+```cpp
+// initializet the boolean lattice
+Lattice3D<bool> latticeBool(4,4,4);
+// get a element at x,y,z
+bool value = latticeBoll.get(x,y,z); 
+// set element at x,y,z
+latticeBoll.set(x,y,z,value);
+```
+
+Every picture is 10'000 adaptive steps with metropolis algorithm at temperature $T = 0.1$ and an external magnetic field of $h = [0,0,0.1]$ a Lattice of size {4,4,16} with dirichlet boundary Conditions, with zero(`{0,0,0}`) at the boundary. 1'000'000 steps in total.
+
+![metropolis algorithm](./docs/plots/dirichlet.gif)
+
 
 # Algorithms
 
