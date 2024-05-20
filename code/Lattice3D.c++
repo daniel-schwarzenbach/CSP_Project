@@ -230,7 +230,12 @@ Lattice3D<T>::Lattice3D(uint Lx, uint Ly, uint Lz)
         cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
+    #else
+    Lx_ = Lx;
+    Ly_ = Ly;
+    Lz_ = Lz;
     #endif
+
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_;
     // ensure that the data has the correct size
@@ -341,6 +346,10 @@ Lattice3D<bool>::Lattice3D(uint Lx, uint Ly, uint Lz)
         cout << WARNING << " lattice has been set to 2ˣ :"
              << "{" << Lx_ << "," << Ly_ << "," << Lz_ << "}" << endl;
     }
+    #else
+    Lx_ = Lx;
+    Ly_ = Ly;
+    Lz_ = Lz;
     #endif
     // callculate the full size
     fullSize = Lx_ * Ly_ * Lz_; // +1 is the dirichlet boundry element
