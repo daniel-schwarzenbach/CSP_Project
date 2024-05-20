@@ -26,6 +26,8 @@ const Spin k = {0, 0, 0};
 
 int main(int argc, char **argv)
 {
+    // set the threads to 12 to avoid wait times
+    omp_set_num_threads(12);
     // make folders
     data::make_folder("plots_wolff");
     // temperatures
@@ -73,8 +75,9 @@ int main(int argc, char **argv)
 
             
             // cut data to the relevant path
-            sim::ns::fit_datas_after_time(metro_omp, metro);
-                        // plot magnitisation
+            //sim::ns::fit_datas_after_time(metro_omp, metro);
+
+            // plot magnitisation
             cout << "plot magnitistion" << endl;
             {
                 auto fig = plt::figure(true);
