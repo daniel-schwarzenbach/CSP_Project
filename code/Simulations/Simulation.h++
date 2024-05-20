@@ -206,7 +206,7 @@ namespace sim
         @param T: temperature
         @param J: interaction Strenth
         @return Array2D<flt>:
-        {time, magnetization, M_z, energy} with same size
+        {ns, magnetization, M_z, energy, Time} with same size
 
         */
         Array2D<flt> test_algorithm(
@@ -219,6 +219,16 @@ namespace sim
             u64 const& startStep = 0, 
             flt const& startTime = 0.0);
 
+
+        // cut test_algorithm data to fit to a certain time
+        Array2D<flt> cut_data_after_time(Array2D<flt> const& array2d,
+                                        flt const& time);
+
+        void fit_datas_after_time(  Array2D<flt>& data1,
+                                    Array2D<flt>& data2);
+
     }
+
+    
 }
 #endif // __ALGORITHM_H__

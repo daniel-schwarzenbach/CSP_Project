@@ -34,9 +34,33 @@ int main(int mainArgCount, char **mainArgs)
     // init lattice
     Lattice lattice(L, L, L);
     // temperatures
-    Array<flt> Ts =
-        {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4, 1.5, 1.7, 2.0,
-         3.0, 4.0, 5.0, 10, 100};
+        Array<flt> Ts(mainArgCount-1, 0);
+    if (mainArgCount > 1)
+    {
+        try
+        {
+            for(uint i = 0; i< mainArgCount-1;++i){
+                Ts[i] = data::read_flt(mainArgs[i+1]);
+            }
+        }
+        catch (const std::invalid_argument &e)
+        {
+            cerr << ERROR
+                 << "Invalid argument: please enter a valid "
+                 << "floating-point number." << endl;
+        }
+        catch (const std::out_of_range &e)
+        {
+            cerr << ERROR << "Out of range: the number is too large."
+                 << endl;
+            return 0;
+        }
+    }
+    else
+    {
+        cerr << ERROR << "no Arguments given";
+        return 0;
+    }
     Array<flt> speedUps(0);
     speedUps.reserve(Ts.size());
     // loop over every temperature
