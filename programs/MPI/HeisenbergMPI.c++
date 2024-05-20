@@ -62,8 +62,7 @@ Array2D<flt> adaptive_sim(
         measure::Timer timer;
         timer.start();
         // run algorithm
-        metropolis_omp(lattice, T, J, _inf_, ns, h, k, 
-                MoveType::Addaptive);
+        adaptive_metropolis(lattice, T, J, _inf_, ns, h, k);
         timer.stop();
         // update time
         t_elapsed += timer.time();
@@ -155,6 +154,10 @@ int main(int argc, char *argv[])
     }
     what_is(L);
     what_is(T);
+    u64 L_factor = ceil(flt(L*L*L) / 512.0);
+    if(L_factor == 0) 
+        cerr << "L_factro should at least be 1"
+        return 0;
     // lattice dimesions
     const uint Lx = L;
     const uint Ly = L;
@@ -183,31 +186,45 @@ int main(int argc, char *argv[])
     // low temperature
 if (T < T_low)
 {
-    N_met = {NRange{u64(1e7), u64(1e3)}, NRange{u64(1e9),u64(1e5)}, 
+    N_met = {NRange{u64(1e7), u64(1e3)}, 
+            NRange{u64(1e9)*L_factor, u64(1e5)*L_factor}, 
             NRange{u64(1e8), u64(1e4)}};
-    N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e4),u64(1e1)}, 
+
+    N_wolff = {NRange{u64(1e2), u64(1e0)}, 
+            NRange{u64(1e4)*L_factor,u64(1e1)*L_factor}, 
             NRange{u64(1e6), u64(1e2)}};
+
     N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
-            NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
+            NRange{u64(1e9)*L_factor, u64(1e5)*L_factor}, 
+            NRange{u64(1e8), u64(1e4)}};
 }
 // mid temperatures
 else if(T <= T_high){
-    N_met = {NRange{u64(1e8), u64(1e5)}, NRange{u64(1e10),u64(1e6)}, 
+    N_met = {NRange{u64(1e8), u64(1e5)}, NRange{u64(1e10)*L_factor
+            ,u64(1e6)*L_factor}, 
             NRange{u64(1e8), u64(1e4)}};
-    N_wolff = {NRange{u64(1e2), u64(1e0)}, NRange{u64(1e6),u64(1e2)}, 
-            NRange{u64(2e6), u64(1e2)}};
+
+    N_wolff = {NRange{u64(1e2), u64(1e0)}, 
+            NRange{u64(2e6)*L_factor,u64(2e2)*L_factor}, 
+            NRange{u64(1e6), u64(1e2)}};
+
     N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
-            NRange{u64(1e10), u64(1e6)}, NRange{u64(1e8), u64(1e4)}};
+            NRange{u64(1e10)*L_factor, u64(1e6)*L_factor}, 
+            NRange{u64(1e8), u64(1e4)}};
 }
 // high temperatures
 else {
-    N_met = {NRange{u64(1e7), u64(1e3)}, NRange{u64(1e9),u64(1e5)}, 
+    N_met = {NRange{u64(1e7), u64(1e3)}, 
+            NRange{u64(1e9)*L_factor, u64(1e5)*L_factor}, 
             NRange{u64(1e8), u64(1e4)}};
+
     N_wolff = {NRange{u64(1e2), u64(1e0)}, 
             NRange{u64(1e4),u64(1e1)}, 
-            NRange{u64(1e7), u64(1e3)}};
+            NRange{u64(1e7)*L_factor, u64(1e3)*L_factor}};
+
     N_add = {NRange{u64(1e4), u64(1e1)}, NRange{u64(1e7),u64(1e3)}, 
-            NRange{u64(1e9), u64(1e5)}, NRange{u64(1e8), u64(1e4)}};
+            NRange{u64(1e9)*L_factor, u64(1e5)*L_factor}, 
+            NRange{u64(1e8), u64(1e4)}};
 }
 
     //      --- init Lattice
@@ -229,7 +246,7 @@ else {
         Array2D<flt> data = sim::ns::test_algorithm(lattice,
                         N_met[0][1], 
                         N_met[0][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep_omp,
+                        J, h, k, sim::ns::metropolis_smallStep,
                         loading_bar, 0);
         remove_Mz(data);
         {
@@ -247,7 +264,7 @@ else {
         Array2D<flt> dataNew = sim::ns::test_algorithm(lattice,
                         N_met[2][1], 
                         N_met[2][0], T,
-                        J, h, k, sim::ns::metropolis_smallStep_omp,
+                        J, h, k, sim::ns::metropolis_smallStep,
                         loading_bar,
                         data[0][data[0].size()-1],
                         data[3][data[3].size()-1]);
