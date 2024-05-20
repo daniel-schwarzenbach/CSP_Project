@@ -71,9 +71,12 @@ inline uint get_id(int const &x, int const &y, int const &z,
         // way more effitient modolo, 
         // but requires that Lx,Ly,Lz are powers of 2
         #ifndef WITHOUT_POW2
-        uint x_ = x & (Lx - 1);
-        uint y_ = y & (Ly - 1);
-        uint z_ = z & (Lz - 1);
+        static uint xMask = (Lx - 1);
+        static uint yMask = (Ly - 1);
+        static uint zMask = (Lz - 1);
+        uint x_ = x & xMask;
+        uint y_ = y & yMask;
+        uint z_ = z & zMask;
         #else
         uint x_ = modulo(x,Lx);
         uint y_ = modulo(y,Ly);
@@ -122,9 +125,12 @@ inline uint get_id_ref(int const &x, int const &y, int const &z,
         // way more effitient modolo, 
         // but requires that Lx,Ly,Lz are powers of 2
         #ifndef WITHOUT_POW2
-        uint x_ = x & (Lx - 1);
-        uint y_ = y & (Ly - 1);
-        uint z_ = z & (Lz - 1);
+        static uint xMask = (Lx - 1);
+        static uint yMask = (Ly - 1);
+        static uint zMask = (Lz - 1);
+        uint x_ = x & xMask;
+        uint y_ = y & yMask;
+        uint z_ = z & zMask;
         #else
         uint x_ = modulo(x,Lx);
         uint y_ = modulo(y,Ly);
