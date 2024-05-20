@@ -44,7 +44,6 @@ endif()
 ###################################### MPI 
 option(MPI "Use MPI" OFF)
 if(MPI)
-    add_definitions(-DWITHOUT_POW2)
     message(STATUS "MPI option is set to ${MPI}")
     set(CMAKE_CXX_COMPILER mpic++)
 
@@ -70,8 +69,6 @@ if(MPI)
         ./programs/MPI/HeisenbergMPI.c++)
     add_executable(MPI_Speed_Up ${SRC_FILES}
         ./programs/MPI/MPI_metropolis_speed_up.c++)
-    add_executable(Lattice4MPI ${SRC_FILES}
-        ./programs/MPI/Lattice4MPI.c++)
 
     # lib/
     set(LIBRARIES
@@ -85,7 +82,6 @@ if(MPI)
     target_link_libraries(MPI_Speed_Up ${LIBRARIES})
     target_link_libraries(HeisenbergMPI ${LIBRARIES})
     target_link_libraries(MPI_Seed ${LIBRARIES})
-    target_link_libraries(Lattice4MPI ${LIBRARIES})
 endif()
 
 
