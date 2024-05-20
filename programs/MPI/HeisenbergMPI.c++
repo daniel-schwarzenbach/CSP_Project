@@ -53,8 +53,8 @@ Array2D<flt> adaptive_sim(
         // calculate data
         Step.push_back(step);
         Time.push_back(t_elapsed);
-        Sigma.push_back(get_sigma_omp());
-        R.push_back(get_acceptance_rate_omp());
+        Sigma.push_back(get_sigma());
+        R.push_back(get_acceptance_rate());
         Vector3 magnVec = measure::get_magnetization(lattice);
         M.push_back(magnVec.norm());
         E.push_back(measure::get_energy(lattice));
