@@ -14,7 +14,7 @@ namespace plt = matplot;
 
 const flt Ns = 1e+0;
 // end Time
-const flt Nmax = 1e+4;
+const flt DT = 20;
 // int Random Lattice Seed
 const int seed = 55;
 // interaction strenth
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 
         1.3, 1.4, 
         1.5, 1.6, 1.7, 1.8, 1.9, 2.0};
-    Array<uint> Ls = {2, 4, 8, 16, 32, 64};
+    Array<uint> Ls = {4, 8, 16, 32, 64, 128};
     u64 rows = Ts.size() * Ls.size();
     Array2D<flt> data(3);
     for (Array<flt> d : data)
@@ -53,25 +53,25 @@ int main(int argc, char **argv)
         {
             what_is(T);
 
-            //              --- adaptive step metropolis omp
+            //              --- wolff omp
             cout << "running metropolis omp" << endl;
             rng::set_seed(seed);
             // randomize lattice
             lattice.randomize();
             // test the algorithm
-            Array2D<flt> metro_omp = sim::ns::test_algorithm(
-                lattice, Ns, Nmax, T,
-                J, h, k, sim::ns::wolff_omp_);
+            Array2D<flt> metro_omp = sim::dt::test_algorithm(
+                lattice, Ns, DT, T,
+                J, sim::dt::wolff_omp_, false);
 
-            //              --- metropolis
+            //              --- wolff
             cout << "running metropolis" << endl;
             rng::set_seed(seed);
             // randomize lattice
             lattice.randomize();
             // test the algorithm
-            Array2D<flt> metro = sim::ns::test_algorithm(
-                lattice, Ns, Nmax, T,
-                J, h, k, sim::ns::metropolis_adaptive);
+            Array2D<flt> metro = sim::dt::test_algorithm(
+                lattice, Ns, DT, T,
+                J, sim::dt::wolff_omp_, false);
 
             
             // cut data to the relevant path

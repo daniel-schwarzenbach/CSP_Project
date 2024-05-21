@@ -24,68 +24,75 @@ namespace sim
         / @param T: temperature
         */
         using Algorithm = function<
-            void(Lattice3D<Spin> &, flt const &, flt const &,
+            void(Lattice3D<Spin> &, uint const &, flt const &,
                  flt const &)>;
 
         static Algorithm metropolis_smallStep_omp =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice, uint const &Ns, flt const &T,
                flt const &J)
         {
-            metropolis_omp(lattice, T, J, dt,
-                           _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis_omp(lattice, T, J, _inf_,
+                           Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                            MoveType::SmallStep);
         };
 
         static Algorithm metropolis_adaptive_omp =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice, uint const &Ns, flt const &T,
                flt const &J)
         {
-            metropolis_omp(lattice, T, J, dt,
-                           _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis_omp(lattice, T, J, _inf_,
+                           Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                            MoveType::Addaptive);
         };
 
         static Algorithm metropolis_random_omp =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice,  uint const &Ns, flt const &T,
                flt const &J)
         {
-            metropolis_omp(lattice, T, J, dt,
-                           _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis_omp(lattice, T, J,_inf_,
+                           Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                            MoveType::Random);
         };
 
         static Algorithm metropolis_adaptive =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice,  uint const &Ns, flt const &T,
                flt const &J)
         {
-            adaptive_metropolis(lattice, T, J, dt,
-                                _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            adaptive_metropolis(lattice, T, J, _inf_,
+                                Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                                 60);
         };
 
         static Algorithm metropolis_smallStep =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice,  uint const &Ns, flt const &T,
                flt const &J)
         {
-            metropolis(lattice, T, J, dt,
-                       _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis(lattice, T, J, _inf_,
+                           Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                        MoveType::SmallStep);
         };
 
         static Algorithm metropolis_random =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice, uint const &Ns, flt const &T,
                flt const &J)
         {
-            metropolis(lattice, T, J, dt,
-                       _maxU32_, Spin{0, 0, 0}, Spin{0, 0, 0},
+            metropolis(lattice, T, J, _inf_,
+                           Ns, Spin{0, 0, 0}, Spin{0, 0, 0},
                        MoveType::Random);
         };
 
         static Algorithm wolff_ =
-            [](Lattice3D<Spin> &lattice, flt const &dt, flt const &T,
+            [](Lattice3D<Spin> &lattice, uint const &Ns, flt const &T,
                flt const &J)
         {
-            wolff(lattice, T, J, dt, _maxU32_);
+            wolff(lattice, T, J, _inf_, Ns);
+        };
+
+                static Algorithm wolff_omp_ =
+            [](Lattice3D<Spin> &lattice, uint const &Ns, flt const &T,
+               flt const &J)
+        {
+            wolff_omp(lattice, T, J, _inf_, Ns);
         };
 
         /*
@@ -102,7 +109,7 @@ namespace sim
         */
         Array2D<flt> test_algorithm(
             Lattice3D<Spin> &lattice,
-            flt const &dt, flt const &t_end, flt const &T,
+            uint const &Ns, flt const &dt, flt const &T,
             flt const &J,
             Algorithm const &algorithmus, bool loadingbar = true);
 

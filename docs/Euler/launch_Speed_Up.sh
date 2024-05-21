@@ -1,14 +1,10 @@
 #!/bin/bash
 
-#SBATCH --nodes=48                   
-#SBATCH --ntasks=48              
-#SBATCH --ntasks-per-node=1 
-#SBATCH --mem-per-cpu=2000
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8    #Requesting 8 CPU for each job
+#SBATCH --mem-per-cpu=6000
 #SBATCH --error=error.txt
 #SBATCH --output=output.txt
-#SBATCH --time=04:00:00
+#SBATCH --time=72:00:00
 
-mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Speed_Up 0.5
-mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Speed_Up 1
-mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Speed_Up 1.5
-mpirun -bind-to core -map-by core -n 12 .././programs/MPI_Speed_Up 2.0
+srun .././programs/Get_Speed_Up_Data

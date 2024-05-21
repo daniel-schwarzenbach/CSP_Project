@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns = 1e+5;
+const flt Ns = 1e+6;
 // end Time
-const flt Nmax = 1e+7;
+const flt Nmax = 1e+8;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth

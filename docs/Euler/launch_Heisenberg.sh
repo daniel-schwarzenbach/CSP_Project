@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --array=1-54     #Array with 54 Jobs, always 27 running in parallel
+#SBATCH --array=1-54%27     #Array with 54 Jobs, always 27 running in parallel
 #SBATCH --cpus-per-task=1    #Requesting 1 CPU for each job
 #SBATCH --mem-per-cpu=2500
 #SBATCH --error=error.txt

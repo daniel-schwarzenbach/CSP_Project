@@ -3,46 +3,44 @@
 // simulation for dt in Time
 Array2D<flt> sim::dt::test_algorithm(
     Lattice3D<Spin> &lattice,
-    flt const &dt, flt const &t_end, flt const &T, flt const &J,
+    uint const &Ns, flt const &dt, flt const &T, flt const &J,
     sim::dt::Algorithm const &algo, bool loadingBar)
 {
     // get z Vector for measuring Mz
     Vector3 z = {0, 0, 1};
-    // get max number of runs for reserving vectors
-    uint maxSize = ceil(flt(t_end) / flt(dt));
 
     // init data arrays, reserve to avoid time to reallocate data
     Array<flt> Time(0);
-    Time.reserve(maxSize);
     Array<flt> M(0);
-    M.reserve(maxSize);
     Array<flt> E(0);
-    E.reserve(maxSize);
     Array<flt> M_z(0);
-    M_z.reserve(maxSize);
+    Array<flt> N(0);
 
     // init loding bar
     measure::LoadingBar lbar(60);
     // measure elapsed time
     flt t_elapsed = 0;
-    while (t_elapsed < t_end)
+    u64 numSteps = 0;
+    while (t_elapsed < dt)
     {
         // update loading bar if requested
         if (loadingBar)
-            lbar.update(t_elapsed / t_end * 100.0);
+            lbar.update(t_elapsed / dt * 100.0);
         // calculate data
         Vector3 magnVec = measure::get_magnetization(lattice);
         Time.push_back(t_elapsed);
         M.push_back(magnVec.norm());
         M_z.push_back(magnVec | z);
         E.push_back(measure::get_energy(lattice));
+        N.push_back(numSteps);
         // track performance
         measure::Timer watch;
         // run algoritm
-        algo(lattice, dt, T, J);
+        algo(lattice, Ns, T, J);
         watch.stop();
         // update time
         t_elapsed += watch.time();
+        numSteps += Ns;
     }
     // update loading bar if requested
     if (loadingBar)
@@ -53,8 +51,9 @@ Array2D<flt> sim::dt::test_algorithm(
     M.push_back(magnVec.norm());
     M_z.push_back(magnVec | z);
     E.push_back(abs(measure::get_energy(lattice)));
+    N.push_back(numSteps);
     // return data
-    return {Time, M, M_z, E};
+    return {N, M, M_z, E, Time};
 }
 
 Array2D<flt> sim::ns::test_algorithm(
