@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     what_is(T);
     u64 L_factor = ceil(flt(L*L*L) / 512.0);
     if(L_factor == 0) 
-        cerr << "L_factro should at least be 1"
+        cerr << "L_factro should at least be 1";
         return 0;
     // lattice dimesions
     const uint Lx = L;
