@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+6;
+const flt Ns_met = 1e+8;
 // end Time
-const flt Nmax_met = 1e+7;
+const flt Nmax_met = 1e+9;
 // int Random Lattice Seed
 const int seed = 124;
 // interaction strenth
@@ -31,7 +31,7 @@ int main(int mainArgCount, char **mainArgs)
         {0.01, 0.1, 0.3, 0.5, 0.7, 1.0, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 
          2.0,
          3.0, 4.0, 5.0, 10, 100};
-    Array<uint> Ls = {2, 4, 8, 16, 32, 64, 128, 256, 512};
+    Array<uint> Ls = {2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
     u64 rows = Ts.size() * Ls.size();
     Array2D<flt> data(3);
     for (Array<flt> d : data)
