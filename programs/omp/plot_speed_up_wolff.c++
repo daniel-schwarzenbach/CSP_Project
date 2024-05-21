@@ -71,7 +71,7 @@ int main(int argc, char **argv)
             // test the algorithm
             Array2D<flt> metro = sim::dt::test_algorithm(
                 lattice, Ns, DT, T,
-                J, sim::dt::wolff_omp_, false);
+                J, sim::dt::wolff_, false);
 
             
             // cut data to the relevant path
