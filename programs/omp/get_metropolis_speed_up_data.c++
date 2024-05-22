@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns_met = 1e+8;
+const flt Ns_met = 1e+7;
 // end Time
-const flt Nmax_met = 1e+9;
+const flt Nmax_met = 1e+8;
 // int Random Lattice Seed
 const int seed = 124;
 // interaction strenth
