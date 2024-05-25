@@ -13,9 +13,9 @@ and anisotropy k to a magnetiesed lattice
 #include <Simulations/Simulation.h++>
 
 // number of steps between measuring
-const flt Ns_met = 1e+1;
+const flt Ns_met = 1e+4;
 // number of steps
-const flt Nmax_met = 1e+4;
+const flt Nmax_met = 1e+8;
 
 // seed to set
 const int seed = 42;
@@ -43,8 +43,8 @@ int main(int mainArgCount, char **mainArgs)
         const Spin k = {0, 0, 0};
         cout << "running for T = " << T << endl;
         // define names
-        string Tstr = "T_" + to_string(uint(T * 1e3)) + "e-3/";
-        string Folder = "k=0/";
+        string Tstr = "T=" + to_string(uint(T * 1e3)) + "e-3";
+        string Folder = "data/k=0/";
         // make folder for k = 0
         data::make_folder(Folder);
         cout << "running metropolis" << endl;
@@ -55,10 +55,10 @@ int main(int mainArgCount, char **mainArgs)
         // run algorithm
         Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
-            J, h, k, sim::ns::metropolis_adaptive);
+            J, h, k, sim::ns::metropolis_smallStep);
         // store the resulting data
         data::store_data(metro,
-                         Folder + "/metropolis_adaptive_" + Tstr);
+                         Folder + "metropolis_small_step_" + Tstr);
     }
 
     //          ---- run with anisotropy k = -z
@@ -68,8 +68,8 @@ int main(int mainArgCount, char **mainArgs)
         const Spin k = {0, 0, -1};
         cout << "running for T = " << T << endl;
         // define names
-        string Tstr = "T_" + to_string(uint(T * 1e3)) + "e-3/";
-        string Folder = "k=-z/";
+        string Tstr = "T" + to_string(uint(T * 1e3)) + "e-3";
+        string Folder = "data/k=-z/";
         // make folder for k = -z
         data::make_folder(Folder);
         cout << "running metropolis" << endl;
@@ -80,10 +80,10 @@ int main(int mainArgCount, char **mainArgs)
         // run algorithm
         Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns_met, Nmax_met, T,
-            J, h, k, sim::ns::metropolis_adaptive);
+            J, h, k, sim::ns::metropolis_smallStep);
         // store the resulting data
         data::store_data(metro,
-                         Folder + "/metropolis_adaptive_" + Tstr);
+                         Folder + "metropolis_small_step_" + Tstr);
     }
     return 0;
 }

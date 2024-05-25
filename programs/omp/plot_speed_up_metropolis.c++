@@ -12,9 +12,9 @@ parallelized version, in terms of physical quantaties and speed-up
 
 namespace plt = matplot;
 
-const flt Ns = 1e+5;
+const flt Ns = 5e+5;
 // end Time
-const flt Nmax = 1e+7;
+const flt Nmax = 5e+8;
 // int Random Lattice Seed
 const int seed = 69;
 // side Lenth
@@ -82,7 +82,7 @@ int main(int mainArgCount, char **mainArgs)
         // test the algorithm
         Array2D<flt> metro_omp = sim::ns::test_algorithm(
             lattice, Ns, Nmax, T,
-            J, h, k, sim::ns::metropolis_smallStep_omp);
+            J, h, k, sim::ns::metropolis_adaptive_omp);
         // store the data
         data::store_data(metro_omp,
                          Folder + "/metropolis_omp");
@@ -97,7 +97,7 @@ int main(int mainArgCount, char **mainArgs)
         // test the algorithm
         Array2D<flt> metro = sim::ns::test_algorithm(
             lattice, Ns, Nmax, T,
-            J, h, k, sim::ns::metropolis_smallStep);
+            J, h, k, sim::ns::metropolis_adaptive);
         // store the data
         data::store_data(metro,
                          Folder + "/metropolis");
@@ -169,8 +169,17 @@ int main(int mainArgCount, char **mainArgs)
                        metro_omp[4][metro_omp[4].size() - 1];
         what_is(Speed_up);
         speedUps.push_back(Speed_up);
+        Array<flt> magnetization_serial = sub_range(200, 999, metro[1]);
+        Array<flt> energy_serial = sub_range(100, 999, metro[3]);
+        what_is(variance(magnetization_serial));
+        what_is(variance(energy_serial));
+        Array<flt> magnetization_parallel = sub_range(200, 999, metro_omp[1]);
+        Array<flt> energy_parallel = sub_range(200, 999, metro_omp[3]);
+        what_is(variance(magnetization_parallel));
+        what_is(variance(energy_parallel));
         cout << endl;
     }
+    
     what_is(mean(speedUps));
     what_is(variance(speedUps));
     return 0;
