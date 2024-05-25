@@ -117,7 +117,7 @@ bool value = latticeBoll.get(x,y,z);
 latticeBoll.set(x,y,z,value);
 ```
 
-Every picture is 10'000 adaptive steps with metropolis algorithm at temperature $T = 0.1$ and an external magnetic field of $h = [0,0,0.1]$ a Lattice of size {4,4,16} with dirichlet boundary Conditions, with zero(`{0,0,0}`) at the boundary. 1'000'000 steps in total.
+Every picture is 10'000 adaptive steps with metropolis algorithm at temperature $T = 0.1$ and an external magnetic field of $h = [0,0,0.01]$ a Lattice of size {4,4,16} with dirichlet boundary Conditions, with zero(`{0,0,0}`) at the boundary. 1'000'000 steps in total.
 
 ![metropolis algorithm](./docs/plots/dirichlet.gif)
 
