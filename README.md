@@ -1,6 +1,6 @@
 # Heisenberg 3D model
 
-In the following gif, we present an animation of the Metropolis algorithm in action. Every snapshot shows the evolution after $N_S = 100$ steps at temperature $T = 0.5$ with an external magnetic field of $h = [0,0,1], adding up to a total of $N_{max} 10000$ steps. 
+In the following gif, we present an animation of the Metropolis algorithm in action. Every snapshot shows the evolution after $N_S$ = 100 steps at temperature $T = 0.5$ with an external magnetic field of $h = [0,0,1], adding up to a total of $N_{max}$ = 10000 steps. 
 
 ![metropolis algorithm](./docs/plots/Magnetfeld.gif)
 
