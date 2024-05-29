@@ -112,9 +112,9 @@ The Lattice3D class also includes a specialized boolean version.
 // initialize the boolean lattice
 Lattice3D<bool> latticeBool(4,4,4);
 // get an element at (x,y,z)
-bool value = latticeBoll.get(x,y,z); 
+bool value = latticeBool.get(x,y,z); 
 // set element at (x,y,z)
-latticeBoll.set(x,y,z,value);
+latticeBool.set(x,y,z,value);
 ```
 
 In the follwoing animaion, we present a simulation using the Metropolis algorithm at $T = 0.1$ with an external magnetic field of $h = [0,0,0.01]$, lattice sizes {4,4,16}, and open boundary conditions with a spin zero(`{0,0,0}`) at the boundary. Every spapshot represents 10000 adaptive steps, adding up to 1000000 steps in total.
