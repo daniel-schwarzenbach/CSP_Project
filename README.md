@@ -1,6 +1,6 @@
 # Heisenberg 3D model
 
-Every picture is 100 random steps with metropolis algorithm at temperature $T = 0.5$ and an external magnetic field of $h = [0,0,1]$. 10'000 steps in total.
+In the following gif, we present an animation of the Metropolis algorithm in action. Every snapshot shows the evolution after $N_S = 100$ steps at temperature $T = 0.5$ with an external magnetic field of $h = [0,0,1], adding up to a total of $N_{max} 10000$ steps. 
 
 ![metropolis algorithm](./docs/plots/Magnetfeld.gif)
 
@@ -19,9 +19,9 @@ Every picture is 100 random steps with metropolis algorithm at temperature $T = 
 
 # Introduction
 
-This repository contains the code to simulate the 3D Heisenberg model using
-different algorithms. The 3D Heisenberg model is a lattice model that
-is used to understand the behavior of magnetic materials under various
+This repository contains the code to simulate the 3D Heisenberg Model using
+different algorithms. The 3D Heisenberg Model is a lattice model that
+is used to simulate the behavior of magnetic materials under various
 conditions. The three algorithms implemented for the simulation are the Wolff
 algorithm, the standard Metropolis algorithm and an adaptive version
 of the Metropolis algorithm.
@@ -30,7 +30,7 @@ In this README file we give instructions for the installation of the
 required libraries, provide an overview over the code, describe the
 core difference between the three algorithms implemented and give a 
 brief overview over the results that can be obtained using our code. 
-Finally, we list the contributions.
+Finally, we list our contributions.
 
 
 # Structure of the code 
@@ -85,10 +85,10 @@ contains files for working in VS-Code
 
 ## Lattice3D
 
-The Lattice3D is a 3D-Array container class capable of handling 
-different lattice Sizes and periodic- and dirichlet- boundary 
-conditions. For optimization purposes Lattice-Side Lengths should be 
-powers of 2. If you would wish like to change that, ad the flag or
+Lattice3D is a 3D-Array container class capable of handling 
+different lattice sizes and periodic and open boundary 
+conditions. For optimization purposes, the individual lattice lengths should be 
+powers of 2. If you would like to change that, add the flag or
 definition: `-DWITHOUT_POW2`.
 
 ```cpp
@@ -96,7 +96,7 @@ definition: `-DWITHOUT_POW2`.
 uint Lx = 4; uint Ly = 4; uint Lz = 32;
 // initialize the lattice
 Lattice3D<Spin> lattice(Lx ,Ly ,Lz);
-// set dirichle/constant boundatry, default is Periodic
+// set open (Dirichlet) or periodic (Periodic) boundary, default is Periodic
 lattice.set_boundary_conditions(BC::Dirichlet);
 // set the dirichlet boundary to {0,0,1}, default is {0,0,0}
 lattice.set_zero_element(Spin{0,0,1});
@@ -106,18 +106,18 @@ Spin s = lattice(x,y,z);
 lattice(x,y,z) = s;
 ```
 
-The Lattice3D class also includes a Specialized boolen-version.
+The Lattice3D class also includes a specialized boolean version.
 
 ```cpp
-// initializet the boolean lattice
+// initialize the boolean lattice
 Lattice3D<bool> latticeBool(4,4,4);
-// get a element at x,y,z
+// get an element at (x,y,z)
 bool value = latticeBoll.get(x,y,z); 
-// set element at x,y,z
+// set element at (x,y,z)
 latticeBoll.set(x,y,z,value);
 ```
 
-Every picture is 10'000 adaptive steps with metropolis algorithm at temperature $T = 0.1$ and an external magnetic field of $h = [0,0,0.01]$ a Lattice of size {4,4,16} with dirichlet boundary Conditions, with zero(`{0,0,0}`) at the boundary. 1'000'000 steps in total.
+In the follwoing animaion, we present a simulation using the Metropolis algorithm at $T = 0.1$ with an external magnetic field of $h = [0,0,0.01]$, lattice sizes {4,4,16}, and open boundary conditions with a spin zero(`{0,0,0}`) at the boundary. Every spapshot represents 10000 adaptive steps, adding up to 1000000 steps in total.
 
 ![metropolis algorithm](./docs/plots/dirichlet.gif)
 
@@ -182,14 +182,14 @@ M.C.W. implemented the observables, J.G. implemented the normal and adaptive Met
 
 ## Mac-Os
 
-First u need to install [Homebrew](https://docs.brew.sh/Installation)
+First, you need to install [Homebrew](https://docs.brew.sh/Installation)
 
 install GCC 11 for c++23
 ```bash
 brew install gcc@11 --without-multilib
 brew link gcc@11 --force
 ```
-If you’ve previously installed GCC using Homebrew, you can reinstall it with:
+If you have previously installed GCC using Homebrew, you can reinstall it with:
 ```bash
 brew reinstall gcc@11 --without-multilib
 ```
@@ -243,7 +243,7 @@ sudo make install
 
 ## Windows
 
-We sadly do not support windows itself, but you can install Windows Subsystems for Linux (WSL) and follow the linux installation guide.
+Unfortunately, we do not support Windows, but you can install a Windows subsystem for Linux (WSL) and follow the linux installation guide.
 
 [install WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 
@@ -251,10 +251,7 @@ We sadly do not support windows itself, but you can install Windows Subsystems f
 
 ## Matplot++-Library
 
-Rich plotting library
-
-Is auto installed through CMake
-
+Matplot++ (automatically installed through CMake) is used as a plotting library.
 
 [Documentation](https://alandefreitas.github.io/matplotplusplus/)
 
